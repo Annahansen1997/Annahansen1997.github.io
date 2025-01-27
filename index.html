@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,27 +8,30 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://js.stripe.com/v3/"></script>
 </head>
+
 <body>
     <header>
         <div class="header-top">
             <h1>Kreativ Moro</h1>
             <p>Pedagogiske aktivitetsark for kreative sjeler</p>
         </div>
-        
+
         <div class="header-bottom">
             <div class="search-container">
                 <input type="search" placeholder="Søk etter aktiviteter...">
                 <button class="search-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </button>
             </div>
-            
+
             <nav class="header-nav">
                 <a href="#" class="nav-link about-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12" y2="8"></line>
@@ -35,13 +39,17 @@
                     Om Oss
                 </a>
                 <a href="#" class="nav-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                        </path>
                     </svg>
                     Kontakt
                 </a>
                 <a href="#" class="nav-link cart-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
@@ -71,7 +79,7 @@
                 </div>
 
                 <div class="product-card" onclick="openModal('modal2')">
-                    <img src="dinosaur.png" alt="Dinosaureventyr">
+                    <img src="Dinosaur.png" alt="Dinosaureventyr">
                     <h3>På eventyr med dinosaurene</h3>
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
@@ -79,12 +87,12 @@
                         id: 2,
                         name: 'På eventyr med dinosaurene',
                         price: 45.00,
-                        image: 'dinosaur.png'
+                        image: 'Dinosaur.png'
                     })">Legg i handlekurv</button>
                 </div>
 
                 <div class="product-card" onclick="openModal('modal3')">
-                    <img src="enhjørning.png" alt="Enhjørninghefte">
+                    <img src="Enhjørning.png" alt="Enhjørninghefte">
                     <h3>Enhjørningens magiske eventyrhefte</h3>
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
@@ -92,12 +100,12 @@
                         id: 3,
                         name: 'Enhjørningens magiske eventyrhefte',
                         price: 45.00,
-                        image: 'enhjørning.png'
+                        image: 'Enhjørning.png'
                     })">Legg i handlekurv</button>
                 </div>
 
                 <div class="product-card" onclick="openModal('modal4')">
-                    <img src="bilbingo.png" alt="Bilbingo">
+                    <img src="Bilbingo.png" alt="Bilbingo">
                     <h3>Bilbingo</h3>
                     <p>Alder 4+</p>
                     <p class="price">35,00 NOK</p>
@@ -105,12 +113,12 @@
                         id: 4,
                         name: 'Bilbingo',
                         price: 35.00,
-                        image: 'bilbingo.png'
+                        image: 'Bilbingo.png'
                     })">Legg i handlekurv</button>
                 </div>
 
                 <div class="product-card" onclick="openModal('modal5')">
-                    <img src="flybingo.png" alt="Flybingo">
+                    <img src="Flybingo.png" alt="Flybingo">
                     <h3>Flybingo</h3>
                     <p>Alder 4+</p>
                     <p class="price">35,00 NOK</p>
@@ -118,7 +126,7 @@
                         id: 5,
                         name: 'Flybingo',
                         price: 35.00,
-                        image: 'flybingo.png'
+                        image: 'Flybingo.png'
                     })">Legg i handlekurv</button>
                 </div>
             </div>
@@ -129,7 +137,7 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('modal1')">&times;</span>
                 <h2>Påskekos Aktivitetshefte</h2>
-                
+
                 <!-- Endre rekkefølgen i bildekarusellen -->
                 <div class="image-carousel">
                     <div class="carousel-container">
@@ -150,8 +158,10 @@
 
                 <div class="modal-info">
                     <p class="intro-text">
-                        Gjør påsken ekstra morsom for barna med Påskekos Aktivitetshefte – perfekt for barn i alderen 3–8 år! 
-                        Dette digitale heftet er fylt med kreative og lærerike aktiviteter som garantert vil engasjere de små i påskeferien.
+                        Gjør påsken ekstra morsom for barna med Påskekos Aktivitetshefte – perfekt for barn i alderen
+                        3–8 år!
+                        Dette digitale heftet er fylt med kreative og lærerike aktiviteter som garantert vil engasjere
+                        de små i påskeferien.
                     </p>
 
                     <div class="content-section">
@@ -176,17 +186,18 @@
                     </div>
 
                     <p class="highlight-text">
-                        Med dette aktivitetsheftet får barna en herlig blanding av kreativ lek og påskestemning 
+                        Med dette aktivitetsheftet får barna en herlig blanding av kreativ lek og påskestemning
                         ��� perfekt for lange dager på hytta, hjemme eller på ferie.
                     </p>
 
                     <div class="notice-box">
-                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro. 
-                        Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
                     </div>
 
                     <button class="buy-button">Kjøp nå - 45,00 NOK</button>
-                    <p class="final-text">La barna utforske sin kreative side og fyll påskeferien med latter, farger og glede!</p>
+                    <p class="final-text">La barna utforske sin kreative side og fyll påskeferien med latter, farger og
+                        glede!</p>
                 </div>
 
                 <div class="reviews-section">
@@ -194,7 +205,7 @@
                     <div class="reviews-container" id="reviews-container">
                         <!-- Eksisterende omtaler vil vises her -->
                     </div>
-                    
+
                     <div class="add-review">
                         <h4>Skriv en omtale</h4>
                         <div class="star-rating">
@@ -204,7 +215,8 @@
                             <span class="star" data-rating="4">★</span>
                             <span class="star" data-rating="5">★</span>
                         </div>
-                        <textarea id="review-text" placeholder="Del din erfaring med produktet..." maxlength="500"></textarea>
+                        <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                            maxlength="500"></textarea>
                         <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                     </div>
                 </div>
@@ -216,13 +228,13 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('modal2')">&times;</span>
                 <h2>På eventyr med dinosaurene</h2>
-                
+
                 <div class="image-carousel">
                     <div class="carousel-container">
-                        <img src="dinosaur.png" alt="Dinosaur forside" class="carousel-image active">
-                        <img src="dinosaur1.png" alt="Dinosaur side 1" class="carousel-image">
-                        <img src="dinosaur2.png" alt="Dinosaur side 2" class="carousel-image">
-                        <img src="dinosaur3.png" alt="Dinosaur side 3" class="carousel-image">
+                        <img src="Dinosaur.png" alt="Dinosaur forside" class="carousel-image active">
+                        <img src="Dinosaur1.png" alt="Dinosaur side 1" class="carousel-image">
+                        <img src="Dinosaur2.png" alt="Dinosaur side 2" class="carousel-image">
+                        <img src="Dinosaur3.png" alt="Dinosaur side 3" class="carousel-image">
                     </div>
                     <button class="carousel-button prev" onclick="changeImage(-1)">❮</button>
                     <button class="carousel-button next" onclick="changeImage(1)">❯</button>
@@ -236,7 +248,8 @@
 
                 <div class="modal-info">
                     <p class="intro-text">
-                        Ta med barna på en spennende reise tilbake i tid med vårt dinosaurhefte! Perfekt for små dinosaurentusiaster 
+                        Ta med barna på en spennende reise tilbake i tid med vårt dinosaurhefte! Perfekt for små
+                        dinosaurentusiaster
                         i alderen 3-8 år som vil lære mer om disse fascinerende forhistoriske dyrene.
                     </p>
 
@@ -258,6 +271,25 @@
 
                     <button class="buy-button">Kjøp nå - 45,00 NOK</button>
                 </div>
+                <div class="reviews-section"></div>
+                <h3>Kundeomtaler</h3>
+                <div class="reviews-container" id="reviews-container">
+                    <!-- Eksisterende omtaler vil vises her -->
+                </div>
+
+                <div class="add-review">
+                    <h4>Skriv en omtale</h4>
+                    <div class="star-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                        maxlength="500"></textarea>
+                    <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
+                </div>
             </div>
         </div>
 
@@ -266,13 +298,13 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('modal3')">&times;</span>
                 <h2>Enhjørningens magiske eventyrhefte</h2>
-                
+
                 <div class="image-carousel">
                     <div class="carousel-container">
-                        <img src="enhjørning.png" alt="Enhjørning forside" class="carousel-image active">
-                        <img src="enhjørning1.png" alt="Enhjørning side 1" class="carousel-image">
-                        <img src="enhjørning2.png" alt="Enhjørning side 2" class="carousel-image">
-                        <img src="enhjørning3.png" alt="Enhjørning side 3" class="carousel-image">
+                        <img src="Enhjørning.png" alt="Enhjørning forside" class="carousel-image active">
+                        <img src="Enhjørning1.png" alt="Enhjørning side 1" class="carousel-image">
+                        <img src="Enhjørning2.png" alt="Enhjørning side 2" class="carousel-image">
+                        <img src="Enhjørning3.png" alt="Enhjørning side 3" class="carousel-image">
                     </div>
                     <button class="carousel-button prev" onclick="changeImage(-1)">❮</button>
                     <button class="carousel-button next" onclick="changeImage(1)">❯</button>
@@ -286,7 +318,7 @@
 
                 <div class="modal-info">
                     <p class="intro-text">
-                        Bli med på et magisk eventyr i enhjørningenes verden! Dette heftet er fylt med glitter, regnbuer 
+                        Bli med på et magisk eventyr i enhjørningenes verden! Dette heftet er fylt med glitter, regnbuer
                         og magi, perfekt for barn i alderen 3-8 år som elsker enhjørninger.
                     </p>
 
@@ -308,6 +340,25 @@
 
                     <button class="buy-button">Kjøp nå - 45,00 NOK</button>
                 </div>
+                <div class="reviews-section"></div>
+                <h3>Kundeomtaler</h3>
+                <div class="reviews-container" id="reviews-container">
+                    <!-- Eksisterende omtaler vil vises her -->
+                </div>
+
+                <div class="add-review">
+                    <h4>Skriv en omtale</h4>
+                    <div class="star-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                        maxlength="500"></textarea>
+                    <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
+                </div>
             </div>
         </div>
 
@@ -316,14 +367,14 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('modal4')">&times;</span>
                 <h2>Bilbingo</h2>
-                
+
                 <div class="single-image">
-                    <img src="bilbingo.png" alt="Bilbingo forside" class="product-image">
+                    <img src="Bilbingo.png" alt="Bilbingo forside" class="product-image">
                 </div>
 
                 <div class="modal-info">
                     <p class="intro-text">
-                        Gjør bilturen morsom med vårt populære bilbingo! Perfekt for lange kjøreturer 
+                        Gjør bilturen morsom med vårt populære bilbingo! Perfekt for lange kjøreturer
                         og familieferier. Passer for hele familien, anbefalt fra 4 år.
                     </p>
 
@@ -347,6 +398,25 @@
 
                     <button class="buy-button">Kjøp nå - 35,00 NOK</button>
                 </div>
+                <div class="reviews-section"></div>
+                <h3>Kundeomtaler</h3>
+                <div class="reviews-container" id="reviews-container">
+                    <!-- Eksisterende omtaler vil vises her -->
+                </div>
+
+                <div class="add-review">
+                    <h4>Skriv en omtale</h4>
+                    <div class="star-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                        maxlength="500"></textarea>
+                    <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
+                </div>
             </div>
         </div>
 
@@ -355,14 +425,14 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('modal5')">&times;</span>
                 <h2>Flybingo</h2>
-                
+
                 <div class="single-image">
-                    <img src="flybingo.png" alt="Flybingo forside" class="product-image">
+                    <img src="Flybingo.png" alt="Flybingo forside" class="product-image">
                 </div>
 
                 <div class="modal-info">
                     <p class="intro-text">
-                        Gjør flyreisen til en morsom opplevelse med vårt engasjerende flybingo! 
+                        Gjør flyreisen til en morsom opplevelse med vårt engasjerende flybingo!
                         Perfekt for både korte og lange flyturer. Passer for hele familien, anbefalt fra 4 år.
                     </p>
 
@@ -386,6 +456,25 @@
 
                     <button class="buy-button">Kjøp nå - 35,00 NOK</button>
                 </div>
+                <div class="reviews-section"></div>
+                <h3>Kundeomtaler</h3>
+                <div class="reviews-container" id="reviews-container">
+                    <!-- Eksisterende omtaler vil vises her -->
+                </div>
+
+                <div class="add-review">
+                    <h4>Skriv en omtale</h4>
+                    <div class="star-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                        maxlength="500"></textarea>
+                    <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
+                </div>
             </div>
         </div>
 
@@ -406,7 +495,8 @@
                         <span>Totalt:</span>
                         <span id="cart-total">0,00 NOK</span>
                     </div>
-                    <p class="terms-note">Ved å gjennomføre kjøpet aksepterer du våre <a href="#" onclick="event.preventDefault(); openModal('terms-modal')">kjøpsvilkår</a></p>
+                    <p class="terms-note">Ved å gjennomføre kjøpet aksepterer du våre <a href="#"
+                            onclick="event.preventDefault(); openModal('terms-modal')">kjøpsvilkår</a></p>
                     <button class="checkout-button" onclick="initiateCheckout()">Betal med kort</button>
                     <button class="empty-cart-button" onclick="emptyCart()">Tøm handlekurv</button>
                 </div>
@@ -423,25 +513,25 @@
                             <label for="name">Navn</label>
                             <input type="text" id="name" name="name" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="email">E-post</label>
                             <input type="email" id="email" name="email" required>
                             <span class="error-message" id="email-error"></span>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="subject">Emne</label>
                             <input type="text" id="subject" name="subject" required>
                             <span class="error-message" id="subject-error"></span>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="message">Melding</label>
                             <textarea id="message" name="message" rows="5" required></textarea>
                             <span class="error-message" id="message-error"></span>
                         </div>
-                        
+
                         <p class="required-notice">* Obligatoriske felt</p>
                         <button type="submit" class="submit-button">Send Melding</button>
                     </form>
@@ -458,17 +548,23 @@
                         <p class="about-intro">
                             Velkommen til Kreativ Moro!
                         </p>
-                        
+
                         <p>
-                            Hos oss tror vi på læring gjennom lek og kreativitet. Vår filosofi er at barn utvikler seg best når de får utforske, være kreative og ha det gøy samtidig. Derfor designer vi aktivitetshefter som ikke bare underholder, men som også stimulerer nysgjerrighet og læring på en morsom måte.
+                            Hos oss tror vi på læring gjennom lek og kreativitet. Vår filosofi er at barn utvikler seg
+                            best når de får utforske, være kreative og ha det gøy samtidig. Derfor designer vi
+                            aktivitetshefter som ikke bare underholder, men som også stimulerer nysgjerrighet og læring
+                            på en morsom måte.
                         </p>
-                        
+
                         <p>
-                            Vi ønsker at alle skal ha råd til å kose seg med kreative oppgaver, og derfor tilbyr vi våre produkter til lave priser. Enten du trenger underholdning til hjemmebruk, ferier eller barnehagen, finner du oppgaver som passer for alle.
+                            Vi ønsker at alle skal ha råd til å kose seg med kreative oppgaver, og derfor tilbyr vi våre
+                            produkter til lave priser. Enten du trenger underholdning til hjemmebruk, ferier eller
+                            barnehagen, finner du oppgaver som passer for alle.
                         </p>
 
                         <p class="about-closing">
-                            Takk for at du støtter oss – vi håper våre aktivitetshefter vil skape glede og inspirere til kreativitet!
+                            Takk for at du støtter oss – vi håper våre aktivitetshefter vil skape glede og inspirere til
+                            kreativitet!
                         </p>
                     </div>
                 </div>
@@ -485,26 +581,31 @@
                     <p>Disse vilkårene gjelder for kjøp av digitale produkter (PDF-filer) fra Kreativ Moro.</p>
 
                     <h3>2. Produktinformasjon</h3>
-                    <p>Alle våre produkter er digitale aktivitetshefter i PDF-format. Produktene leveres via e-post umiddelbart etter bekreftet betaling.</p>
+                    <p>Alle våre produkter er digitale aktivitetshefter i PDF-format. Produktene leveres via e-post
+                        umiddelbart etter bekreftet betaling.</p>
 
                     <h3>3. Priser og Betaling</h3>
-                    <p>Alle priser er oppgitt i norske kroner (NOK) og inkluderer merverdiavgift. Betaling gjennomføres via sikker betalingsløsning.</p>
+                    <p>Alle priser er oppgitt i norske kroner (NOK) og inkluderer merverdiavgift. Betaling gjennomføres
+                        via sikker betalingsløsning.</p>
 
                     <h3>4. Levering</h3>
                     <p>- PDF-filen sendes til e-postadressen oppgitt ved kjøp<br>
-                    - Levering skjer automatisk etter bekreftet betaling<br>
-                    - Ved manglende mottak, ta kontakt via vårt kontaktskjema</p>
+                        - Levering skjer automatisk etter bekreftet betaling<br>
+                        - Ved manglende mottak, ta kontakt via vårt kontaktskjema</p>
 
                     <h3>5. Angrerett</h3>
-                    <p>I henhold til angrerettloven § 22 bokstav n, gjelder ikke angrerett for digitale produkter som leveres elektronisk når nedlastingen eller leveringen har begynt. Ved å gjennomføre kjøpet, samtykker du til at leveringen starter umiddelbart og at angreretten dermed bortfaller.</p>
+                    <p>I henhold til angrerettloven § 22 bokstav n, gjelder ikke angrerett for digitale produkter som
+                        leveres elektronisk når nedlastingen eller leveringen har begynt. Ved å gjennomføre kjøpet,
+                        samtykker du til at leveringen starter umiddelbart og at angreretten dermed bortfaller.</p>
 
                     <h3>6. Bruksrettigheter</h3>
                     <p>- Produktet er kun til personlig bruk<br>
-                    - Videresalg eller deling er ikke tillatt<br>
-                    - Du kan skrive ut så mange kopier du ønsker til eget bruk</p>
+                        - Videresalg eller deling er ikke tillatt<br>
+                        - Du kan skrive ut så mange kopier du ønsker til eget bruk</p>
 
                     <h3>7. Personvern</h3>
-                    <p>Din e-postadresse brukes kun til å levere produktet og til eventuell nødvendig kommunikasjon relatert til kjøpet.</p>
+                    <p>Din e-postadresse brukes kun til å levere produktet og til eventuell nødvendig kommunikasjon
+                        relatert til kjøpet.</p>
 
                     <h3>8. Kontakt</h3>
                     <p>Ved spørsmål eller problemer, kontakt oss via kontaktskjemaet på nettsiden.</p>
@@ -534,11 +635,12 @@
 
                     <h3>3. Lagring og sikkerhet</h3>
                     <p>- Personopplysninger lagres sikkert og kryptert<br>
-                    - Vi deler ikke dine opplysninger med tredjeparter<br>
-                    - Opplysninger slettes når formålet med lagringen opphører</p>
+                        - Vi deler ikke dine opplysninger med tredjeparter<br>
+                        - Opplysninger slettes når formålet med lagringen opphører</p>
 
                     <h3>4. Betalingsinformasjon</h3>
-                    <p>All betalingsinformasjon håndteres av vår betalingsleverandør. Vi har ikke tilgang til eller lagrer betalingsinformasjon.</p>
+                    <p>All betalingsinformasjon håndteres av vår betalingsleverandør. Vi har ikke tilgang til eller
+                        lagrer betalingsinformasjon.</p>
 
                     <h3>5. Informasjonskapsler (cookies)</h3>
                     <p>Vi bruker kun nødvendige informasjonskapsler for å huske handlekurven din.</p>
@@ -563,7 +665,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 Kreativ Moro. Alle rettigheter forbeholdt. | 
+        <p>&copy; 2024 Kreativ Moro. Alle rettigheter forbeholdt. |
             <a href="#" onclick="event.preventDefault(); openModal('terms-modal')" class="footer-link">Kjøpsvilkår</a> |
             <a href="#" onclick="event.preventDefault(); openModal('privacy-modal')" class="footer-link">Personvern</a>
         </p>
@@ -572,9 +674,10 @@
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        (function() {
+        (function () {
             emailjs.init("DIN_PUBLIC_KEY"); // Erstatt med din public key fra EmailJS
         })();
     </script>
 </body>
+
 </html>

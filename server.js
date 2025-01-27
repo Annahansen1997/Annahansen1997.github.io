@@ -10,7 +10,7 @@ app.use(express.static('.'));
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'annahans@hotmail.com', // Din e-postadresse
+        user: 'hombgames@hotmail.com', // Din e-postadresse
         pass: 'ditt_app_passord' // App-spesifikt passord
     }
 });
@@ -52,7 +52,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
         
         // Send PDF til kunden
         const mailOptions = {
-            from: 'annahans@hotmail.com',
+            from: 'hombgames@hotmail.com',
             to: session.metadata.customerEmail,
             subject: 'Ditt Påskekos Aktivitetshefte',
             text: 'Takk for kjøpet! Her er ditt Påskekos Aktivitetshefte.',

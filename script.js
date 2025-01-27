@@ -181,7 +181,7 @@ function openContactModal() {
 
 // Legg til denne konstanten øverst i filen (utenfor alle funksjoner)
 const CONTACT_CONFIG = {
-    recipientEmail: 'annahans@hotmail.com' // Dette er kun for backend-bruk
+    recipientEmail: 'hombgames@hotmail.com' // Dette er kun for backend-bruk
 };
 
 // Oppdater handleContactSubmit funksjonen
