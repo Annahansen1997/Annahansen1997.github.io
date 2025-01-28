@@ -60,6 +60,7 @@ function openModal(modalId) {
     modal.style.display = "block";
     modal.classList.add('active');
     document.body.classList.add('modal-open');
+    document.getElementById(modalId).style.display = 'block';
    
     // Reset currentImageIndex når en ny modal åpnes
     currentImageIndex = 0;
@@ -75,6 +76,7 @@ function closeModal(modalId) {
     modal.style.display = "none";
     modal.classList.remove('active');
     document.body.classList.remove('modal-open');
+    document.getElementById(modalId).style.display = 'none';
 }
 
 window.onclick = function(event) {

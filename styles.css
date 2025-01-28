@@ -213,13 +213,21 @@ footer {
 }
 
 body.modal-open {
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none !important;
+    -webkit-overflow-scrolling: none;
 }
 
-.modal-content {
+.modal-content,
+.cart-modal-content,
+.product-modal-content,
+.contact-modal-content,
+.about-modal-content,
+.terms-modal-content,
+.privacy-modal-content {
     background-color: white;
     margin: 0 auto;
     padding: 20px;
@@ -232,9 +240,145 @@ body.modal-open {
     transform: translate(-50%, -50%);
     max-height: 90vh;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y pinch-zoom;
 }
+
+/* Scrollbart innhold for alle modaler */
+.modal-content > *:not(.modal-footer):not(.cart-summary),
+.cart-modal-content > *:not(.modal-footer):not(.cart-summary),
+.product-modal-content > *:not(.modal-footer):not(.cart-summary),
+.contact-modal-content > *:not(.modal-footer),
+.about-modal-content > *:not(.modal-footer),
+.terms-modal-content > *:not(.modal-footer),
+.privacy-modal-content > *:not(.modal-footer) {
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 10px;
+    padding-bottom: 20px;
+}
+
+/* Footer/knapp-område for alle modaler */
+.modal-footer,
+.cart-summary,
+.review-submit-section,
+.contact-form-buttons,
+.terms-buttons {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 15px;
+    border-top: 2px solid #eee;
+    margin-top: auto;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+/* Hindre scrolling på bakgrunnen for alle modaler */
+.modal::before,
+.cart-modal::before,
+.product-modal::before,
+.contact-modal::before,
+.about-modal::before,
+.terms-modal::before,
+.privacy-modal::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    touch-action: none;
+}
+
+/* Spesifikke mobil-justeringer for alle modaler */
+@media screen and (max-width: 768px) {
+    .modal-content,
+    .cart-modal-content,
+    .product-modal-content,
+    .contact-modal-content,
+    .about-modal-content,
+    .terms-modal-content,
+    .privacy-modal-content {
+        margin: 0;
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        top: 0;
+        left: 0;
+        transform: none;
+        position: fixed;
+    }
+    
+    /* Forbedret scrolling kontroll for iOS på alle modaler */
+    .modal-content,
+    .cart-modal-content,
+    .product-modal-content,
+    .contact-modal-content,
+    .about-modal-content,
+    .terms-modal-content,
+    .privacy-modal-content {
+        -webkit-overflow-scrolling: touch;
+        overflow-y: auto;
+        touch-action: pan-y;
+    }
+    
+    /* Sikker avstand for knapper på iOS */
+    .modal-footer,
+    .cart-summary,
+    .review-submit-section,
+    .contact-form-buttons,
+    .terms-buttons {
+        padding-bottom: calc(15px + env(safe-area-inset-bottom));
+    }
+}
+
+/* Forbedret scrollbar styling for alle modaler */
+.modal-content::-webkit-scrollbar,
+.cart-modal-content::-webkit-scrollbar,
+.product-modal-content::-webkit-scrollbar,
+.contact-modal-content::-webkit-scrollbar,
+.about-modal-content::-webkit-scrollbar,
+.terms-modal-content::-webkit-scrollbar,
+.privacy-modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+.cart-modal-content::-webkit-scrollbar-track,
+.product-modal-content::-webkit-scrollbar-track,
+.contact-modal-content::-webkit-scrollbar-track,
+.about-modal-content::-webkit-scrollbar-track,
+.terms-modal-content::-webkit-scrollbar-track,
+.privacy-modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+.cart-modal-content::-webkit-scrollbar-thumb,
+.product-modal-content::-webkit-scrollbar-thumb,
+.contact-modal-content::-webkit-scrollbar-thumb,
+.about-modal-content::-webkit-scrollbar-thumb,
+.terms-modal-content::-webkit-scrollbar-thumb,
+.privacy-modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover,
+.cart-modal-content::-webkit-scrollbar-thumb:hover,
+.product-modal-content::-webkit-scrollbar-thumb:hover,
+.contact-modal-content::-webkit-scrollbar-thumb:hover,
+.about-modal-content::-webkit-scrollbar-thumb:hover,
+.terms-modal-content::-webkit-scrollbar-thumb:hover,
+.privacy-modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 
 .modal-content img {
     max-width: 100%;
