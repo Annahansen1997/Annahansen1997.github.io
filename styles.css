@@ -7,7 +7,6 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    overflow-x: hidden; /* Forhindrer horisontal scrolling */
 }
 
 header {
@@ -131,7 +130,6 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-sizing: border-box; /* Inkluder padding i bredden */
 }
 
 .product-card:hover {
@@ -259,184 +257,6 @@ footer {
     }
 }
 
-/* Modal-stiler */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    overflow-y: auto; /* Tillat vertikal scrolling */
-    z-index: 1000;
-}
-
-body.modal-open {
-    overflow: hidden; /* Skjuler scrolling på body når en modal er åpen */
-}
-
-.modal-content {
-    background-color: white;
-    margin: 5% auto;
-    padding: 20px;
-    width: 90%;
-    max-width: 600px;
-    border-radius: 8px;
-    position: relative;
-    max-height: 90vh; /* Begrens høyden til 90 % av skjermhøyden */
-    overflow-y: auto; /* Tillat vertikal scrolling */
-    box-sizing: border-box; /* Inkluder padding i bredden */
-}
-
-.modal-content img {
-    max-width: 100%; /* Begrens bilder til å ikke bli bredere enn modalen */
-    height: auto; /* Bevar bildets proporsjoner */
-}
-
-.close {
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #666;
-}
-
-.modal-info {
-    padding: 20px;
-}
-
-.modal-info ul {
-    margin: 15px 0;
-    padding-left: 20px;
-}
-
-.modal-info li {
-    margin: 8px 0;
-}
-
-.buy-button {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 20px;
-    font-size: 16px;
-}
-
-.buy-button:hover {
-    background-color: #45a049;
-}
-
-/* Stiler for salgsannonser og andre innholdselementer */
-.product-card, .cart-item, .contact-form {
-    width: 100%; /* Sikrer at disse elementene ikke overskrider bredden */
-    box-sizing: border-box; /* Inkluder padding og border i bredden */
-    padding: 10px; /* Legg til litt padding for bedre lesbarhet */
-}
-
-/* Sikre at input-felt og tekstområder ikke overskrider bredden */
-.form-group input, .form-group textarea {
-    width: 100%; /* Fyll bredden av foreldreelementet */
-    box-sizing: border-box; /* Inkluder padding og border i bredden */
-}
-
-/* Forbedre blåing på små skjermer */
-@media (max-width: 768px) {
-    .modal-content {
-        width: 95%; /* Gjør modalen litt smalere på mobil */
-        padding: 15px; /* Reduser padding for mer plass til innhold */
-    }
-
-    .product-card, .cart-item {
-        padding: 5px; /* Reduser padding for mindre skjermer */
-    }
-    }
-    .header-bottom {
-        flex-direction: column;
-        /* Behold column for andre elementer */
-        gap: 1rem;
-    }
-
-    .header-nav {
-        flex-direction: row;
-        /* Endret til row for å plassere lenker horisontalt */
-        gap: 1rem;
-        flex-wrap: wrap;
-        /* Tillat wrapping hvis nødvendig */
-        justify-content: center;
-        /* Sentrer lenker horisontalt */
-    }
-
-    .nav-link {
-        width: auto;
-        /* Unngå at lenker tar opp hele bredden */
-    }
-
-    .search-container {
-        max-width: 100%;
-    }
-
-    .product-grid {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .product-card {
-        width: 100%;
-        max-width: 300px;
-    }
-}
-
-@media (max-width: 480px) {
-    .header-nav {
-        gap: 0.5rem;
-        /* Mindre gap for mindre skjermer */
-    }
-
-    .nav-link {
-        font-size: 0.9rem;
-        /* Mindre tekst for mindre skjermer */
-    }
-
-    .search-container input {
-        font-size: 0.9rem;
-    }
-
-    .product-card {
-        min-height: auto;
-    }
-
-    .product-card img {
-        height: 150px;
-    }
-
-    .product-card h3 {
-        font-size: 1rem;
-    }
-
-    .product-card p {
-        font-size: 0.8rem;
-    }
-
-    .product-card .price {
-        font-size: 1rem;
-    }
-
-    .product-card button {
-        font-size: 0.8rem;
-    }
-}
-
 /* Modal styles */
 .modal {
     display: none;
@@ -446,7 +266,7 @@ body.modal-open {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0,0,0,0.7);
     overflow-y: auto;
 }
 
