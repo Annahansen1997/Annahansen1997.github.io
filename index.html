@@ -65,6 +65,20 @@
         <section class="featured">
             <h2>Utvalgte aktiviteter</h2>
             <div class="product-grid">
+                <!-- New Vinterkos product card -->
+                <div class="product-card" onclick="openModal('modal0')">
+                    <img src="Vinterkos.png" alt="Vinterkos">
+                    <h3>Vinterkos</h3>
+                    <p>Alder 3-8</p>
+                    <p class="price">45,00 NOK</p>
+                    <button onclick="event.stopPropagation(); addToCart({
+                        id: 0,
+                        name: 'Vinterkos',
+                        price: 45.00,
+                        image: 'Vinterkos.png'
+                    })">Legg i handlekurv</button>
+                </div>
+
                 <div class="product-card" onclick="openModal('modal1')">
                     <img src="Påskekos.png" alt="Påskekos">
                     <h3>Påskekos</h3>
@@ -132,13 +146,104 @@
             </div>
         </section>
 
-        <!-- Modaler for produktinformasjon -->
+        <!-- New Modal for Vinterkos -->
+        <div id="modal0" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal0')">&times;</span>
+                <h2>Vinterkos Aktivitetshefte</h2>
+
+                <div class="image-carousel">
+                    <div class="carousel-container">
+                        <img src="Vinterkos.png" alt="Vinterkos forside" class="carousel-image active">
+                        <img src="Vinterkos1.png" alt="Vinterkos side 1" class="carousel-image">
+                        <img src="Vinterkos2.png" alt="Vinterkos side 2" class="carousel-image">
+                        <img src="Vinterkos3.png" alt="Vinterkos side 3" class="carousel-image">
+                    </div>
+                    <button class="carousel-button prev" onclick="changeImage(-1)">❮</button>
+                    <button class="carousel-button next" onclick="changeImage(1)">❯</button>
+                    <div class="carousel-dots">
+                        <span class="dot active" onclick="showImage(0)"></span>
+                        <span class="dot" onclick="showImage(1)"></span>
+                        <span class="dot" onclick="showImage(2)"></span>
+                        <span class="dot" onclick="showImage(3)"></span>
+                    </div>
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Gjør vinteren magisk med Vinterkos Aktivitetshefte – perfekt for barn i alderen 3-8 år!
+                        Dette digitale heftet er fylt med koselige vinteraktiviteter som vil holde barna
+                        engasjert og kreative gjennom de kalde vintermånedene.
+                    </p>
+
+                    <div class="content-section">
+                        <h3>Hva inneholder heftet?</h3>
+                        <ul class="bullet-list">
+                            <li>• 20 sider med morsomme vinteraktiviteter</li>
+                            <li>• Tegneoppgaver og fargelegging</li>
+                            <li>• Enkle tall- og skriveøvelser</li>
+                            <li>• Labyrint og finn-frem oppgaver</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Hva trenger du?</h3>
+                        <p>• Fargeblyanter eller tusjer – og kanskje litt glitter for ekstra vinterstemning!</p>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Hvordan fungerer det?</h3>
+                        <ul class="bullet-list">
+                            <li>• Heftet leveres som en praktisk PDF</li>
+                            <li>• Du mottar en lenke på e-post</li>
+                            <li>• Skriv ut så mange eksemplarer du ønsker hjemme</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        Med dette aktivitetsheftet får barna en perfekt blanding av læring og moro,
+                        samtidig som de kommer i skikkelig vinterstemning!
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <button class="buy-button">Kjøp nå - 45,00 NOK</button>
+                    <p class="final-text">La barna utforske sin kreative side og fyll vinterdagene med latter, farger og
+                        glede!</p>
+                </div>
+
+                <div class="reviews-section">
+                    <h3>Kundeomtaler</h3>
+                    <div class="reviews-container" id="reviews-container">
+                        <!-- Eksisterende omtaler vil vises her -->
+                    </div>
+
+                    <div class="add-review">
+                        <h4>Skriv en omtale</h4>
+                        <div class="star-rating">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                        <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                            maxlength="500"></textarea>
+                        <button onclick="submitReview(0)" class="submit-review-btn">Send inn omtale</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Påskekos -->
         <div id="modal1" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('modal1')">&times;</span>
                 <h2>Påskekos Aktivitetshefte</h2>
 
-                <!-- Endre rekkefølgen i bildekarusellen -->
                 <div class="image-carousel">
                     <div class="carousel-container">
                         <img src="Påskekos.png" alt="Påskekos forside" class="carousel-image active">
