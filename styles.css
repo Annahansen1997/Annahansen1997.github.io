@@ -1,4 +1,3 @@
-/* Grunnleggende stil */
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
@@ -7,6 +6,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    overflow-x: hidden; /* Forhindrer horisontal scrolling */
 }
 
 header {
@@ -99,9 +99,10 @@ header {
 }
 
 main {
-    max-width: 1200px;
+    max-width: 100%; /* Endre til 100% for mobil */
     margin: 2rem auto;
     padding: 0 1rem;
+    overflow-x: hidden; /* Forhindrer horisontal scrolling */
 }
 
 .featured h2 {
@@ -190,23 +191,18 @@ footer {
 @media (max-width: 768px) {
     .header-bottom {
         flex-direction: column;
-        /* Behold column for andre elementer */
         gap: 1rem;
     }
 
     .header-nav {
         flex-direction: row;
-        /* Endret til row for å plassere lenker horisontalt */
         gap: 1rem;
         flex-wrap: wrap;
-        /* Tillat wrapping hvis nødvendig */
         justify-content: center;
-        /* Sentrer lenker horisontalt */
     }
 
     .nav-link {
         width: auto;
-        /* Unngå at lenker tar opp hele bredden */
     }
 
     .search-container {
@@ -222,17 +218,24 @@ footer {
         width: 100%;
         max-width: 300px;
     }
+
+    .modal-content {
+        width: 95%; /* Juster bredden på modaler for mobil */
+        margin: 2% auto;
+    }
+
+    .cart-modal-content, .contact-modal-content, .about-modal-content, .terms-modal-content, .privacy-modal-content {
+        width: 95%; /* Juster bredden på modaler for mobil */
+    }
 }
 
 @media (max-width: 480px) {
     .header-nav {
         gap: 0.5rem;
-        /* Mindre gap for mindre skjermer */
     }
 
     .nav-link {
         font-size: 0.9rem;
-        /* Mindre tekst for mindre skjermer */
     }
 
     .search-container input {
@@ -261,6 +264,33 @@ footer {
 
     .product-card button {
         font-size: 0.8rem;
+    }
+
+    .modal-content {
+        padding: 10px; /* Mindre padding for mobil */
+    }
+
+    .cart-item {
+        flex-direction: column; /* Endre layout for handlekurv-elementer på mobil */
+        align-items: flex-start;
+    }
+
+    .cart-item img {
+        width: 100%; /* Bredde på 100% for mobil */
+        height: auto;
+    }
+
+    .cart-item-details {
+        width: 100%;
+    }
+
+    .cart-item-quantity {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .cart-item-price {
+        text-align: left;
     }
 }
 
