@@ -199,7 +199,7 @@ footer {
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Oppdaterte modal stiler */
+/* Modal styles */
 .modal {
     display: none;
     position: fixed;
@@ -209,7 +209,8 @@ footer {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
-    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 body.modal-open {
@@ -221,19 +222,15 @@ body.modal-open {
 
 .modal-content {
     background-color: white;
-    margin: 0 auto;
+    margin: 5% auto;
     padding: 20px;
     width: 90%;
     max-width: 600px;
     border-radius: 8px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-height: 90vh;
+    position: relative;
+    max-height: 85vh;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-content img {
@@ -269,19 +266,124 @@ body.modal-open {
     margin: 8px 0;
 }
 
-/* Oppdatert cart-modal styling */
+.buy-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.buy-button:hover {
+    background-color: #45a049;
+}
+
+.modal-info .intro-text {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.content-section {
+    margin: 1.5rem 0;
+}
+
+.content-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.highlight-text {
+    background-color: #fff3e0;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.notice-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    padding: 1rem;
+    margin: 1.5rem 0;
+}
+
+.final-text {
+    text-align: center;
+    font-size: 1.1em;
+    margin-top: 1.5rem;
+    color: #2c3e50;
+}
+
+.modal-info ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.modal-info ul li {
+    margin: 0.8rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.modal-content h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.bullet-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.bullet-list li {
+    padding-left: 0;
+    margin: 8px 0;
+}
+
+.cart-message {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    animation: slideIn 0.3s ease-out;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.view-cart-btn {
+    background-color: white;
+    color: #4CAF50;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.view-cart-btn:hover {
+    background-color: #f8f9fa;
+}
+
 .cart-modal-content {
     max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    height: 90vh;
 }
 
 #cart-items {
-    flex: 1;
-    overflow-y: auto;
-    margin: 10px 0;
-    padding-right: 10px;
+    margin: 20px 0;
 }
 
 .cart-item {
@@ -303,77 +405,6 @@ body.modal-open {
     flex: 1;
 }
 
-.cart-summary {
-    position: sticky;
-    bottom: 0;
-    background: white;
-    padding: 15px;
-    border-top: 2px solid #eee;
-    margin-top: auto;
-    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.checkout-button {
-    width: 100%;
-    padding: 15px;
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1.1em;
-    margin: 10px 0;
-    position: sticky;
-    bottom: 0;
-}
-
-.empty-cart-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-}
-
-/* Forbedret scrollbar styling */
-.modal-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-/* Spesifikke mobil-justeringer */
-@media screen and (max-width: 768px) {
-    .modal-content {
-        margin: 0;
-        width: 100%;
-        height: 100vh;
-        max-height: 100vh;
-        border-radius: 0;
-    }
-    
-    .cart-modal-content {
-        height: 100vh;
-    }
-    
-    .cart-summary {
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-}
-
-/* Resten av dine eksisterende stiler forblir uendret */
 .cart-item-quantity {
     display: flex;
     align-items: center;
@@ -410,12 +441,18 @@ body.modal-open {
     text-align: right;
 }
 
+.cart-summary {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+}
+
 .total {
     display: flex;
     justify-content: space-between;
+    font-size: 1.2em;
     font-weight: bold;
-    font-size: 1.1em;
-    margin: 10px 0;
+    margin-bottom: 20px;
 }
 
 .checkout-button {
