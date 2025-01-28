@@ -189,19 +189,24 @@ footer {
 /* Responsivt design */
 @media (max-width: 768px) {
     .header-bottom {
-        flex-direction: column; /* Behold column for andre elementer */
+        flex-direction: column;
+        /* Behold column for andre elementer */
         gap: 1rem;
     }
 
     .header-nav {
-        flex-direction: row; /* Endret til row for å plassere lenker horisontalt */
+        flex-direction: row;
+        /* Endret til row for å plassere lenker horisontalt */
         gap: 1rem;
-        flex-wrap: wrap; /* Tillat wrapping hvis nødvendig */
-        justify-content: center; /* Sentrer lenker horisontalt */
+        flex-wrap: wrap;
+        /* Tillat wrapping hvis nødvendig */
+        justify-content: center;
+        /* Sentrer lenker horisontalt */
     }
 
     .nav-link {
-        width: auto; /* Unngå at lenker tar opp hele bredden */
+        width: auto;
+        /* Unngå at lenker tar opp hele bredden */
     }
 
     .search-container {
@@ -221,11 +226,13 @@ footer {
 
 @media (max-width: 480px) {
     .header-nav {
-        gap: 0.5rem; /* Mindre gap for mindre skjermer */
+        gap: 0.5rem;
+        /* Mindre gap for mindre skjermer */
     }
 
     .nav-link {
-        font-size: 0.9rem; /* Mindre tekst for mindre skjermer */
+        font-size: 0.9rem;
+        /* Mindre tekst for mindre skjermer */
     }
 
     .search-container input {
@@ -266,7 +273,7 @@ footer {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.7);
     overflow-y: auto;
 }
 
