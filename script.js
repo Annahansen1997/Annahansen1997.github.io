@@ -77,6 +77,16 @@ function openModal(modalId) {
     if (modalId === 'modal1') {
         displayReviews(1);
     }
+
+    // Initialiser karusell hvis den finnes i denne modalen
+    const carousel = modal.querySelector('.image-carousel');
+    if (carousel) {
+        if (!modalSlideIndices[modalId]) {
+            modalSlideIndices[modalId] = 1;
+            initializeCarousels();
+        }
+        showSlides(modalId, modalSlideIndices[modalId]);
+    }
 }
 
 function closeModal(modalId) {
@@ -651,3 +661,59 @@ function buyNow(product) {
     // Åpne handlekurv-modalen
     openModal('cart-modal');
 }
+
+// Bildekarusell funksjonalitet
+let slideIndex = 1;
+let modalSlideIndices = {};
+
+function initializeCarousels() {
+    const carousels = document.querySelectorAll('.image-carousel');
+    carousels.forEach((carousel, index) => {
+        const modalId = carousel.closest('.modal').id;
+        modalSlideIndices[modalId] = 1;
+        
+        // Opprett prikkene for denne karusellen
+        const dots = carousel.querySelector('.carousel-dots');
+        const images = carousel.querySelectorAll('.carousel-image');
+        
+        images.forEach((_, i) => {
+            const dot = document.createElement('span');
+            dot.className = 'dot';
+            dot.onclick = () => setSlide(modalId, i + 1);
+            dots.appendChild(dot);
+        });
+        
+        // Vis første bilde
+        showSlides(modalId, modalSlideIndices[modalId]);
+    });
+}
+
+function moveSlide(modalId, n) {
+    showSlides(modalId, modalSlideIndices[modalId] += n);
+}
+
+function setSlide(modalId, n) {
+    showSlides(modalId, modalSlideIndices[modalId] = n);
+}
+
+function showSlides(modalId, n) {
+    const carousel = document.querySelector(`#${modalId} .image-carousel`);
+    const slides = carousel.querySelectorAll('.carousel-image');
+    const dots = carousel.querySelectorAll('.dot');
+    
+    if (n > slides.length) {
+        modalSlideIndices[modalId] = 1;
+    }
+    if (n < 1) {
+        modalSlideIndices[modalId] = slides.length;
+    }
+    
+    slides.forEach(slide => slide.style.display = "none");
+    dots.forEach(dot => dot.classList.remove('active'));
+    
+    slides[modalSlideIndices[modalId] - 1].style.display = "block";
+    dots[modalSlideIndices[modalId] - 1].classList.add('active');
+}
+
+// Initialiser karuseller når siden lastes
+document.addEventListener('DOMContentLoaded', initializeCarousels);

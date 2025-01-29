@@ -185,15 +185,9 @@ main {
 }
 
 .product-card .button-group {
-    margin-top: auto;
-    padding-top: 1rem;
-}
-
-.product-card .button-group {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin: 0.5rem 0 0 0;
+    gap: 1.5rem;
+    margin: 2rem 0;
 }
 
 .product-card .buy-button,
@@ -534,7 +528,7 @@ body.modal-open {
 
 /* Kontaktskjema stiler */
 .contact-modal-content {
-    max-width: 500px;
+    max-width: 400px;
     height: auto;
     min-height: auto;
     max-height: none;
@@ -546,6 +540,8 @@ body.modal-open {
 
 .contact-form {
     padding: 10px 0;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .form-group {
@@ -562,10 +558,10 @@ body.modal-open {
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px;
     -webkit-appearance: none;
     appearance: none;
 }
@@ -573,6 +569,7 @@ body.modal-open {
 .form-group textarea {
     resize: vertical;
     min-height: 100px;
+    max-height: 200px;
 }
 
 .submit-button {
@@ -585,6 +582,7 @@ body.modal-open {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-top: 10px;
 }
 
 .submit-button:hover {
@@ -947,14 +945,10 @@ body.modal-open {
     }
 
     .contact-modal-content {
-        width: 95%;
+        width: 90%;
+        max-width: 350px;
         margin: 60px auto 20px auto;
         padding: 15px;
-        height: auto;
-        min-height: auto;
-        max-height: none;
-        overflow-y: visible;
-        position: relative;
     }
 
     .close {
@@ -974,31 +968,10 @@ body.modal-open {
         cursor: pointer;
     }
 
-    .form-group {
-        margin-bottom: 15px;
-        width: 100%;
-    }
-
     .form-group input,
     .form-group textarea {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        -webkit-appearance: none;
-    }
-
-    .form-group textarea {
-        min-height: 100px;
-    }
-
-    .submit-button {
-        width: 100%;
-        padding: 15px;
-        font-size: 16px;
-        margin-top: 15px;
-        -webkit-appearance: none;
+        padding: 10px;
+        font-size: 14px;
     }
 
     body.modal-open {
@@ -1052,8 +1025,8 @@ body.modal-open {
 
     .button-group {
         flex-direction: column;
-        gap: 12px;
-        margin: 15px 0;
+        gap: 1rem;
+        margin: 1.5rem 0;
         padding: 0;
     }
 
