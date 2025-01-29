@@ -911,6 +911,9 @@ body.modal-open {
 
 .star-rating {
     margin: 1rem 0;
+    display: inline-flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
 }
 
 .star {
@@ -918,6 +921,7 @@ body.modal-open {
     font-size: 1.5rem;
     cursor: pointer;
     transition: color 0.2s;
+    padding: 0 2px;
 }
 
 .star.active {
@@ -925,7 +929,7 @@ body.modal-open {
 }
 
 .star:hover,
-.star:hover~.star {
+.star:hover ~ .star {
     color: #ffd700;
 }
 

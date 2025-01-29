@@ -70,6 +70,9 @@ function openModal(modalId) {
     // Reset currentImageIndex når en ny modal åpnes
     currentImageIndex = 0;
 
+    // Initialiser stjernerangering
+    initializeStarRating();
+
     // Vis anmeldelser hvis det er produktmodalen
     if (modalId === 'modal1') {
         displayReviews(1);
@@ -429,17 +432,40 @@ let currentRating = 0;
 let reviews = JSON.parse(localStorage.getItem('productReviews')) || {};
 
 // Initialiser stjernevelger
-document.querySelectorAll('.star').forEach(star => {
-    star.addEventListener('click', function () {
-        currentRating = parseInt(this.dataset.rating);
-        updateStars(currentRating);
-    });
-});
+function initializeStarRating() {
+    document.querySelectorAll('.star-rating').forEach(ratingContainer => {
+        const stars = ratingContainer.querySelectorAll('.star');
+        
+        stars.forEach(star => {
+            // Når musen er over en stjerne
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.dataset.rating);
+                highlightStars(stars, rating);
+            });
 
-function updateStars(rating) {
-    document.querySelectorAll('.star').forEach(star => {
+            // Når musen forlater stjerneområdet
+            ratingContainer.addEventListener('mouseleave', function() {
+                highlightStars(stars, currentRating);
+            });
+
+            // Når en stjerne klikkes
+            star.addEventListener('click', function() {
+                currentRating = parseInt(this.dataset.rating);
+                highlightStars(stars, currentRating);
+            });
+        });
+    });
+}
+
+// Funksjon for å fremheve stjerner
+function highlightStars(stars, rating) {
+    stars.forEach(star => {
         const starRating = parseInt(star.dataset.rating);
-        star.classList.toggle('active', starRating <= rating);
+        if (starRating <= rating) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
     });
 }
 
@@ -469,7 +495,7 @@ function submitReview(productId) {
 
     // Reset form
     currentRating = 0;
-    updateStars(0);
+    highlightStars(stars, 0);
     document.getElementById('review-text').value = '';
 
     // Oppdater visning
@@ -587,4 +613,18 @@ function hideLoadingMessage() {
     if (loadingDiv) {
         loadingDiv.remove();
     }
+}
+
+function buyNow(product) {
+    // Legg til produktet i handlekurven
+    addToCart(product);
+    
+    // Lukk den nåværende produkt-modalen
+    const currentModal = document.querySelector('.modal[style*="display: block"]');
+    if (currentModal) {
+        closeModal(currentModal.id);
+    }
+    
+    // Åpne handlekurv-modalen
+    openModal('cart-modal');
 }
