@@ -93,6 +93,17 @@ header {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
+.nav-link .fa-heart {
+    color: #e74c3c;
+    font-size: 1.2rem;
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover .fa-heart {
+    transform: scale(1.1);
+}
+
 .cart-link {
     position: relative;
 }
