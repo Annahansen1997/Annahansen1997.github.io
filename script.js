@@ -3,13 +3,13 @@ updateCartCount(); // Oppdater tallet når siden lastes
 
 function addToCart(product) {
     const existingItem = cart.find(item => item.id === product.id);
-
+   
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
-        cart.push({ ...product, quantity: 1 });
+        cart.push({...product, quantity: 1});
     }
-
+   
     localStorage.setItem('cart', JSON.stringify(cart)); // Lagre i localStorage
     updateCartCount();
     showAddedToCartMessage(product.name);
@@ -27,9 +27,9 @@ function showAddedToCartMessage(productName) {
         ${productName} lagt til i handlekurven!
         <button onclick="openCartModal()" class="view-cart-btn">Vis handlekurv</button>
     `;
-
+   
     document.body.appendChild(messageContainer);
-
+   
     setTimeout(() => {
         messageContainer.remove();
     }, 2000);
@@ -39,13 +39,13 @@ function showAddedToCartMessage(productName) {
 const searchInput = document.querySelector('.search-container input');
 const productCards = document.querySelectorAll('.product-card');
 
-searchInput.addEventListener('input', function (e) {
+searchInput.addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
-
+   
     productCards.forEach(card => {
         const title = card.querySelector('h3').textContent.toLowerCase();
         const description = card.querySelector('p').textContent.toLowerCase();
-
+       
         if (title.includes(searchTerm) || description.includes(searchTerm)) {
             card.style.display = '';
         } else {
@@ -60,10 +60,10 @@ function openModal(modalId) {
     modal.style.display = "block";
     modal.classList.add('active');
     document.body.classList.add('modal-open');
-
+   
     // Reset currentImageIndex når en ny modal åpnes
     currentImageIndex = 0;
-
+   
     // Vis anmeldelser hvis det er produktmodalen
     if (modalId === 'modal1') {
         displayReviews(1);
@@ -77,7 +77,7 @@ function closeModal(modalId) {
     document.body.classList.remove('modal-open');
 }
 
-window.onclick = function (event) {
+window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         event.target.style.display = "none";
         event.target.classList.remove('active');
@@ -86,7 +86,7 @@ window.onclick = function (event) {
 }
 
 // Oppdater handlekurv-lenken til å åpne modalen
-document.querySelector('.cart-link').addEventListener('click', function (e) {
+document.querySelector('.cart-link').addEventListener('click', function(e) {
     e.preventDefault();
     openCartModal();
 });
@@ -101,7 +101,7 @@ function openCartModal() {
 function updateCartDisplay() {
     const cartItems = document.getElementById('cart-items');
     const cartTotal = document.getElementById('cart-total');
-
+   
     if (cart.length === 0) {
         cartItems.innerHTML = '<div class="empty-cart-message">Handlekurven er tom</div>';
         cartTotal.textContent = '0,00 NOK';
@@ -166,7 +166,7 @@ function checkout() {
 // Kontakt-funksjonalitet
 document.querySelectorAll('.nav-link').forEach(link => {
     if (link.textContent.trim() === 'Kontakt') {
-        link.addEventListener('click', function (e) {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
             openContactModal();
         });
@@ -187,59 +187,59 @@ const CONTACT_CONFIG = {
 // Oppdater handleContactSubmit funksjonen
 function handleContactSubmit(event) {
     event.preventDefault();
-
+   
     // Reset error messages
     document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
-
+   
     // Get form fields
     const email = document.getElementById('email');
     const subject = document.getElementById('subject');
     const message = document.getElementById('message');
-
+   
     // Validate fields
     let isValid = true;
-
+   
     if (!email.value || !email.value.includes('@')) {
         document.getElementById('email-error').textContent = 'Vennligst oppgi en gyldig e-postadresse';
         document.getElementById('email-error').style.display = 'block';
         isValid = false;
     }
-
+   
     if (!subject.value.trim()) {
         document.getElementById('subject-error').textContent = 'Emne er påkrevd';
         document.getElementById('subject-error').style.display = 'block';
         isValid = false;
     }
-
+   
     if (!message.value.trim()) {
         document.getElementById('message-error').textContent = 'Melding er påkrevd';
         document.getElementById('message-error').style.display = 'block';
         isValid = false;
     }
-
+   
     if (!isValid) {
         return;
     }
-
+   
     const formData = {
         email: email.value,
         subject: subject.value,
         message: message.value,
         to_email: CONTACT_CONFIG.recipientEmail
     };
-
+   
     // Send e-post via EmailJS
     emailjs.send(
         'DIN_SERVICE_ID',
         'DIN_TEMPLATE_ID',
         formData
     ).then(
-        function (response) {
+        function(response) {
             showSuccessMessage('Takk for din henvendelse! Vi vil svare deg så snart som mulig.');
             document.getElementById('contactForm').reset();
             closeModal('contact-modal');
         },
-        function (error) {
+        function(error) {
             showSuccessMessage('Beklager, noe gikk galt. Vennligst prøv igjen senere.', 'error');
         }
     );
@@ -250,14 +250,14 @@ function showSuccessMessage(message) {
     successMessage.className = 'success-message';
     successMessage.textContent = message;
     document.body.appendChild(successMessage);
-
+   
     setTimeout(() => {
         successMessage.remove();
     }, 3000);
 }
 
 // Om Oss-funksjonalitet
-document.querySelector('.about-link').addEventListener('click', function (e) {
+document.querySelector('.about-link').addEventListener('click', function(e) {
     e.preventDefault();
     openModal('about-modal');
 });
@@ -269,7 +269,7 @@ async function initiateCheckout() {
     try {
         // Spør om kundens e-postadresse
         const customerEmail = prompt('Vennligst skriv inn din e-postadresse for å motta produktet:');
-
+       
         if (!customerEmail || !customerEmail.includes('@')) {
             alert('Vennligst oppgi en gyldig e-postadresse.');
             return;
@@ -321,14 +321,14 @@ function changeImage(direction) {
 
     const images = modal.querySelectorAll('.carousel-image');
     const dots = modal.querySelectorAll('.dot');
-
+   
     // Fjern active class fra nåværende bilde og dot
     images[currentImageIndex].classList.remove('active');
     dots[currentImageIndex].classList.remove('active');
-
+   
     // Oppdater index med looping
     currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
-
+   
     // Legg til active class på nytt bilde og dot
     images[currentImageIndex].classList.add('active');
     dots[currentImageIndex].classList.add('active');
@@ -340,14 +340,14 @@ function showImage(index) {
 
     const images = modal.querySelectorAll('.carousel-image');
     const dots = modal.querySelectorAll('.dot');
-
+   
     // Fjern active class fra nåværende bilde og dot
     images[currentImageIndex].classList.remove('active');
     dots[currentImageIndex].classList.remove('active');
-
+   
     // Sett ny index
     currentImageIndex = index;
-
+   
     // Legg til active class på nytt bilde og dot
     images[currentImageIndex].classList.add('active');
     dots[currentImageIndex].classList.add('active');
@@ -356,7 +356,7 @@ function showImage(index) {
 // Rabattkode funksjonalitet
 function applyDiscount() {
     const discountCode = document.getElementById('discount-code').value.trim().toUpperCase();
-
+   
     // Her kan du legge til dine rabattkoder
     const validDiscounts = {
         'VELKOMST10': 10, // 10% rabatt
@@ -368,7 +368,7 @@ function applyDiscount() {
         const currentTotal = calculateTotal();
         const discountAmount = (currentTotal * discountPercent) / 100;
         const newTotal = currentTotal - discountAmount;
-
+       
         document.getElementById('cart-total').textContent = newTotal.toFixed(2) + ' NOK';
         showSuccessMessage(`Rabattkode anvendt! Du fikk ${discountPercent}% rabatt.`);
         document.getElementById('discount-code').value = '';
@@ -396,7 +396,7 @@ let reviews = JSON.parse(localStorage.getItem('productReviews')) || {};
 
 // Initialiser stjernevelger
 document.querySelectorAll('.star').forEach(star => {
-    star.addEventListener('click', function () {
+    star.addEventListener('click', function() {
         currentRating = parseInt(this.dataset.rating);
         updateStars(currentRating);
     });
@@ -446,7 +446,7 @@ function submitReview(productId) {
 function displayReviews(productId) {
     const container = document.getElementById('reviews-container');
     const productReviews = reviews[productId] || [];
-
+   
     if (productReviews.length === 0) {
         container.innerHTML = '<p>Ingen omtaler ennå. Bli den første til å anmelde dette produktet!</p>';
         return;
@@ -455,7 +455,7 @@ function displayReviews(productId) {
     const reviewsHTML = productReviews.map(review => {
         const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
         const date = new Date(review.date).toLocaleDateString('no-NO');
-
+       
         return `
             <div class="review-item">
                 <div class="review-header">
@@ -468,11 +468,11 @@ function displayReviews(productId) {
     }).join('');
 
     container.innerHTML = reviewsHTML;
-
+   
     // Oppdater gjennomsnittlig rating
     const avgRating = productReviews.reduce((sum, review) => sum + review.rating, 0) / productReviews.length;
     const reviewCount = productReviews.length;
-
+   
     document.querySelector('.reviews-section h3').innerHTML =
         `Kundeomtaler <span class="review-stars">${'★'.repeat(Math.round(avgRating))}</span>
         <span class="review-count">(${reviewCount} ${reviewCount === 1 ? 'omtale' : 'omtaler'})</span>`;
@@ -491,7 +491,7 @@ const productPDFs = {
 function handlePurchase(productId, productName, price) {
     // Spør om kundens e-postadresse
     const customerEmail = prompt('Vennligst skriv inn din e-postadresse for å motta produktet:');
-
+   
     if (!customerEmail || !customerEmail.includes('@')) {
         alert('Vennligst oppgi en gyldig e-postadresse.');
         return;
@@ -512,14 +512,14 @@ function handlePurchase(productId, productName, price) {
             total_price: price.toFixed(2) + ' NOK'
         }
     ).then(
-        function (response) {
+        function(response) {
             hideLoadingMessage();
             showSuccessMessage('Takk for ditt kjøp! Produktet er sendt til din e-post.');
             // Fjern produktet fra handlekurven hvis det var kjøpt derfra
             removeFromCart(productId);
             closeModal('cart-modal');
         },
-        function (error) {
+        function(error) {
             hideLoadingMessage();
             showSuccessMessage('Beklager, noe gikk galt. Vennligst kontakt kundeservice.', 'error');
             console.error('E-post feil:', error);
@@ -533,7 +533,7 @@ document.querySelectorAll('.buy-button').forEach(button => {
     const productId = parseInt(button.closest('.modal').id.replace('modal', ''));
     const productName = modalContent.querySelector('h2').textContent;
     const price = parseFloat(button.textContent.match(/\d+\.?\d*/)[0]);
-
+   
     button.onclick = () => handlePurchase(productId, productName, price);
 });
 
