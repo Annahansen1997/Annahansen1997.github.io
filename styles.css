@@ -945,8 +945,8 @@ body.modal-open {
     }
 
     .contact-modal-content {
-        width: 90%;
-        max-width: 350px;
+        width: 85%;
+        max-width: 300px;
         margin: 60px auto 20px auto;
         padding: 15px;
     }
@@ -968,10 +968,28 @@ body.modal-open {
         cursor: pointer;
     }
 
+    .form-group {
+        margin-bottom: 12px;
+    }
+
     .form-group input,
     .form-group textarea {
+        width: calc(100% - 20px);
+        padding: 8px;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .form-group textarea {
+        min-height: 80px;
+        max-height: 150px;
+    }
+
+    .submit-button {
+        width: calc(100% - 20px);
         padding: 10px;
         font-size: 14px;
+        margin-top: 8px;
     }
 
     body.modal-open {
