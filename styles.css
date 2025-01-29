@@ -172,9 +172,31 @@ main {
     margin: 0.5rem 0;
 }
 
-.product-card button {
-    padding: 0.4rem 0.8rem;
+.product-card .button-group {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.product-card .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.5rem 0 0 0;
+}
+
+.product-card .buy-button,
+.product-card .add-to-cart-button {
+    width: 100%;
+    padding: 8px;
     font-size: 0.9rem;
+}
+
+.product-card .buy-button {
+    background-color: #4CAF50;
+}
+
+.product-card .buy-button:hover {
+    background-color: #45a049;
 }
 
 button {
@@ -227,7 +249,7 @@ body.modal-open {
     margin: 0 auto;
     padding: 20px;
     width: 90%;
-    max-width: 600px;
+    max-width: 800px;
     border-radius: 8px;
     position: relative;
     overflow-y: auto;
@@ -255,12 +277,21 @@ body.modal-open {
 }
 
 .close {
-    position: absolute;
-    right: 20px;
+    position: fixed;
+    right: 5%;
     top: 10px;
     font-size: 28px;
     font-weight: bold;
-    cursor: pointer;
+    color: #333;
+    background: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
 }
 
 .close:hover {
@@ -914,23 +945,64 @@ body.modal-open {
     display: inline-flex;
     flex-direction: row-reverse;
     justify-content: flex-end;
+    position: relative;
+    background: linear-gradient(to right, #ddd 0%, #ddd 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.star-rating:hover .star {
+    color: #ffd700;
+    -webkit-text-fill-color: #ffd700;
 }
 
 .star {
-    color: #ddd;
-    font-size: 1.5rem;
+    font-size: 2rem;
     cursor: pointer;
-    transition: color 0.2s;
     padding: 0 2px;
-}
-
-.star.active {
-    color: #ffd700;
+    transition: all 0.2s ease-in-out;
+    transform-origin: center;
 }
 
 .star:hover,
 .star:hover ~ .star {
     color: #ffd700;
+    -webkit-text-fill-color: #ffd700;
+    transform: scale(1.1);
+}
+
+.star.active {
+    color: #ffd700;
+    -webkit-text-fill-color: #ffd700;
+}
+
+.star-rating-text {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.star-rating:hover .star-rating-text {
+    opacity: 1;
+}
+
+.review-stars {
+    color: #ffd700;
+    font-size: 1.2rem;
+    display: inline-flex;
+    gap: 2px;
+}
+
+.review-stars .star {
+    font-size: 1.2rem;
+    padding: 0;
 }
 
 #review-text {
@@ -1102,16 +1174,24 @@ body.modal-open {
 
     .modal-content {
         width: 95%;
-        margin: 2vh auto;
         padding: 15px;
-        max-height: 96vh;
-        touch-action: pan-y pinch-zoom;
+        margin: 10px auto;
     }
 
-    .modal-info {
-        padding: 10px 0;
-        overflow-x: hidden;
-        width: 100%;
+    .cart-modal-content {
+        width: 95%;
+        max-height: 85vh;
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    .close {
+        right: 3%;
+        top: 5px;
+    }
+
+    .modal {
+        padding-top: 0;
     }
 
     .carousel-container {
@@ -1153,7 +1233,6 @@ body.modal-open {
     }
 
     .reviews-section,
-    .cart-modal-content,
     .about-modal-content,
     .contact-modal-content,
     .terms-modal-content,

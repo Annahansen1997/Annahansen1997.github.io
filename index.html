@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 
 <head>
     <meta charset="UTF-8">
@@ -71,12 +71,20 @@
                     <h3>Vinterkos</h3>
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
-                    <button onclick="event.stopPropagation(); addToCart({
-                        id: 0,
-                        name: 'Vinterkos',
-                        price: 45.00,
-                        image: 'Vinterkos.png'
-                    })">Legg i handlekurv</button>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                            id: 0,
+                            name: 'Vinterkos',
+                            price: 45.00,
+                            image: 'Vinterkos.png'
+                        })">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                            id: 0,
+                            name: 'Vinterkos',
+                            price: 45.00,
+                            image: 'Vinterkos.png'
+                        })">Legg i handlekurv</button>
+                    </div>
                 </div>
 
                 <div class="product-card" onclick="openModal('modal1')">
@@ -84,12 +92,20 @@
                     <h3>Påskekos</h3>
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
-                    <button onclick="event.stopPropagation(); addToCart({
-                        id: 1,
-                        name: 'Påskekos',
-                        price: 45.00,
-                        image: 'Påskekos.png'
-                    })">Legg i handlekurv</button>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                            id: 1,
+                            name: 'Påskekos',
+                            price: 45.00,
+                            image: 'Påskekos.png'
+                        })">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                            id: 1,
+                            name: 'Påskekos',
+                            price: 45.00,
+                            image: 'Påskekos.png'
+                        })">Legg i handlekurv</button>
+                    </div>
                 </div>
 
                 <div class="product-card" onclick="openModal('modal2')">
@@ -97,12 +113,20 @@
                     <h3>På eventyr med dinosaurene</h3>
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
-                    <button onclick="event.stopPropagation(); addToCart({
-                        id: 2,
-                        name: 'På eventyr med dinosaurene',
-                        price: 45.00,
-                        image: 'Dinosaur.png'
-                    })">Legg i handlekurv</button>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                            id: 2,
+                            name: 'På eventyr med dinosaurene',
+                            price: 45.00,
+                            image: 'Dinosaur.png'
+                        })">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                            id: 2,
+                            name: 'På eventyr med dinosaurene',
+                            price: 45.00,
+                            image: 'Dinosaur.png'
+                        })">Legg i handlekurv</button>
+                    </div>
                 </div>
 
                 <div class="product-card" onclick="openModal('modal3')">
@@ -110,12 +134,20 @@
                     <h3>Enhjørningens magiske eventyrhefte</h3>
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
-                    <button onclick="event.stopPropagation(); addToCart({
-                        id: 3,
-                        name: 'Enhjørningens magiske eventyrhefte',
-                        price: 45.00,
-                        image: 'Enhjørning.png'
-                    })">Legg i handlekurv</button>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                            id: 3,
+                            name: 'Enhjørningens magiske eventyrhefte',
+                            price: 45.00,
+                            image: 'Enhjørning.png'
+                        })">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                            id: 3,
+                            name: 'Enhjørningens magiske eventyrhefte',
+                            price: 45.00,
+                            image: 'Enhjørning.png'
+                        })">Legg i handlekurv</button>
+                    </div>
                 </div>
 
                 <div class="product-card" onclick="openModal('modal4')">
@@ -123,12 +155,20 @@
                     <h3>Bilbingo</h3>
                     <p>Alder 4+</p>
                     <p class="price">35,00 NOK</p>
-                    <button onclick="event.stopPropagation(); addToCart({
-                        id: 4,
-                        name: 'Bilbingo',
-                        price: 35.00,
-                        image: 'Bilbingo.png'
-                    })">Legg i handlekurv</button>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                            id: 4,
+                            name: 'Bilbingo',
+                            price: 35.00,
+                            image: 'Bilbingo.png'
+                        })">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                            id: 4,
+                            name: 'Bilbingo',
+                            price: 35.00,
+                            image: 'Bilbingo.png'
+                        })">Legg i handlekurv</button>
+                    </div>
                 </div>
 
                 <div class="product-card" onclick="openModal('modal5')">
@@ -136,12 +176,20 @@
                     <h3>Flybingo</h3>
                     <p>Alder 4+</p>
                     <p class="price">35,00 NOK</p>
-                    <button onclick="event.stopPropagation(); addToCart({
-                        id: 5,
-                        name: 'Flybingo',
-                        price: 35.00,
-                        image: 'Flybingo.png'
-                    })">Legg i handlekurv</button>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                            id: 5,
+                            name: 'Flybingo',
+                            price: 35.00,
+                            image: 'Flybingo.png'
+                        })">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                            id: 5,
+                            name: 'Flybingo',
+                            price: 35.00,
+                            image: 'Flybingo.png'
+                        })">Legg i handlekurv</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -237,13 +285,14 @@
                     <div class="add-review">
                         <h4>Skriv en omtale</h4>
                         <div class="star-rating">
-                            <span class="star" data-rating="1">★</span>
-                            <span class="star" data-rating="2">★</span>
-                            <span class="star" data-rating="3">★</span>
-                            <span class="star" data-rating="4">★</span>
-                            <span class="star" data-rating="5">★</span>
+                            <div class="star-rating-text">Velg din vurdering</div>
+                            <span class="star" data-rating="5" data-description="Utmerket">★</span>
+                            <span class="star" data-rating="4" data-description="Veldig bra">★</span>
+                            <span class="star" data-rating="3" data-description="Bra">★</span>
+                            <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
+                            <span class="star" data-rating="1" data-description="Skuffende">★</span>
                         </div>
-                        <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                        <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
                             maxlength="500"></textarea>
                         <button onclick="submitReview(0)" class="submit-review-btn">Send inn omtale</button>
                     </div>
@@ -340,13 +389,14 @@
                     <div class="add-review">
                         <h4>Skriv en omtale</h4>
                         <div class="star-rating">
-                            <span class="star" data-rating="1">★</span>
-                            <span class="star" data-rating="2">★</span>
-                            <span class="star" data-rating="3">★</span>
-                            <span class="star" data-rating="4">★</span>
-                            <span class="star" data-rating="5">★</span>
+                            <div class="star-rating-text">Velg din vurdering</div>
+                            <span class="star" data-rating="5" data-description="Utmerket">★</span>
+                            <span class="star" data-rating="4" data-description="Veldig bra">★</span>
+                            <span class="star" data-rating="3" data-description="Bra">★</span>
+                            <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
+                            <span class="star" data-rating="1" data-description="Skuffende">★</span>
                         </div>
-                        <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                        <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
                             maxlength="500"></textarea>
                         <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                     </div>
@@ -400,7 +450,29 @@
                         </ul>
                     </div>
 
-                    <button class="buy-button">Kjøp nå - 45,00 NOK</button>
+                    <div class="content-section">
+                        <h3>Fordeler</h3>
+                        <ul class="bullet-list">
+                            <li>• Holder barna engasjert på lange turer</li>
+                            <li>• Lærer observasjon og konsentrasjon</li>
+                            <li>• Kan brukes om og om igjen</li>
+                        </ul>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="buy-button" onclick="buyNow({
+                            id: 2,
+                            name: 'På eventyr med dinosaurene',
+                            price: 45.00,
+                            image: 'Dinosaur.png'
+                        })">Kjøp nå - 45,00 NOK</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 2,
+                            name: 'På eventyr med dinosaurene',
+                            price: 45.00,
+                            image: 'Dinosaur.png'
+                        })">Legg i handlekurv</button>
+                    </div>
                 </div>
                 <div class="reviews-section"></div>
                 <h3>Kundeomtaler</h3>
@@ -411,13 +483,14 @@
                 <div class="add-review">
                     <h4>Skriv en omtale</h4>
                     <div class="star-rating">
-                        <span class="star" data-rating="1">★</span>
-                        <span class="star" data-rating="2">★</span>
-                        <span class="star" data-rating="3">★</span>
-                        <span class="star" data-rating="4">★</span>
-                        <span class="star" data-rating="5">★</span>
+                        <div class="star-rating-text">Velg din vurdering</div>
+                        <span class="star" data-rating="5" data-description="Utmerket">★</span>
+                        <span class="star" data-rating="4" data-description="Veldig bra">★</span>
+                        <span class="star" data-rating="3" data-description="Bra">★</span>
+                        <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
+                        <span class="star" data-rating="1" data-description="Skuffende">★</span>
                     </div>
-                    <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                    <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
                         maxlength="500"></textarea>
                     <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                 </div>
@@ -469,7 +542,20 @@
                         </ul>
                     </div>
 
-                    <button class="buy-button">Kjøp nå - 45,00 NOK</button>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="buyNow({
+                            id: 3,
+                            name: 'Enhjørningens magiske eventyrhefte',
+                            price: 45.00,
+                            image: 'Enhjørning.png'
+                        })">Kjøp nå - 45,00 NOK</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 3,
+                            name: 'Enhjørningens magiske eventyrhefte',
+                            price: 45.00,
+                            image: 'Enhjørning.png'
+                        })">Legg i handlekurv</button>
+                    </div>
                 </div>
                 <div class="reviews-section"></div>
                 <h3>Kundeomtaler</h3>
@@ -480,13 +566,14 @@
                 <div class="add-review">
                     <h4>Skriv en omtale</h4>
                     <div class="star-rating">
-                        <span class="star" data-rating="1">★</span>
-                        <span class="star" data-rating="2">★</span>
-                        <span class="star" data-rating="3">★</span>
-                        <span class="star" data-rating="4">★</span>
-                        <span class="star" data-rating="5">★</span>
+                        <div class="star-rating-text">Velg din vurdering</div>
+                        <span class="star" data-rating="5" data-description="Utmerket">★</span>
+                        <span class="star" data-rating="4" data-description="Veldig bra">★</span>
+                        <span class="star" data-rating="3" data-description="Bra">★</span>
+                        <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
+                        <span class="star" data-rating="1" data-description="Skuffende">★</span>
                     </div>
-                    <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                    <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
                         maxlength="500"></textarea>
                     <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                 </div>
@@ -551,13 +638,14 @@
                 <div class="add-review">
                     <h4>Skriv en omtale</h4>
                     <div class="star-rating">
-                        <span class="star" data-rating="1">★</span>
-                        <span class="star" data-rating="2">★</span>
-                        <span class="star" data-rating="3">★</span>
-                        <span class="star" data-rating="4">★</span>
-                        <span class="star" data-rating="5">★</span>
+                        <div class="star-rating-text">Velg din vurdering</div>
+                        <span class="star" data-rating="5" data-description="Utmerket">★</span>
+                        <span class="star" data-rating="4" data-description="Veldig bra">★</span>
+                        <span class="star" data-rating="3" data-description="Bra">★</span>
+                        <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
+                        <span class="star" data-rating="1" data-description="Skuffende">★</span>
                     </div>
-                    <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                    <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
                         maxlength="500"></textarea>
                     <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                 </div>
@@ -622,13 +710,14 @@
                 <div class="add-review">
                     <h4>Skriv en omtale</h4>
                     <div class="star-rating">
-                        <span class="star" data-rating="1">★</span>
-                        <span class="star" data-rating="2">★</span>
-                        <span class="star" data-rating="3">★</span>
-                        <span class="star" data-rating="4">★</span>
-                        <span class="star" data-rating="5">★</span>
+                        <div class="star-rating-text">Velg din vurdering</div>
+                        <span class="star" data-rating="5" data-description="Utmerket">★</span>
+                        <span class="star" data-rating="4" data-description="Veldig bra">★</span>
+                        <span class="star" data-rating="3" data-description="Bra">★</span>
+                        <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
+                        <span class="star" data-rating="1" data-description="Skuffende">★</span>
                     </div>
-                    <textarea id="review-text" placeholder="Del din erfaring med produktet..."
+                    <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
                         maxlength="500"></textarea>
                     <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                 </div>

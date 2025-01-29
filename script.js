@@ -431,33 +431,56 @@ function removeFromCart(productId) {
 let currentRating = 0;
 let reviews = JSON.parse(localStorage.getItem('productReviews')) || {};
 
-// Initialiser stjernevelger
 function initializeStarRating() {
     document.querySelectorAll('.star-rating').forEach(ratingContainer => {
         const stars = ratingContainer.querySelectorAll('.star');
+        const ratingText = ratingContainer.querySelector('.star-rating-text');
         
         stars.forEach(star => {
             // Når musen er over en stjerne
             star.addEventListener('mouseover', function() {
                 const rating = parseInt(this.dataset.rating);
+                const description = this.dataset.description;
                 highlightStars(stars, rating);
+                if (ratingText) {
+                    ratingText.textContent = description;
+                    ratingText.style.opacity = '1';
+                }
             });
 
             // Når musen forlater stjerneområdet
             ratingContainer.addEventListener('mouseleave', function() {
                 highlightStars(stars, currentRating);
+                if (ratingText) {
+                    if (currentRating > 0) {
+                        const selectedStar = ratingContainer.querySelector(`[data-rating="${currentRating}"]`);
+                        ratingText.textContent = selectedStar.dataset.description;
+                    } else {
+                        ratingText.textContent = 'Velg din vurdering';
+                    }
+                }
             });
 
             // Når en stjerne klikkes
             star.addEventListener('click', function() {
-                currentRating = parseInt(this.dataset.rating);
-                highlightStars(stars, currentRating);
+                const rating = parseInt(this.dataset.rating);
+                const description = this.dataset.description;
+                currentRating = rating;
+                highlightStars(stars, rating);
+                if (ratingText) {
+                    ratingText.textContent = description;
+                }
+                
+                // Legg til en visuell bekreftelse
+                star.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    star.style.transform = 'scale(1)';
+                }, 200);
             });
         });
     });
 }
 
-// Funksjon for å fremheve stjerner
 function highlightStars(stars, rating) {
     stars.forEach(star => {
         const starRating = parseInt(star.dataset.rating);
