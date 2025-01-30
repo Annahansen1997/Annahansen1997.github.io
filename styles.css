@@ -1196,3 +1196,14 @@ body.modal-open {
     min-width: 0;
     white-space: nowrap;
 }
+
+.modal-info .price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    margin: 1rem 0;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
