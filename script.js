@@ -1,5 +1,8 @@
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-updateCartCount(); // Oppdater tallet når siden lastes
+let currentSlide = 0;
+let slides = [];
+let dots = [];
+let currentModal = null;
+let cart = [];
 
 function addToCart(product) {
     const existingItem = cart.find(item => item.id === product.id);
@@ -57,100 +60,117 @@ searchInput.addEventListener('input', function (e) {
 // Modal funksjoner
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.style.display = "block";
-    modal.classList.add('active');
+    if (!modal) return;
+    
+    modal.style.display = 'block';
     document.body.classList.add('modal-open');
-
-    // Legg til overflow kontroll
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.overscrollBehavior = 'none';
-
-    // Reset currentImageIndex når en ny modal åpnes
-    currentImageIndex = 0;
-
-    // Initialiser stjernerangering
-    initializeStarRating();
-
-    // Vis anmeldelser hvis det er produktmodalen
-    if (modalId === 'modal1') {
-        displayReviews(1);
-    }
-
-    // Initialiser karusell hvis den finnes i denne modalen
-    const carousel = modal.querySelector('.image-carousel');
-    if (carousel) {
-        if (!modalSlideIndices[modalId]) {
-            modalSlideIndices[modalId] = 1;
-            initializeCarousels();
-        }
-        showSlides(modalId, modalSlideIndices[modalId]);
-    }
+    currentModal = modal;
+    
+    // Initialize carousel for the current modal
+    initializeCarousel(modal);
 }
 
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.style.display = "none";
-    modal.classList.remove('active');
+    if (!modal) return;
+    
+    modal.style.display = 'none';
     document.body.classList.remove('modal-open');
-
-    // Fjern overflow kontroll
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.width = '';
-    document.body.style.overscrollBehavior = '';
+    currentModal = null;
 }
 
-// Oppdater window.onclick handler
+function initializeCarousel(modal) {
+    // Reset current slide
+    currentSlide = 0;
+    
+    // Get carousel elements for the current modal
+    slides = modal.querySelectorAll('.carousel-image');
+    if (slides.length === 0) return;
+    
+    // Clear existing dots
+    const dotsContainer = modal.querySelector('.carousel-dots');
+    if (!dotsContainer) return;
+    dotsContainer.innerHTML = '';
+    
+    // Create dots for each slide
+    slides.forEach((_, index) => {
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        dot.onclick = () => goToSlide(index);
+        dotsContainer.appendChild(dot);
+    });
+    
+    // Update dots array
+    dots = modal.querySelectorAll('.dot');
+    
+    // Show first slide
+    showSlide(0);
+}
+
+function showSlide(n) {
+    if (!currentModal || slides.length === 0) return;
+    
+    // Remove active class from all slides and dots
+    slides.forEach(slide => slide.classList.remove('active'));
+    dots.forEach(dot => dot.classList.remove('active'));
+    
+    // Update current slide index
+    currentSlide = (n + slides.length) % slides.length;
+    
+    // Add active class to current slide and dot
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+}
+
+function moveSlide(direction) {
+    if (!currentModal) return;
+    showSlide(currentSlide + direction);
+}
+
+function goToSlide(n) {
+    if (!currentModal) return;
+    showSlide(n);
+}
+
+// Close modal when clicking outside
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
-        event.target.classList.remove('active');
-        document.body.classList.remove('modal-open');
-       
-        // Fjern overflow kontroll
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.overscrollBehavior = '';
+        closeModal(event.target.id);
     }
 }
 
-/*SKAL DENNE VÆRE MED?*/
-// Oppdater handlekurv-lenken til å åpne modalen
-document.querySelector('.cart-link').addEventListener('click', function(e) {
-    e.preventDefault();
-    openCartModal();
-});  
+// Handle keyboard navigation
+document.addEventListener('keydown', function(event) {
+    if (!currentModal) return;
+    
+    if (event.key === 'ArrowLeft') {
+        moveSlide(-1);
+    } else if (event.key === 'ArrowRight') {
+        moveSlide(1);
+    } else if (event.key === 'Escape') {
+        closeModal(currentModal.id);
+    }
+});
 
-function openCartModal() {
-    const modal = document.getElementById('cart-modal');
-    modal.style.display = "block";
-    document.body.classList.add('modal-open');
-   
-    // Legg til overflow kontroll
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.overscrollBehavior = 'none';
-   
-    updateCartDisplay();
-}
-
-
+// Shopping cart functionality
 function updateCartDisplay() {
     const cartItems = document.getElementById('cart-items');
     const cartTotal = document.getElementById('cart-total');
-
+    
     if (cart.length === 0) {
         cartItems.innerHTML = '<div class="empty-cart-message">Handlekurven er tom</div>';
         cartTotal.textContent = '0,00 NOK';
         return;
     }
-
-    cartItems.innerHTML = cart.map(item => {
-        return `
+    
+    let html = '';
+    let total = 0;
+    
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        html += `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-details">
@@ -162,47 +182,65 @@ function updateCartDisplay() {
                     <span>${item.quantity}</span>
                     <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
                 </div>
-                <div class="cart-item-price">
-                    ${(item.price * item.quantity).toFixed(2)} NOK
-                </div>
+                <div class="cart-item-price">${(itemTotal).toFixed(2)} NOK</div>
                 <button class="delete-btn" onclick="removeFromCart(${item.id})">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
         `;
-    }).join('');
-
-    cartTotal.textContent = calculateTotal().toFixed(2) + ' NOK';
+    });
+    
+    cartItems.innerHTML = html;
+    cartTotal.textContent = total.toFixed(2) + ' NOK';
 }
 
 function updateQuantity(productId, change) {
     const item = cart.find(item => item.id === productId);
-    if (item) {
-        item.quantity += change;
-        if (item.quantity <= 0) {
-            cart = cart.filter(i => i.id !== productId);
-        }
-        localStorage.setItem('cart', JSON.stringify(cart));
+    if (!item) return;
+    
+    item.quantity += change;
+    
+    if (item.quantity <= 0) {
+        removeFromCart(productId);
+    } else {
         updateCartCount();
         updateCartDisplay();
     }
+}
+
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    updateCartCount();
+    updateCartDisplay();
 }
 
 function emptyCart() {
-    if (confirm('Er du sikker på at du vil tømme handlekurven?')) {
-        cart = [];
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCount();
-        updateCartDisplay();
-    }
+    cart = [];
+    updateCartCount();
+    updateCartDisplay();
 }
 
-function checkout() {
-    alert('Tar deg videre til betaling...');
-    // Implementer betalingsløsning her
+function showCartMessage() {
+    const message = document.createElement('div');
+    message.className = 'cart-message';
+    message.innerHTML = `
+        <span>Produkt lagt i handlekurv!</span>
+        <button class="view-cart-btn" onclick="openModal('cart-modal')">Se handlekurv</button>
+    `;
+    
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+        message.remove();
+    }, 3000);
 }
+
+// Initialize cart count on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartCount();
+});
 
 // Kontakt-funksjonalitet
 document.querySelectorAll('.nav-link').forEach(link => {
@@ -429,14 +467,6 @@ function calculateTotal() {
     return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 }
 
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-    updateCartDisplay();
-    showSuccessMessage('Produkt fjernet fra handlekurven');
-}
-
 // Anmeldelsesfunksjonalitet
 let currentRating = 0;
 let reviews = JSON.parse(localStorage.getItem('productReviews')) || {};
@@ -661,59 +691,3 @@ function buyNow(product) {
     // Åpne handlekurv-modalen
     openModal('cart-modal');
 }
-
-// Bildekarusell funksjonalitet
-let slideIndex = 1;
-let modalSlideIndices = {};
-
-function initializeCarousels() {
-    const carousels = document.querySelectorAll('.image-carousel');
-    carousels.forEach((carousel, index) => {
-        const modalId = carousel.closest('.modal').id;
-        modalSlideIndices[modalId] = 1;
-        
-        // Opprett prikkene for denne karusellen
-        const dots = carousel.querySelector('.carousel-dots');
-        const images = carousel.querySelectorAll('.carousel-image');
-        
-        images.forEach((_, i) => {
-            const dot = document.createElement('span');
-            dot.className = 'dot';
-            dot.onclick = () => setSlide(modalId, i + 1);
-            dots.appendChild(dot);
-        });
-        
-        // Vis første bilde
-        showSlides(modalId, modalSlideIndices[modalId]);
-    });
-}
-
-function moveSlide(modalId, n) {
-    showSlides(modalId, modalSlideIndices[modalId] += n);
-}
-
-function setSlide(modalId, n) {
-    showSlides(modalId, modalSlideIndices[modalId] = n);
-}
-
-function showSlides(modalId, n) {
-    const carousel = document.querySelector(`#${modalId} .image-carousel`);
-    const slides = carousel.querySelectorAll('.carousel-image');
-    const dots = carousel.querySelectorAll('.dot');
-    
-    if (n > slides.length) {
-        modalSlideIndices[modalId] = 1;
-    }
-    if (n < 1) {
-        modalSlideIndices[modalId] = slides.length;
-    }
-    
-    slides.forEach(slide => slide.style.display = "none");
-    dots.forEach(dot => dot.classList.remove('active'));
-    
-    slides[modalSlideIndices[modalId] - 1].style.display = "block";
-    dots[modalSlideIndices[modalId] - 1].classList.add('active');
-}
-
-// Initialiser karuseller når siden lastes
-document.addEventListener('DOMContentLoaded', initializeCarousels);
