@@ -186,15 +186,17 @@ main {
 
 .product-card .button-group {
     display: flex;
-    gap: 0.5rem;
-    margin: 1rem 0;
+    gap: 0.3rem;
+    margin: 0.5rem 0;
 }
 
 .product-card .buy-button,
 .product-card .add-to-cart-button {
     width: 100%;
-    padding: 8px;
+    padding: 8px 4px;
     font-size: 0.9rem;
+    white-space: nowrap;
+    min-width: 0;
 }
 
 .product-card .buy-button {
