@@ -68,12 +68,12 @@
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 0,
                             name: 'Vinterkos',
                             price: 45.00,
                             image: 'Vinterkos.png'
-                        })">Kjøp nå</button>
+                        }); openModal('cart-modal')">Kjøp nå - 45,00 NOK</button>
                         <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
                             id: 0,
                             name: 'Vinterkos',
@@ -89,12 +89,12 @@
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 1,
                             name: 'Påskekos',
                             price: 45.00,
                             image: 'Påskekos.png'
-                        })">Kjøp nå</button>
+                        }); openModal('cart-modal')">Kjøp nå - 45,00 NOK</button>
                         <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
                             id: 1,
                             name: 'Påskekos',
@@ -110,13 +110,13 @@
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 2,
                             name: 'På eventyr med dinosaurene',
                             price: 45.00,
                             image: 'Dinosaur.png'
-                        })">Kjøp nå</button>
-                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                        }); openModal('cart-modal')">Kjøp nå - 45,00 NOK</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
                             id: 2,
                             name: 'På eventyr med dinosaurene',
                             price: 45.00,
@@ -131,13 +131,13 @@
                     <p>Alder 3-8</p>
                     <p class="price">45,00 NOK</p>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 3,
                             name: 'Enhjørningens magiske eventyrhefte',
                             price: 45.00,
                             image: 'Enhjørning.png'
-                        })">Kjøp nå</button>
-                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                        }); openModal('cart-modal')">Kjøp nå - 45,00 NOK</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
                             id: 3,
                             name: 'Enhjørningens magiske eventyrhefte',
                             price: 45.00,
@@ -152,13 +152,13 @@
                     <p>Alder 4+</p>
                     <p class="price">35,00 NOK</p>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 4,
                             name: 'Bilbingo',
                             price: 35.00,
                             image: 'Bilbingo.png'
-                        })">Kjøp nå</button>
-                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                        }); openModal('cart-modal')">Kjøp nå - 35,00 NOK</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
                             id: 4,
                             name: 'Bilbingo',
                             price: 35.00,
@@ -173,13 +173,13 @@
                     <p>Alder 4+</p>
                     <p class="price">35,00 NOK</p>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 5,
                             name: 'Flybingo',
                             price: 35.00,
                             image: 'Flybingo.png'
-                        })">Kjøp nå</button>
-                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                        }); openModal('cart-modal')">Kjøp nå - 35,00 NOK</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
                             id: 5,
                             name: 'Flybingo',
                             price: 35.00,
@@ -252,12 +252,12 @@
                     </div>
 
                     <div class="button-group">
-                        <button class="buy-button" onclick="buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 0,
                             name: 'Vinterkos',
                             price: 45.00,
                             image: 'Vinterkos.png'
-                        })">Kjøp nå - 45,00 NOK</button>
+                        }); openModal('cart-modal')">Kjøp nå - 45,00 NOK</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 0,
                             name: 'Vinterkos',
@@ -331,12 +331,12 @@
                     </div>
 
                     <div class="button-group">
-                        <button class="buy-button" onclick="buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 1,
                             name: 'Påskekos',
                             price: 45.00,
                             image: 'Påskekos.png'
-                        })">Kjøp nå - 45,00 NOK</button>
+                        }); openModal('cart-modal')">Kjøp nå - 45,00 NOK</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 1,
                             name: 'Påskekos',
@@ -403,12 +403,12 @@
                     </div>
 
                     <div class="button-group">
-                        <button class="buy-button" onclick="buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 2,
                             name: 'På eventyr med dinosaurene',
                             price: 45.00,
                             image: 'Dinosaur.png'
-                        })">Kjøp nå - 45,00 NOK</button>
+                        }); openModal('cart-modal')">Kjøp nå - 45,00 NOK</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 2,
                             name: 'På eventyr med dinosaurene',
@@ -416,26 +416,6 @@
                             image: 'Dinosaur.png'
                         })">Legg i handlekurv</button>
                     </div>
-                </div>
-                <div class="reviews-section"></div>
-                <h3>Kundeomtaler</h3>
-                <div class="reviews-container" id="reviews-container">
-                    <!-- Eksisterende omtaler vil vises her -->
-                </div>
-
-                <div class="add-review">
-                    <h4>Skriv en omtale</h4>
-                    <div class="star-rating">
-                        <div class="star-rating-text">Velg din vurdering</div>
-                        <span class="star" data-rating="5" data-description="Utmerket">★</span>
-                        <span class="star" data-rating="4" data-description="Veldig bra">★</span>
-                        <span class="star" data-rating="3" data-description="Bra">★</span>
-                        <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
-                        <span class="star" data-rating="1" data-description="Skuffende">★</span>
-                    </div>
-                    <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
-                        maxlength="500"></textarea>
-                    <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                 </div>
             </div>
         </div>
@@ -483,12 +463,12 @@
                     </div>
 
                     <div class="button-group">
-                        <button class="buy-button" onclick="buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 3,
                             name: 'Enhjørningens magiske eventyrhefte',
                             price: 45.00,
                             image: 'Enhjørning.png'
-                        })">Kjøp nå - 45,00 NOK</button>
+                        }); openModal('cart-modal')">Kjøp nå - 45,00 NOK</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 3,
                             name: 'Enhjørningens magiske eventyrhefte',
@@ -496,26 +476,6 @@
                             image: 'Enhjørning.png'
                         })">Legg i handlekurv</button>
                     </div>
-                </div>
-                <div class="reviews-section"></div>
-                <h3>Kundeomtaler</h3>
-                <div class="reviews-container" id="reviews-container">
-                    <!-- Eksisterende omtaler vil vises her -->
-                </div>
-
-                <div class="add-review">
-                    <h4>Skriv en omtale</h4>
-                    <div class="star-rating">
-                        <div class="star-rating-text">Velg din vurdering</div>
-                        <span class="star" data-rating="5" data-description="Utmerket">★</span>
-                        <span class="star" data-rating="4" data-description="Veldig bra">★</span>
-                        <span class="star" data-rating="3" data-description="Bra">★</span>
-                        <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
-                        <span class="star" data-rating="1" data-description="Skuffende">★</span>
-                    </div>
-                    <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
-                        maxlength="500"></textarea>
-                    <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                 </div>
             </div>
         </div>
@@ -562,12 +522,12 @@
                     </div>
 
                     <div class="button-group">
-                        <button class="buy-button" onclick="buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 4,
                             name: 'Bilbingo',
                             price: 35.00,
                             image: 'Bilbingo.png'
-                        })">Kjøp nå - 35,00 NOK</button>
+                        }); openModal('cart-modal')">Kjøp nå - 35,00 NOK</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 4,
                             name: 'Bilbingo',
@@ -575,26 +535,6 @@
                             image: 'Bilbingo.png'
                         })">Legg i handlekurv</button>
                     </div>
-                </div>
-                <div class="reviews-section"></div>
-                <h3>Kundeomtaler</h3>
-                <div class="reviews-container" id="reviews-container">
-                    <!-- Eksisterende omtaler vil vises her -->
-                </div>
-
-                <div class="add-review">
-                    <h4>Skriv en omtale</h4>
-                    <div class="star-rating">
-                        <div class="star-rating-text">Velg din vurdering</div>
-                        <span class="star" data-rating="5" data-description="Utmerket">★</span>
-                        <span class="star" data-rating="4" data-description="Veldig bra">★</span>
-                        <span class="star" data-rating="3" data-description="Bra">★</span>
-                        <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
-                        <span class="star" data-rating="1" data-description="Skuffende">★</span>
-                    </div>
-                    <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
-                        maxlength="500"></textarea>
-                    <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                 </div>
             </div>
         </div>
@@ -641,12 +581,12 @@
                     </div>
 
                     <div class="button-group">
-                        <button class="buy-button" onclick="buyNow({
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
                             id: 5,
                             name: 'Flybingo',
                             price: 35.00,
                             image: 'Flybingo.png'
-                        })">Kjøp nå - 35,00 NOK</button>
+                        }); openModal('cart-modal')">Kjøp nå - 35,00 NOK</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 5,
                             name: 'Flybingo',
@@ -654,26 +594,6 @@
                             image: 'Flybingo.png'
                         })">Legg i handlekurv</button>
                     </div>
-                </div>
-                <div class="reviews-section"></div>
-                <h3>Kundeomtaler</h3>
-                <div class="reviews-container" id="reviews-container">
-                    <!-- Eksisterende omtaler vil vises her -->
-                </div>
-
-                <div class="add-review">
-                    <h4>Skriv en omtale</h4>
-                    <div class="star-rating">
-                        <div class="star-rating-text">Velg din vurdering</div>
-                        <span class="star" data-rating="5" data-description="Utmerket">★</span>
-                        <span class="star" data-rating="4" data-description="Veldig bra">★</span>
-                        <span class="star" data-rating="3" data-description="Bra">★</span>
-                        <span class="star" data-rating="2" data-description="Kunne vært bedre">★</span>
-                        <span class="star" data-rating="1" data-description="Skuffende">★</span>
-                    </div>
-                    <textarea id="review-text" placeholder="Fortell andre hva du synes om produktet..."
-                        maxlength="500"></textarea>
-                    <button onclick="submitReview(1)" class="submit-review-btn">Send inn omtale</button>
                 </div>
             </div>
         </div>
