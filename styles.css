@@ -186,8 +186,8 @@ main {
 
 .product-card .button-group {
     display: flex;
-    gap: 1.5rem;
-    margin: 2rem 0;
+    gap: 0.5rem;
+    margin: 1rem 0;
 }
 
 .product-card .buy-button,
