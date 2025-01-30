@@ -2,7 +2,13 @@ let currentSlide = 0;
 let slides = [];
 let dots = [];
 let currentModal = null;
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+// Oppdater handlekurven når siden lastes
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartCount();
+    updateCartDisplay();
+});
 
 function addToCart(product) {
     const existingItem = cart.find(item => item.id === product.id);
@@ -13,8 +19,9 @@ function addToCart(product) {
         cart.push({ ...product, quantity: 1 });
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart)); // Lagre i localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
+    updateCartDisplay();
     showAddedToCartMessage(product.name);
 }
 
@@ -23,19 +30,93 @@ function updateCartCount() {
     document.querySelector('.cart-count').textContent = totalItems;
 }
 
+function updateCartDisplay() {
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    
+    if (!cartItems || !cartTotal) return;
+    
+    if (cart.length === 0) {
+        cartItems.innerHTML = '<div class="empty-cart-message">Handlekurven er tom</div>';
+        cartTotal.textContent = '0,00 NOK';
+        return;
+    }
+    
+    let html = '';
+    let total = 0;
+    
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        html += `
+            <div class="cart-item">
+                <img src="${item.image}" alt="${item.name}">
+                <div class="cart-item-details">
+                    <h3>${item.name}</h3>
+                    <p>${item.price.toFixed(2)} NOK</p>
+                </div>
+                <div class="cart-item-quantity">
+                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                    <span>${item.quantity}</span>
+                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                </div>
+                <div class="cart-item-price">${itemTotal.toFixed(2)} NOK</div>
+                <button class="delete-btn" onclick="removeFromCart(${item.id})">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+    });
+    
+    cartItems.innerHTML = html;
+    cartTotal.textContent = total.toFixed(2) + ' NOK';
+}
+
+function updateQuantity(productId, change) {
+    const item = cart.find(item => item.id === productId);
+    if (!item) return;
+    
+    item.quantity += change;
+    
+    if (item.quantity <= 0) {
+        removeFromCart(productId);
+    } else {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        updateCartDisplay();
+    }
+}
+
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    updateCartDisplay();
+}
+
+function emptyCart() {
+    cart = [];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    updateCartDisplay();
+}
+
 function showAddedToCartMessage(productName) {
     const messageContainer = document.createElement('div');
     messageContainer.className = 'cart-message';
     messageContainer.innerHTML = `
         ${productName} lagt til i handlekurven!
-        <button onclick="openCartModal()" class="view-cart-btn">Vis handlekurv</button>
+        <button onclick="openModal('cart-modal')" class="view-cart-btn">Vis handlekurv</button>
     `;
 
     document.body.appendChild(messageContainer);
 
     setTimeout(() => {
         messageContainer.remove();
-    }, 2000);
+    }, 3000);
 }
 
 // Søkefunksjonalitet
@@ -153,75 +234,6 @@ document.addEventListener('keydown', function(event) {
 });
 
 // Shopping cart functionality
-function updateCartDisplay() {
-    const cartItems = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
-    
-    if (cart.length === 0) {
-        cartItems.innerHTML = '<div class="empty-cart-message">Handlekurven er tom</div>';
-        cartTotal.textContent = '0,00 NOK';
-        return;
-    }
-    
-    let html = '';
-    let total = 0;
-    
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-        
-        html += `
-            <div class="cart-item">
-                <img src="${item.image}" alt="${item.name}">
-                <div class="cart-item-details">
-                    <h3>${item.name}</h3>
-                    <p>${item.price.toFixed(2)} NOK</p>
-                </div>
-                <div class="cart-item-quantity">
-                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
-                    <span>${item.quantity}</span>
-                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-                </div>
-                <div class="cart-item-price">${(itemTotal).toFixed(2)} NOK</div>
-                <button class="delete-btn" onclick="removeFromCart(${item.id})">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-        `;
-    });
-    
-    cartItems.innerHTML = html;
-    cartTotal.textContent = total.toFixed(2) + ' NOK';
-}
-
-function updateQuantity(productId, change) {
-    const item = cart.find(item => item.id === productId);
-    if (!item) return;
-    
-    item.quantity += change;
-    
-    if (item.quantity <= 0) {
-        removeFromCart(productId);
-    } else {
-        updateCartCount();
-        updateCartDisplay();
-    }
-}
-
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    updateCartCount();
-    updateCartDisplay();
-}
-
-function emptyCart() {
-    cart = [];
-    updateCartCount();
-    updateCartDisplay();
-}
-
 function showCartMessage() {
     const message = document.createElement('div');
     message.className = 'cart-message';
@@ -236,11 +248,6 @@ function showCartMessage() {
         message.remove();
     }, 3000);
 }
-
-// Initialize cart count on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateCartCount();
-});
 
 // Kontakt-funksjonalitet
 document.querySelectorAll('.nav-link').forEach(link => {
