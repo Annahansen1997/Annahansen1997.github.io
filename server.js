@@ -1,5 +1,5 @@
 const express = require('express');
-const stripe = require('stripe')('din_stripe_secret_key');
+const stripe = require('stripe')('your_stripe_secret_key'); // Erstatt med din Stripe secret key
 const nodemailer = require('nodemailer');
 const app = express();
 
@@ -10,27 +10,81 @@ app.use(express.static('.'));
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'hombgames@hotmail.com', // Din e-postadresse
-        pass: 'ditt_app_passord' // App-spesifikt passord
+        user: 'hombgames@hotmail.com',
+        pass: 'ditt_app_passord' // Husk å erstatte med ditt app-spesifikke passord
     }
 });
 
+// Produktkatalog
+const products = {
+    'vinterkos': {
+        name: 'Vinterkos',
+        price: 4500, // 45 NOK i øre
+        description: 'Digitalt aktivitetshefte for vinteren',
+        filename: 'Vinterkos_Aktivitetshefte.pdf'
+    },
+    'paskekos': {
+        name: 'Påskekos',
+        price: 4500, // 45 NOK i øre
+        description: 'Digitalt aktivitetshefte for påsken',
+        filename: 'Påskekos_Aktivitetshefte.pdf'
+    },
+    'dinosaur': {
+        name: 'På eventyr med dinosaurene',
+        price: 4500, // 45 NOK i øre
+        description: 'Digitalt aktivitetshefte med dinosaurer',
+        filename: 'Dinosaur_Aktivitetshefte.pdf'
+    },
+    'enhjorning': {
+        name: 'Enhjørningens magiske eventyrhefte',
+        price: 4500, // 45 NOK i øre
+        description: 'Digitalt aktivitetshefte med enhjørninger',
+        filename: 'Enhjørning_Aktivitetshefte.pdf'
+    },
+    'bilbingo': {
+        name: 'Bilbingo',
+        price: 3500, // 35 NOK i øre
+        description: 'Digitalt bilbingo for bilturen',
+        filename: 'Bilbingo.pdf'
+    },
+    'flybingo': {
+        name: 'Flybingo',
+        price: 3500, // 35 NOK i øre
+        description: 'Digitalt flybingo for flyreisen',
+        filename: 'Flybingo.pdf'
+    }
+};
+
+// Opprett checkout-økt endepunkt
 app.post('/create-checkout-session', async (req, res) => {
     try {
+        const items = req.body.items || [];
+        const lineItems = items.map(item => ({
+            price_data: {
+                currency: 'nok',
+                product_data: {
+                    name: products[item.id].name,
+                    description: products[item.id].description,
+                },
+                unit_amount: products[item.id].price,
+            },
+            quantity: item.quantity || 1,
+        }));
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            line_items: req.body.lineItems,
+            line_items: lineItems,
             mode: 'payment',
-            success_url: 'https://dittdomene.no/success.html',
-            cancel_url: 'https://dittdomene.no/cancel.html',
+            success_url: `${req.headers.origin}/success.html`,
+            cancel_url: `${req.headers.origin}/cancel.html`,
             metadata: {
-                customerEmail: req.body.customerEmail // Legg til kundens e-post
+                customerEmail: req.body.customerEmail
             }
         });
 
-        res.json({ id: session.sessionId });
+        res.json({ url: session.url });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: `Betalingsfeil: ${error.message}` });
     }
 });
 
@@ -42,7 +96,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
     try {
         event = stripe.webhooks.constructEvent(request.body, sig, 'din_webhook_secret');
     } catch (err) {
-        response.status(400).send(`Webhook Error: ${err.message}`);
+        response.status(400).send(`Webhook-feil: ${err.message}`);
         return;
     }
 
@@ -54,12 +108,9 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
         const mailOptions = {
             from: 'hombgames@hotmail.com',
             to: session.metadata.customerEmail,
-            subject: 'Ditt Påskekos Aktivitetshefte',
-            text: 'Takk for kjøpet! Her er ditt Påskekos Aktivitetshefte.',
-            attachments: [{
-                filename: 'Påskekos_Aktivitetshefte.pdf',
-                path: './assets/Påskekos_Aktivitetshefte.pdf' // Sti til PDF-filen
-            }]
+            subject: 'Dine aktivitetshefter fra Kreativ Moro',
+            text: 'Tusen takk for kjøpet! Her er dine aktivitetshefter. God fornøyelse!',
+            attachments: [] // Attachments will be added based on purchased items
         };
 
         transporter.sendMail(mailOptions, function(error, info) {
@@ -74,4 +125,8 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
     response.json({received: true});
 });
 
-app.listen(3000, () => console.log('Server kjører på port 3000')); 
+// Start serveren
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Serveren kjører på port ${port}`);
+}); 

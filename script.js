@@ -355,52 +355,31 @@ document.querySelector('.about-link').addEventListener('click', function (e) {
 });
 
 // Stripe konfigurasjon (erstatt med din egen public key)
-const stripe = Stripe('din_stripe_public_key');
+const stripe = Stripe('your_publishable_key');
 
 async function initiateCheckout() {
     try {
-        // Spør om kundens e-postadresse
-        const customerEmail = prompt('Vennligst skriv inn din e-postadresse for å motta produktet:');
-
-        if (!customerEmail || !customerEmail.includes('@')) {
-            alert('Vennligst oppgi en gyldig e-postadresse.');
-            return;
-        }
-
-        const lineItems = cart.map(item => ({
-            price_data: {
-                currency: 'nok',
-                product_data: {
-                    name: item.name,
-                    images: [item.image],
-                },
-                unit_amount: item.price * 100,
-            },
-            quantity: item.quantity,
-        }));
-
         const response = await fetch('/create-checkout-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                lineItems,
-                customerEmail
-            }),
+                items: cart.map(item => ({
+                    id: item.id,
+                    quantity: item.quantity
+                })),
+                customerEmail: document.getElementById('customer-email')?.value
+            })
         });
 
-        const session = await response.json();
-        const result = await stripe.redirectToCheckout({
-            sessionId: session.id,
-        });
-
-        if (result.error) {
-            alert('Det oppstod en feil ved betaling. Vennligst prøv igjen.');
-        }
+        const { url } = await response.json();
+        
+        // Redirect til Stripe Checkout
+        window.location.href = url;
     } catch (error) {
-        console.error('Betalingsfeil:', error);
-        alert('Det oppstod en feil ved betaling. Vennligst prøv igjen.');
+        console.error('Error:', error);
+        alert('Det oppstod en feil ved behandling av betalingen. Vennligst prøv igjen.');
     }
 }
 
