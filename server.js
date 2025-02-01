@@ -18,37 +18,37 @@ const transporter = nodemailer.createTransport({
 
 // Produktkatalog
 const products = {
-    'vinterkos': {
+    '0': {
         name: 'Vinterkos',
         price: 4500, // 45 NOK i øre
         description: 'Digitalt aktivitetshefte for vinteren',
         filename: 'Vinterkos_Aktivitetshefte.pdf'
     },
-    'paskekos': {
+    '1': {
         name: 'Påskekos',
         price: 4500, // 45 NOK i øre
         description: 'Digitalt aktivitetshefte for påsken',
         filename: 'Påskekos_Aktivitetshefte.pdf'
     },
-    'dinosaur': {
+    '2': {
         name: 'På eventyr med dinosaurene',
         price: 4500, // 45 NOK i øre
         description: 'Digitalt aktivitetshefte med dinosaurer',
         filename: 'Dinosaur_Aktivitetshefte.pdf'
     },
-    'enhjorning': {
+    '3': {
         name: 'Enhjørningens magiske eventyrhefte',
         price: 4500, // 45 NOK i øre
         description: 'Digitalt aktivitetshefte med enhjørninger',
         filename: 'Enhjørning_Aktivitetshefte.pdf'
     },
-    'bilbingo': {
+    '4': {
         name: 'Bilbingo',
         price: 3500, // 35 NOK i øre
         description: 'Digitalt bilbingo for bilturen',
         filename: 'Bilbingo.pdf'
     },
-    'flybingo': {
+    '5': {
         name: 'Flybingo',
         price: 3500, // 35 NOK i øre
         description: 'Digitalt flybingo for flyreisen',
@@ -127,7 +127,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
 });
 
 // Start serveren
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
     console.log(`Serveren kjører på port ${port}`);
 }); 
