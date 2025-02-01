@@ -1,5 +1,6 @@
+require('dotenv').config();
 const express = require('express');
-const stripe = require('stripe')('your_stripe_secret_key'); // Erstatt med din Stripe secret key
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
 const app = express();
 
@@ -8,10 +9,10 @@ app.use(express.static('.'));
 
 // Konfigurer e-post-tjeneste
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: 'hotmail',
     auth: {
         user: 'hombgames@hotmail.com',
-        pass: 'ditt_app_passord' // Husk å erstatte med ditt app-spesifikke passord
+        pass: process.env.EMAIL_PASSWORD
     }
 });
 
