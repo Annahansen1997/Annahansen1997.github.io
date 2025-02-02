@@ -677,3 +677,70 @@ function buyNow(product) {
     // Åpne handlekurv-modalen
     openModal('cart-modal');
 }
+
+function goToCheckout() {
+    // Lukk handlekurv-modalen
+    closeModal('cart-modal');
+    
+    // Åpne checkout-modalen
+    openCheckoutModal();
+}
+
+function openCheckoutModal() {
+    const checkoutModal = document.createElement('div');
+    checkoutModal.id = 'checkout-modal';
+    checkoutModal.className = 'modal';
+    
+    const modalContent = `
+        <div class="modal-content checkout-modal-content">
+            <span class="close" onclick="closeModal('checkout-modal')">&times;</span>
+            <h2>Kasse</h2>
+            <div class="checkout-summary">
+                <h3>Din bestilling</h3>
+                <div id="checkout-items">
+                    ${generateCheckoutItemsHTML()}
+                </div>
+                <div class="checkout-total">
+                    <strong>Totalt å betale: ${document.getElementById('cart-total').textContent}</strong>
+                </div>
+                <div class="checkout-actions">
+                    <button class="payment-button" onclick="initiateCheckout()">Betal med kort</button>
+                    <button class="back-to-cart-button" onclick="backToCart()">Tilbake til handlekurv</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    checkoutModal.innerHTML = modalContent;
+    document.body.appendChild(checkoutModal);
+    openModal('checkout-modal');
+}
+
+function generateCheckoutItemsHTML() {
+    let html = '';
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    cartItems.forEach(item => {
+        html += `
+            <div class="checkout-item">
+                <img src="${item.image}" alt="${item.name}" class="checkout-item-image">
+                <div class="checkout-item-details">
+                    <h4>${item.name}</h4>
+                    <p>Pris: ${item.price.toFixed(2)} NOK</p>
+                    <p>Antall: ${item.quantity}</p>
+                </div>
+            </div>
+        `;
+    });
+    
+    return html;
+}
+
+function backToCart() {
+    closeModal('checkout-modal');
+    const checkoutModal = document.getElementById('checkout-modal');
+    if (checkoutModal) {
+        checkoutModal.remove();
+    }
+    openModal('cart-modal');
+}
