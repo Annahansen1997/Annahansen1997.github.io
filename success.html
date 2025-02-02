@@ -7,22 +7,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="success-page">
-        <h1>Tusen takk for kjøpet! 🎉</h1>
-        <div class="success-message">
-            <p>Din betaling er bekreftet, og du vil snart motta en e-post med dine aktivitetshefter.</p>
-            <p>Husk å sjekke spam-mappen hvis du ikke ser e-posten i innboksen din.</p>
-        </div>
-        <div class="next-steps">
-            <h2>Neste steg:</h2>
-            <ol>
-                <li>Sjekk e-posten din for nedlastingslenker</li>
-                <li>Last ned aktivitetsheftene</li>
-                <li>Skriv ut og ha det gøy!</li>
-            </ol>
-        </div>
-        <a href="/" class="back-button">Tilbake til butikken</a>
-        <p class="contact-info">Har du spørsmål? Kontakt oss på <a href="mailto:hombgames@hotmail.com">hombgames@hotmail.com</a></p>
+    <div class="success-container">
+        <h1>Takk for din bestilling!</h1>
+        <p>Din betaling er mottatt og du vil snart motta en e-post med dine aktivitetsark.</p>
+        <p>Hvis du ikke mottar e-posten innen få minutter, sjekk spam-mappen din.</p>
+        <a href="/" class="back-to-home">Tilbake til butikken</a>
     </div>
+
+    <script>
+        // Tøm handlekurven etter vellykket kjøp
+        localStorage.removeItem('cart');
+    </script>
 </body>
 </html>

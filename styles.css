@@ -1474,3 +1474,39 @@ body.modal-open {
 .back-to-cart-button:hover {
     background-color: #e9ecef;
 }
+
+.success-container,
+.cancel-container {
+    max-width: 600px;
+    margin: 100px auto;
+    padding: 40px;
+    text-align: center;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.success-container h1 {
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+
+.cancel-container h1 {
+    color: #f44336;
+    margin-bottom: 20px;
+}
+
+.back-to-home {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.back-to-home:hover {
+    background-color: #45a049;
+}

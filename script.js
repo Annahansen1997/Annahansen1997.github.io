@@ -369,37 +369,29 @@ function initiateCheckout() {
         return;
     }
 
-    // Opprett en liste med produkter for Stripe
-    const lineItems = cartItems.map(item => ({
-        price_data: {
-            currency: 'nok',
-            product_data: {
-                name: item.name,
-                images: [window.location.origin + '/' + item.image]
+    // Opprett en Stripe Checkout sesjon direkte
+    stripe.redirectToCheckout({
+        lineItems: cartItems.map(item => ({
+            price_data: {
+                currency: 'nok',
+                product_data: {
+                    name: item.name,
+                    images: [window.location.origin + '/' + item.image]
+                },
+                unit_amount: Math.round(item.price * 100) // Konverter til øre
             },
-            unit_amount: item.price * 100 // Konverter til øre
-        },
-        quantity: item.quantity
-    }));
-
-    // Opprett en Stripe-økt
-    fetch('/.netlify/functions/create-checkout-session', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            lineItems: lineItems,
-            successUrl: window.location.origin + '/success.html',
-            cancelUrl: window.location.origin + '/cancel.html'
-        })
+            quantity: item.quantity
+        })),
+        mode: 'payment',
+        successUrl: window.location.origin + '/success.html',
+        cancelUrl: window.location.origin + '/cancel.html'
     })
-    .then(response => response.json())
-    .then(session => {
-        // Redirect til Stripe Checkout
-        return stripe.redirectToCheckout({ sessionId: session.id });
+    .then(function (result) {
+        if (result.error) {
+            alert(result.error.message);
+        }
     })
-    .catch(error => {
+    .catch(function(error) {
         console.error('Error:', error);
         alert('Det oppstod en feil ved behandling av betalingen. Vennligst prøv igjen.');
     });
