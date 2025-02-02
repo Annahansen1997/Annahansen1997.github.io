@@ -647,6 +647,656 @@
                     </div>
                     <p class="terms-note">Ved å gjennomføre kjøpet aksepterer du våre <a href="#"
                             onclick="event.preventDefault(); openModal('terms-modal')">kjøpsvilkår</a></p>
+                    <button class="checkout-button" onclick="goToCheckout(); return false;">Gå til kasse</button>
+<!DOCTYPE html>
+<html lang="no">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kids Activity Sheets</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<body>
+    <header>
+        <div class="header-top">
+            <h1>Kreativ Moro</h1>
+            <p>Pedagogiske aktivitetsark for kreative sjeler</p>
+        </div>
+
+        <div class="header-bottom">
+            <div class="search-container">
+                <input type="search" placeholder="Søk etter aktiviteter...">
+                <button class="search-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="header-nav">
+                <a href="#" class="nav-link" onclick="openModal('about-modal')">
+                    <i class="far fa-heart"></i>
+                    Om oss
+                </a>
+                <a href="#" class="nav-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                        </path>
+                    </svg>
+                    Kontakt
+                </a>
+                <a href="#" class="nav-link cart-link" onclick="event.preventDefault(); openModal('cart-modal')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Handlekurv
+                    <span class="cart-count">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="featured">
+            <h2>Utvalgte aktiviteter</h2>
+            <div class="product-grid">
+                <!-- New Vinterkos product card -->
+                <div class="product-card" onclick="openModal('modal0')">
+                    <img src="Vinterkos.png" alt="Vinterkos">
+                    <h3>Vinterkos</h3>
+                    <p>Alder 3-8</p>
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 0,
+                            name: 'Vinterkos',
+                            price: 45.00,
+                            image: 'Vinterkos.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                            id: 0,
+                            name: 'Vinterkos',
+                            price: 45.00,
+                            image: 'Vinterkos.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('modal1')">
+                    <img src="Påskekos.png" alt="Påskekos">
+                    <h3>Påskekos</h3>
+                    <p>Alder 3-8</p>
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 1,
+                            name: 'Påskekos',
+                            price: 45.00,
+                            image: 'Påskekos.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                            id: 1,
+                            name: 'Påskekos',
+                            price: 45.00,
+                            image: 'Påskekos.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('modal2')">
+                    <img src="Dinosaur.png" alt="Dinosaureventyr">
+                    <h3>På eventyr med dinosaurene</h3>
+                    <p>Alder 3-8</p>
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 2,
+                            name: 'På eventyr med dinosaurene',
+                            price: 45.00,
+                            image: 'Dinosaur.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 2,
+                            name: 'På eventyr med dinosaurene',
+                            price: 45.00,
+                            image: 'Dinosaur.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('modal3')">
+                    <img src="Enhjørning.png" alt="Enhjørninghefte">
+                    <h3>Enhjørningens magiske eventyrhefte</h3>
+                    <p>Alder 3-8</p>
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 3,
+                            name: 'Enhjørningens magiske eventyrhefte',
+                            price: 45.00,
+                            image: 'Enhjørning.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 3,
+                            name: 'Enhjørningens magiske eventyrhefte',
+                            price: 45.00,
+                            image: 'Enhjørning.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('modal4')">
+                    <img src="Bilbingo.png" alt="Bilbingo">
+                    <h3>Bilbingo</h3>
+                    <p>Alder 4+</p>
+                    <p class="price">Pris: 35,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 4,
+                            name: 'Bilbingo',
+                            price: 35.00,
+                            image: 'Bilbingo.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 4,
+                            name: 'Bilbingo',
+                            price: 35.00,
+                            image: 'Bilbingo.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('modal5')">
+                    <img src="Flybingo.png" alt="Flybingo">
+                    <h3>Flybingo</h3>
+                    <p>Alder 4+</p>
+                    <p class="price">Pris: 35,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 5,
+                            name: 'Flybingo',
+                            price: 35.00,
+                            image: 'Flybingo.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 5,
+                            name: 'Flybingo',
+                            price: 35.00,
+                            image: 'Flybingo.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- New Modal for Vinterkos -->
+        <div id="modal0" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal0')">&times;</span>
+                <h2>Vinterkos Aktivitetshefte</h2>
+
+                <div class="single-image">
+                    <div class="image-carousel">
+                        <div class="carousel-container">
+                            <img src="Vinterkos.png" alt="Vinterkos forside" class="carousel-image active">
+                            <img src="Vinterkos1.png" alt="Vinterkos side 1" class="carousel-image">
+                            <img src="Vinterkos2.png" alt="Vinterkos side 2" class="carousel-image">
+                            <img src="Vinterkos3.png" alt="Vinterkos side 3" class="carousel-image">
+                        </div>
+                        <button class="carousel-button prev" onclick="moveSlide(-1)">❮</button>
+                        <button class="carousel-button next" onclick="moveSlide(1)">❯</button>
+                        <div class="carousel-dots"></div>
+                    </div>
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Gjør vinteren magisk med Vinterkos Aktivitetshefte – perfekt for barn i alderen 3-8 år!
+                        Dette digitale heftet er fylt med koselige vinteraktiviteter som vil holde barna
+                        engasjert og kreative gjennom de kalde vintermånedene.
+                    </p>
+                
+                    <div class="content-section">
+                        <h3>Hva inneholder heftet?</h3>
+                        <ul class="bullet-list">
+                            <li>• 19 sider med morsomme vinteraktiviteter</li>
+                            <li>• Tegneoppgaver og fargelegging</li>
+                            <li>• Enkle tall- og skriveøvelser</li>
+                            <li>• Labyrint og finn-frem oppgaver</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Hva trenger du?</h3>
+                        <p>• Fargeblyanter eller tusjer – og kanskje litt glitter for ekstra vinterstemning!</p>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Hvordan fungerer det?</h3>
+                        <ul class="bullet-list">
+                            <li>• Heftet leveres som en praktisk PDF</li>
+                            <li>• Du mottar en lenke på e-post</li>
+                            <li>• Skriv ut så mange eksemplarer du ønsker hjemme</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        Med dette aktivitetsheftet får barna en perfekt blanding av læring og moro,
+                        samtidig som de kommer i skikkelig vinterstemning!
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 0,
+                            name: 'Vinterkos',
+                            price: 45.00,
+                            image: 'Vinterkos.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 0,
+                            name: 'Vinterkos',
+                            price: 45.00,
+                            image: 'Vinterkos.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                    <p class="final-text">La barna utforske sin kreative side og fyll vinterdagene med latter, farger og
+                        glede!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Påskekos -->
+        <div id="modal1" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal1')">&times;</span>
+                <h2>Påskekos Aktivitetshefte</h2>
+
+                <div class="single-image">
+                    <div class="image-carousel">
+                        <div class="carousel-container">
+                            <img src="Påskekos.png" alt="Påskekos forside" class="carousel-image active">
+                            <img src="Påskekos1.png" alt="Påskekos side 1" class="carousel-image">
+                            <img src="Påskekos2.png" alt="Påskekos side 2" class="carousel-image">
+                            <img src="Påskekos3.png" alt="Påskekos side 3" class="carousel-image">
+                        </div>
+                        <button class="carousel-button prev" onclick="moveSlide(-1)">❮</button>
+                        <button class="carousel-button next" onclick="moveSlide(1)">❯</button>
+                        <div class="carousel-dots"></div>
+                    </div>
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Gjør påsken ekstra morsom for barna med Påskekos Aktivitetshefte – perfekt for barn i alderen
+                        3–8 år!
+                        Dette digitale heftet er fylt med kreative og lærerike aktiviteter som garantert vil engasjere
+                        de små i påskeferien.
+                    </p>
+
+                    <div class="content-section">
+                        <h3>Hva inneholder heftet?</h3>
+                        <ul class="bullet-list">
+                            <li>• 22 sider med morsomme aktiviteter</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Hva trenger du?</h3>
+                        <p>• Kun fargeblyanter – og kanskje litt maling hvis barna vil leke seg ekstra!</p>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Hvordan fungerer det?</h3>
+                        <ul class="bullet-list">
+                            <li>• Heftet leveres som en praktisk PDF</li>
+                            <li>• Du mottar en lenke på e-post</li>
+                            <li>• Skriv ut så mange eksemplarer du ønsker hjemme</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        Med dette aktivitetsheftet får barna en herlig blanding av kreativ lek og påskestemning
+                        perfekt for lange dager på hytta, hjemme eller på ferie.
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 1,
+                            name: 'Påskekos',
+                            price: 45.00,
+                            image: 'Påskekos.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 1,
+                            name: 'Påskekos',
+                            price: 45.00,
+                            image: 'Påskekos.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                    <p class="final-text">La barna utforske sin kreative side og fyll påskeferien med latter, farger og
+                        glede!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for På eventyr med dinosaurene -->
+        <div id="modal2" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal2')">&times;</span>
+                <h2>På eventyr med dinosaurene</h2>
+
+                <div class="single-image">
+                    <div class="image-carousel">
+                        <div class="carousel-container">
+                            <img src="Dinosaur.png" alt="Dinosaur forside" class="carousel-image active">
+                            <img src="Dinosaur1.png" alt="Dinosaur side 1" class="carousel-image">
+                            <img src="Dinosaur2.png" alt="Dinosaur side 2" class="carousel-image">
+                            <img src="Dinosaur3.png" alt="Dinosaur side 3" class="carousel-image">
+                        </div>
+                        <button class="carousel-button prev" onclick="moveSlide(-1)">❮</button>
+                        <button class="carousel-button next" onclick="moveSlide(1)">❯</button>
+                        <div class="carousel-dots"></div>
+                    </div>
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Ta med barna på en spennende reise tilbake i tid med vårt dinosaurhefte! Perfekt for små
+                        dinosaurentusiaster
+                        i alderen 3-8 år som vil lære mer om disse fascinerende forhistoriske dyrene.
+                    </p>
+
+                    <div class="content-section">
+                        <h3>Hva inneholder heftet?</h3>
+                        <ul class="bullet-list">
+                            <li>• 19 sider med morsomme aktiviteter</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Hva lærer barna?</h3>
+                        <ul class="bullet-list">
+                            <li>• Dinosaurnavn og fakta</li>
+                            <li>• Telling og enkel matematikk</li>
+                            <li>• Finmotorikk og kreativitet</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Fordeler</h3>
+                        <ul class="bullet-list">
+                            <li>• Holder barna engasjert på lange turer</li>
+                            <li>• Lærer observasjon og konsentrasjon</li>
+                            <li>• Kan brukes om og om igjen</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        Med dette aktivitetsheftet får barna en spennende reise tilbake i tid mens de lærer
+                        og har det gøy samtidig!
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 2,
+                            name: 'På eventyr med dinosaurene',
+                            price: 45.00,
+                            image: 'Dinosaur.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 2,
+                            name: 'På eventyr med dinosaurene',
+                            price: 45.00,
+                            image: 'Dinosaur.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Enhjørningens magiske eventyrhefte -->
+        <div id="modal3" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal3')">&times;</span>
+                <h2>Enhjørningens magiske eventyrhefte</h2>
+
+                <div class="single-image">
+                    <div class="image-carousel">
+                        <div class="carousel-container">
+                            <img src="Enhjørning.png" alt="Enhjørning forside" class="carousel-image active">
+                            <img src="Enhjørning1.png" alt="Enhjørning side 1" class="carousel-image">
+                            <img src="Enhjørning2.png" alt="Enhjørning side 2" class="carousel-image">
+                            <img src="Enhjørning3.png" alt="Enhjørning side 3" class="carousel-image">
+                        </div>
+                        <button class="carousel-button prev" onclick="moveSlide(-1)">❮</button>
+                        <button class="carousel-button next" onclick="moveSlide(1)">❯</button>
+                        <div class="carousel-dots"></div>
+                    </div>
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Bli med på et magisk eventyr i enhjørningenes verden! Dette heftet er fylt med glitter, regnbuer
+                        og magi, perfekt for barn i alderen 3-8 år som elsker enhjørninger.
+                    </p>
+
+                    <div class="content-section">
+                        <h3>Hva inneholder heftet?</h3>
+                        <ul class="bullet-list">
+                            <li>• 19 sider med morsomme aktiviteter</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Perfekt for</h3>
+                        <ul class="bullet-list">
+                            <li>• Kreativ lek og læring</li>
+                            <li>• Utvikling av finmotorikk</li>
+                            <li>• Fantasifull underholdning</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        La barnas fantasi ta vinger med dette magiske aktivitetsheftet fylt med enhjørninger,
+                        glitter og eventyr!
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 3,
+                            name: 'Enhjørningens magiske eventyrhefte',
+                            price: 45.00,
+                            image: 'Enhjørning.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 3,
+                            name: 'Enhjørningens magiske eventyrhefte',
+                            price: 45.00,
+                            image: 'Enhjørning.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Bilbingo -->
+        <div id="modal4" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal4')">&times;</span>
+                <h2>Bilbingo</h2>
+
+                <div class="single-image">
+                    <img src="Bilbingo.png" alt="Bilbingo forside">
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Gjør bilturen morsom med vårt populære bilbingo! Perfekt for lange kjøreturer
+                        og familieferier. Passer for hele familien, anbefalt fra 4 år.
+                    </p>
+
+                    <div class="content-section">
+                        <h3>Dette får du</h3>
+                        <ul class="bullet-list">
+                            <li>• 10 sider med unike bilbingobrett</li>
+                            <li>• Enkle regler og instruksjoner</li>
+                            <li>• Tilpasset norske veier og omgivelser</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Fordeler</h3>
+                        <ul class="bullet-list">
+                            <li>• Holder barna engasjert på lange turer</li>
+                            <li>• Lærer observasjon og konsentrasjon</li>
+                            <li>• Kan brukes om og om igjen</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        Gjør bilturen til en morsom opplevelse for hele familien med vårt engasjerende bilbingo!
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <p class="price">Pris: 35,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 4,
+                            name: 'Bilbingo',
+                            price: 35.00,
+                            image: 'Bilbingo.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 4,
+                            name: 'Bilbingo',
+                            price: 35.00,
+                            image: 'Bilbingo.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Flybingo -->
+        <div id="modal5" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal5')">&times;</span>
+                <h2>Flybingo</h2>
+
+                <div class="single-image">
+                    <img src="Flybingo.png" alt="Flybingo forside">
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Gjør flyreisen til en morsom opplevelse med vårt engasjerende flybingo!
+                        Perfekt for både korte og lange flyturer. Passer for hele familien, anbefalt fra 4 år.
+                    </p>
+
+                    <div class="content-section">
+                        <h3>Dette får du</h3>
+                        <ul class="bullet-list">
+                            <li>• 10 sider med unike flybingobrett</li>
+                            <li>• Enkle regler og instruksjoner</li>
+                            <li>• Tilpasset flyreiser og flyplasser</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Fordeler</h3>
+                        <ul class="bullet-list">
+                            <li>• Holder barna opptatt under flyreisen</li>
+                            <li>• Reduserer reisestress</li>
+                            <li>• Kan brukes på alle flyreiser</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        Gjør flyreisen til en morsom opplevelse for hele familien med vårt engasjerende flybingo!
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <p class="price">Pris: 35,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 5,
+                            name: 'Flybingo',
+                            price: 35.00,
+                            image: 'Flybingo.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 5,
+                            name: 'Flybingo',
+                            price: 35.00,
+                            image: 'Flybingo.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legg til denne koden rett før </main> -->
+        <div id="cart-modal" class="modal">
+            <div class="modal-content cart-modal-content">
+                <span class="close" onclick="closeModal('cart-modal')">&times;</span>
+                <h2>Din Handlekurv</h2>
+                <div id="cart-items">
+                    <!-- Her vil handlekurvens innhold bli vist dynamisk -->
+                </div>
+                <div class="cart-summary">
+                    <div class="discount-section">
+                        <input type="text" id="discount-code" placeholder="Rabattkode" class="discount-input">
+                        <button onclick="applyDiscount()" class="apply-discount-btn">Bruk kode</button>
+                    </div>
+                    <div class="total">
+                        <span>Totalt:</span>
+                        <span id="cart-total">0,00 NOK</span>
+                    </div>
+                    <p class="terms-note">Ved å gjennomføre kjøpet aksepterer du våre <a href="#"
+                            onclick="event.preventDefault(); openModal('terms-modal')">kjøpsvilkår</a></p>
                     <button class="checkout-button" onclick="goToCheckout()">Gå til kasse</button>
                     <button class="empty-cart-button" onclick="emptyCart()">Tøm handlekurv</button>
                 </div>

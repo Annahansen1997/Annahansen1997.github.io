@@ -8,6 +8,11 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
     updateCartDisplay();
+    // Legg til event listeners for handlekurv-knapper
+    const checkoutButton = document.querySelector('.checkout-button');
+    if (checkoutButton) {
+        checkoutButton.addEventListener('click', goToCheckout);
+    }
 });
 
 function addToCart(product) {
@@ -678,10 +683,12 @@ function buyNow(product) {
 }
 
 function goToCheckout() {
+    console.log('Starter checkout prosess'); // Debug logging
+    
     // Lukk handlekurv-modalen
     closeModal('cart-modal');
     
-    // Opprett og vis checkout-modalen
+    // Opprett checkout-modal
     const checkoutModal = document.createElement('div');
     checkoutModal.id = 'checkout-modal';
     checkoutModal.className = 'modal';
@@ -711,7 +718,11 @@ function goToCheckout() {
     
     checkoutModal.innerHTML = modalContent;
     document.body.appendChild(checkoutModal);
-    openModal('checkout-modal');
+    
+    // Vis checkout-modalen
+    setTimeout(() => {
+        openModal('checkout-modal');
+    }, 100);
 }
 
 function generateCheckoutItemsHTML() {
