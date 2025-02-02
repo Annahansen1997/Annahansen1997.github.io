@@ -358,33 +358,51 @@ document.querySelector('.about-link').addEventListener('click', function (e) {
     openModal('about-modal');
 });
 
-// Stripe konfigurasjon (erstatt med din egen public key)
-const stripe = Stripe('your_publishable_key');
+// Stripe konfigurasjon
+const stripe = Stripe(config.STRIPE_PUBLISHABLE_KEY);
 
-async function initiateCheckout() {
-    try {
-        const response = await fetch('/create-checkout-session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+function initiateCheckout() {
+    // Hent handlekurvdata
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cartItems.length === 0) {
+        alert('Handlekurven er tom');
+        return;
+    }
+
+    // Opprett en liste med produkter for Stripe
+    const lineItems = cartItems.map(item => ({
+        price_data: {
+            currency: 'nok',
+            product_data: {
+                name: item.name,
+                images: [window.location.origin + '/' + item.image]
             },
-            body: JSON.stringify({
-                items: cart.map(item => ({
-                    id: item.id,
-                    quantity: item.quantity
-                })),
-                customerEmail: document.getElementById('customer-email')?.value
-            })
-        });
+            unit_amount: item.price * 100 // Konverter til øre
+        },
+        quantity: item.quantity
+    }));
 
-        const { url } = await response.json();
-        
+    // Opprett en Stripe-økt
+    fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            lineItems: lineItems,
+            successUrl: window.location.origin + '/success.html',
+            cancelUrl: window.location.origin + '/cancel.html'
+        })
+    })
+    .then(response => response.json())
+    .then(session => {
         // Redirect til Stripe Checkout
-        window.location.href = url;
-    } catch (error) {
+        return stripe.redirectToCheckout({ sessionId: session.id });
+    })
+    .catch(error => {
         console.error('Error:', error);
         alert('Det oppstod en feil ved behandling av betalingen. Vennligst prøv igjen.');
-    }
+    });
 }
 
 // Bildekarusell funksjonalitet
