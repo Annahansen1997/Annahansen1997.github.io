@@ -682,14 +682,13 @@ function goToCheckout() {
     // Lukk handlekurv-modalen
     closeModal('cart-modal');
     
-    // Åpne checkout-modalen
-    openCheckoutModal();
-}
-
-function openCheckoutModal() {
+    // Opprett og vis checkout-modalen
     const checkoutModal = document.createElement('div');
     checkoutModal.id = 'checkout-modal';
     checkoutModal.className = 'modal';
+    
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
     const modalContent = `
         <div class="modal-content checkout-modal-content">
@@ -701,7 +700,7 @@ function openCheckoutModal() {
                     ${generateCheckoutItemsHTML()}
                 </div>
                 <div class="checkout-total">
-                    <strong>Totalt å betale: ${document.getElementById('cart-total').textContent}</strong>
+                    <strong>Totalt å betale: ${total.toFixed(2)} NOK</strong>
                 </div>
                 <div class="checkout-actions">
                     <button class="payment-button" onclick="initiateCheckout()">Betal med kort</button>
@@ -717,8 +716,8 @@ function openCheckoutModal() {
 }
 
 function generateCheckoutItemsHTML() {
-    let html = '';
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    let html = '';
     
     cartItems.forEach(item => {
         html += `
@@ -737,10 +736,13 @@ function generateCheckoutItemsHTML() {
 }
 
 function backToCart() {
+    // Fjern checkout-modalen
     closeModal('checkout-modal');
     const checkoutModal = document.getElementById('checkout-modal');
     if (checkoutModal) {
         checkoutModal.remove();
     }
+    
+    // Åpne handlekurv-modalen igjen
     openModal('cart-modal');
 }
