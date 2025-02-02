@@ -369,32 +369,11 @@ function initiateCheckout() {
         return;
     }
 
-    // Opprett en Stripe Checkout sesjon direkte
-    stripe.redirectToCheckout({
-        lineItems: cartItems.map(item => ({
-            price_data: {
-                currency: 'nok',
-                product_data: {
-                    name: item.name,
-                    images: [window.location.origin + '/' + item.image]
-                },
-                unit_amount: Math.round(item.price * 100) // Konverter til øre
-            },
-            quantity: item.quantity
-        })),
-        mode: 'payment',
-        successUrl: window.location.origin + '/success.html',
-        cancelUrl: window.location.origin + '/cancel.html'
-    })
-    .then(function (result) {
-        if (result.error) {
-            alert(result.error.message);
-        }
-    })
-    .catch(function(error) {
-        console.error('Error:', error);
-        alert('Det oppstod en feil ved behandling av betalingen. Vennligst prøv igjen.');
-    });
+    // Beregn total
+    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Redirect til Stripe payment link
+    window.location.href = config.PAYMENT_LINK;
 }
 
 // Bildekarusell funksjonalitet

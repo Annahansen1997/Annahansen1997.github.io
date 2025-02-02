@@ -1,3 +1,4 @@
+// Stripe konfigurasjon - Nøkler er flyttet til .env fil
 const config = {
-    STRIPE_PUBLISHABLE_KEY: 'pk_live_51Qmu3ULPxmfy63yEbYUAv6FZFaaGsoSTp8XF7nUEol9ksHgNid71K4FogSAhBwBDdNYa8syBZ4DAP4c9BS0qHaBQ00aT9p4bcV'
+    PAYMENT_LINK: 'https://buy.stripe.com/4gw6qj0UQb8K6647ss'
 }; 
