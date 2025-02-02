@@ -141,23 +141,22 @@ searchInput.addEventListener('input', function (e) {
 // Modal funksjoner
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
-    if (!modal) return;
-    
-    modal.style.display = 'block';
-    document.body.classList.add('modal-open');
-    currentModal = modal;
-    
-    // Initialize carousel for the current modal
-    initializeCarousel(modal);
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.classList.add('modal-open');
+        
+        if (modalId === 'cart-modal') {
+            updateCartDisplay();
+        }
+    }
 }
 
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-    if (!modal) return;
-    
-    modal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-    currentModal = null;
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
 }
 
 function initializeCarousel(modal) {
