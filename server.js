@@ -2,10 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
-const app = express();
+const cors = require('cors');
 
+const app = express();
 app.use(express.json());
-app.use(express.static('.'));
+app.use(cors());
 
 // Konfigurer e-post-tjeneste
 const transporter = nodemailer.createTransport({
@@ -16,14 +17,14 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Stripe Price IDs for hvert produkt
+// Stripe Price IDs for products
 const STRIPE_PRICE_IDS = {
-    '0': 'price_1Qo9IPLPxmfy63yEXy1w1l8T',  // Vinterkos
-    '1': 'price_1Qo9MJLPxmfy63yETbGYTyLJ',  // Påskekos
-    '2': 'price_1Qo9NKLPxmfy63yEAoCoz18f',  // Dinosaur
-    '3': 'price_1Qo9ODLPxmfy63yEtbAchGtn',  // Enhjørning
-    '4': 'price_1Qo9P1LPxmfy63yES6FrJHo3',  // Bilbingo
-    '5': 'price_1Qo9PnLPxmfy63yEf9cE5DIr'   // Flybingo
+    'flybingo': 'price_1QnxbQLPxmfy63yEgOJpONGp',
+    'bilbingo': 'price_1QnxbQLPxmfy63yEhKMpQOYp',
+    'enhjørning': 'price_1QnxbQLPxmfy63yEiRNpFCBG',
+    'dinosaur': 'price_1QnxbQLPxmfy63yEjSOpXHZb',
+    'påskekos': 'price_1QnxbQLPxmfy63yEkTQqYIZc',
+    'vinterkos': 'price_1QnxbQLPxmfy63yElURrZJad'
 };
 
 // Produktkatalog
@@ -66,40 +67,30 @@ const products = {
     }
 };
 
-// Opprett checkout-økt endepunkt
 app.post('/create-checkout-session', async (req, res) => {
     try {
-        const items = req.body.items || [];
-        const lineItems = items.map(item => ({
-            price: STRIPE_PRICE_IDS[item.id],
-            quantity: 1
-        }));
-
-        // Lagre produktinformasjon for e-postlevering
-        const purchasedProducts = items.map(item => ({
-            name: products[item.id].name,
-            filename: products[item.id].filename
-        }));
-
+        const { items } = req.body;
+        
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            line_items: lineItems,
+            line_items: items.map(item => ({
+                price: STRIPE_PRICE_IDS[item.id],
+                quantity: 1,
+            })),
             mode: 'payment',
             success_url: `${req.headers.origin}/success.html`,
             cancel_url: `${req.headers.origin}/cancel.html`,
-            metadata: {
-                customerEmail: req.body.customerEmail,
-                purchasedProducts: JSON.stringify(purchasedProducts)
-            },
+            automatic_tax: { enabled: true },
             billing_address_collection: 'required',
             shipping_address_collection: {
-                allowed_countries: ['NO']
-            }
+                allowed_countries: ['NO'],
+            },
         });
 
         res.json({ url: session.url });
     } catch (error) {
-        res.status(500).json({ error: `Betalingsfeil: ${error.message}` });
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -145,7 +136,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
 });
 
 // Start serveren
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Serveren kjører på port ${port}`);
+    console.log(`Server running on port ${port}`);
 });

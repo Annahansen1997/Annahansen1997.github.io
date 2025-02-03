@@ -355,43 +355,35 @@ document.querySelector('.about-link').addEventListener('click', function (e) {
 // Stripe konfigurasjon
 const stripe = Stripe(config.STRIPE_PUBLISHABLE_KEY);
 
-function goToCheckout() {
-    // Hent handlekurvdata
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    if (cartItems.length === 0) {
-        alert('Handlekurven er tom');
-        return;
-    }
+async function handleCheckout() {
+    const cartModal = document.getElementById('cart-modal');
+    cartModal.style.display = 'none';
 
-    // Lukk handlekurv-modalen
-    closeModal('cart-modal');
-    
-    // Send forespørsel til serveren for å opprette en Stripe Checkout Session
-    fetch('http://localhost:3001/create-checkout-session', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            items: cartItems.map(item => ({
-                id: item.id.toString(),
-                quantity: 1
-            }))
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.url) {
-            // Redirect til Stripe Checkout
-            window.location.href = data.url;
-        } else {
-            throw new Error('Kunne ikke opprette checkout session');
-        }
-    })
-    .catch(error => {
+    try {
+        const response = await fetch('http://localhost:3000/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                items: cart.map(item => ({ 
+                    id: item.id === 0 ? 'vinterkos' :
+                         item.id === 1 ? 'påskekos' :
+                         item.id === 2 ? 'dinosaur' :
+                         item.id === 3 ? 'enhjørning' :
+                         item.id === 4 ? 'bilbingo' :
+                         'flybingo'
+                }))
+            })
+        });
+
+        const { url } = await response.json();
+        window.location = url;
+    } catch (error) {
         console.error('Error:', error);
         alert('Det oppstod en feil. Vennligst prøv igjen senere.');
-    });
+        cartModal.style.display = 'block';
+    }
 }
 
 // Bildekarusell funksjonalitet
