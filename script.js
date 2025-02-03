@@ -366,8 +366,8 @@ function initiateCheckout() {
         return;
     }
 
-    // Redirect til Stripe betalingslenke
-    window.location.href = 'https://buy.stripe.com/bIYcOHbzuccO0LKcMN';
+    // Send kunden til Stripe betalingsside
+    window.location.href = config.PAYMENT_LINK;
 }
 
 // Bildekarusell funksjonalitet
