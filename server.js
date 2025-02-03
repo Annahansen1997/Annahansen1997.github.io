@@ -16,6 +16,16 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Stripe Price IDs for hvert produkt
+const STRIPE_PRICE_IDS = {
+    '0': 'price_1Qo9IPLPxmfy63yEXy1w1l8T',  // Vinterkos
+    '1': 'price_1Qo9MJLPxmfy63yETbGYTyLJ',  // Påskekos
+    '2': 'price_1Qo9NKLPxmfy63yEAoCoz18f',  // Dinosaur
+    '3': 'price_1Qo9ODLPxmfy63yEtbAchGtn',  // Enhjørning
+    '4': 'price_1Qo9P1LPxmfy63yES6FrJHo3',  // Bilbingo
+    '5': 'price_1Qo9PnLPxmfy63yEf9cE5DIr'   // Flybingo
+};
+
 // Produktkatalog
 const products = {
     '0': {
@@ -61,15 +71,14 @@ app.post('/create-checkout-session', async (req, res) => {
     try {
         const items = req.body.items || [];
         const lineItems = items.map(item => ({
-            price_data: {
-                currency: 'nok',
-                product_data: {
-                    name: products[item.id].name,
-                    description: products[item.id].description,
-                },
-                unit_amount: products[item.id].price,
-            },
-            quantity: item.quantity || 1,
+            price: STRIPE_PRICE_IDS[item.id],
+            quantity: 1
+        }));
+
+        // Lagre produktinformasjon for e-postlevering
+        const purchasedProducts = items.map(item => ({
+            name: products[item.id].name,
+            filename: products[item.id].filename
         }));
 
         const session = await stripe.checkout.sessions.create({
@@ -79,7 +88,12 @@ app.post('/create-checkout-session', async (req, res) => {
             success_url: `${req.headers.origin}/success.html`,
             cancel_url: `${req.headers.origin}/cancel.html`,
             metadata: {
-                customerEmail: req.body.customerEmail
+                customerEmail: req.body.customerEmail,
+                purchasedProducts: JSON.stringify(purchasedProducts)
+            },
+            billing_address_collection: 'required',
+            shipping_address_collection: {
+                allowed_countries: ['NO']
             }
         });
 
@@ -95,7 +109,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent(request.body, sig, 'din_webhook_secret');
+        event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
         response.status(400).send(`Webhook-feil: ${err.message}`);
         return;
@@ -104,6 +118,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
     // Håndter vellykket betaling
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
+        const purchasedProducts = JSON.parse(session.metadata.purchasedProducts);
         
         // Send PDF til kunden
         const mailOptions = {
@@ -111,7 +126,10 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
             to: session.metadata.customerEmail,
             subject: 'Dine aktivitetshefter fra Kreativ Moro',
             text: 'Tusen takk for kjøpet! Her er dine aktivitetshefter. God fornøyelse!',
-            attachments: [] // Attachments will be added based on purchased items
+            attachments: purchasedProducts.map(product => ({
+                filename: product.filename,
+                path: `./${product.filename}` // Sørg for at filene ligger i riktig mappe
+            }))
         };
 
         transporter.sendMail(mailOptions, function(error, info) {
@@ -130,4 +148,4 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
     console.log(`Serveren kjører på port ${port}`);
-}); 
+});

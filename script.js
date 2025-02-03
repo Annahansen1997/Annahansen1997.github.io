@@ -13,6 +13,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (checkoutButton) {
         checkoutButton.addEventListener('click', goToCheckout);
     }
+
+    // Legg til kontakt-knapp lytter
+    document.querySelectorAll('.nav-link').forEach(link => {
+        if (link.textContent.trim() === 'Kontakt') {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                openContactModal();
+            });
+        }
+    });
 });
 
 function addToCart(product) {
@@ -251,25 +261,12 @@ function showCartMessage() {
 }
 
 // Kontakt-funksjonalitet
-document.querySelectorAll('.nav-link').forEach(link => {
-    if (link.textContent.trim() === 'Kontakt') {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            openContactModal();
-        });
-    }
-});
-
 function openContactModal() {
     const modal = document.getElementById('contact-modal');
-    modal.style.display = "block";
-    document.body.classList.add('modal-open');
-   
-    // Legg til overflow kontroll
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.overscrollBehavior = 'none';
+    if (modal) {
+        modal.style.display = "block";
+        document.body.classList.add('modal-open');
+    }
 }
 
 // Legg til denne konstanten øverst i filen (utenfor alle funksjoner)
@@ -369,8 +366,32 @@ function goToCheckout() {
     // Lukk handlekurv-modalen
     closeModal('cart-modal');
     
-    // Send kunden direkte til Stripe betalingslenke
-    window.location.href = config.PAYMENT_LINK;
+    // Send forespørsel til serveren for å opprette en Stripe Checkout Session
+    fetch('http://localhost:3001/create-checkout-session', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            items: cartItems.map(item => ({
+                id: item.id.toString(),
+                quantity: 1
+            }))
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.url) {
+            // Redirect til Stripe Checkout
+            window.location.href = data.url;
+        } else {
+            throw new Error('Kunne ikke opprette checkout session');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Det oppstod en feil. Vennligst prøv igjen senere.');
+    });
 }
 
 // Bildekarusell funksjonalitet
@@ -666,21 +687,6 @@ function buyNow(product) {
     
     // Åpne handlekurv-modalen
     openModal('cart-modal');
-}
-
-function goToCheckout() {
-    // Hent handlekurvdata
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    if (cartItems.length === 0) {
-        alert('Handlekurven er tom');
-        return;
-    }
-
-    // Lukk handlekurv-modalen
-    closeModal('cart-modal');
-    
-    // Send kunden direkte til Stripe betalingslenke
-    window.location.href = config.PAYMENT_LINK;
 }
 
 function generateCheckoutItemsHTML() {
