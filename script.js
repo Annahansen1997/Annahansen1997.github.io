@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Legg til event listeners for handlekurv-knapper
     const checkoutButton = document.querySelector('.checkout-button');
     if (checkoutButton) {
-        checkoutButton.addEventListener('click', goToCheckout);
+        checkoutButton.addEventListener('click', handleCheckout);
     }
 
     // Legg til kontakt-knapp lytter
