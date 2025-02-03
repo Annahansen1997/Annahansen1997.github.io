@@ -16,14 +16,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function addToCart(product) {
+    // Sjekk om produktet allerede er i handlekurven
     const existingItem = cart.find(item => item.id === product.id);
-
+    
     if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
+        // Vis melding om at produktet allerede er i handlekurven
+        showAddedToCartMessage(`${product.name} er allerede i handlekurven`);
+        return;
     }
-
+    
+    // Legg til produktet (alltid med quantity = 1 siden det er PDF)
+    cart.push({ ...product, quantity: 1 });
+    
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     updateCartDisplay();
@@ -51,8 +55,7 @@ function updateCartDisplay() {
     let total = 0;
     
     cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
+        total += item.price;
         
         html += `
             <div class="cart-item">
@@ -61,12 +64,6 @@ function updateCartDisplay() {
                     <h3>${item.name}</h3>
                     <p>${item.price.toFixed(2)} NOK</p>
                 </div>
-                <div class="cart-item-quantity">
-                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
-                    <span>${item.quantity}</span>
-                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-                </div>
-                <div class="cart-item-price">${itemTotal.toFixed(2)} NOK</div>
                 <button class="delete-btn" onclick="removeFromCart(${item.id})">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 6L6 18M6 6l12 12"/>
@@ -369,11 +366,8 @@ function initiateCheckout() {
         return;
     }
 
-    // Beregn total
-    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
-    // Redirect til Stripe payment link
-    window.location.href = config.PAYMENT_LINK;
+    // Redirect til Stripe betalingslenke
+    window.location.href = 'https://buy.stripe.com/bIYcOHbzuccO0LKcMN';
 }
 
 // Bildekarusell funksjonalitet
