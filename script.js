@@ -358,7 +358,7 @@ document.querySelector('.about-link').addEventListener('click', function (e) {
 // Stripe konfigurasjon
 const stripe = Stripe(config.STRIPE_PUBLISHABLE_KEY);
 
-function initiateCheckout() {
+function goToCheckout() {
     // Hent handlekurvdata
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     if (cartItems.length === 0) {
@@ -366,7 +366,10 @@ function initiateCheckout() {
         return;
     }
 
-    // Send kunden til Stripe betalingsside
+    // Lukk handlekurv-modalen
+    closeModal('cart-modal');
+    
+    // Send kunden direkte til Stripe betalingslenke
     window.location.href = config.PAYMENT_LINK;
 }
 
@@ -666,46 +669,18 @@ function buyNow(product) {
 }
 
 function goToCheckout() {
-    console.log('Starter checkout prosess'); // Debug logging
-    
+    // Hent handlekurvdata
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cartItems.length === 0) {
+        alert('Handlekurven er tom');
+        return;
+    }
+
     // Lukk handlekurv-modalen
     closeModal('cart-modal');
     
-    // Opprett checkout-modal
-    const checkoutModal = document.createElement('div');
-    checkoutModal.id = 'checkout-modal';
-    checkoutModal.className = 'modal';
-    
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
-    const modalContent = `
-        <div class="modal-content checkout-modal-content">
-            <span class="close" onclick="closeModal('checkout-modal')">&times;</span>
-            <h2>Kasse</h2>
-            <div class="checkout-summary">
-                <h3>Din bestilling</h3>
-                <div id="checkout-items">
-                    ${generateCheckoutItemsHTML()}
-                </div>
-                <div class="checkout-total">
-                    <strong>Totalt å betale: ${total.toFixed(2)} NOK</strong>
-                </div>
-                <div class="checkout-actions">
-                    <button class="payment-button" onclick="initiateCheckout()">Betal med kort</button>
-                    <button class="back-to-cart-button" onclick="backToCart()">Tilbake til handlekurv</button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    checkoutModal.innerHTML = modalContent;
-    document.body.appendChild(checkoutModal);
-    
-    // Vis checkout-modalen
-    setTimeout(() => {
-        openModal('checkout-modal');
-    }, 100);
+    // Send kunden direkte til Stripe betalingslenke
+    window.location.href = config.PAYMENT_LINK;
 }
 
 function generateCheckoutItemsHTML() {
