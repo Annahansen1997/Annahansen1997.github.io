@@ -13,15 +13,15 @@ const corsOptions = {
     credentials: true
 };
 
-// Legg til CORS middleware
 app.use(cors({
-    origin: ['https://kreativmoro.no', 'http://localhost:3000'],
+    origin: ['https://kreativmoro.no'],
     methods: ['POST', 'GET', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'stripe-signature'],
+    allowedHeaders: ['Content-Type'],
     credentials: true
 }));
 
-app.options('*', cors()); // Håndter pre-flight OPTIONS-forespørsler globalt
+app.options('*', cors()); // Pre-flight OPTIONS
+
 
 app.use(express.json());
 app.use(express.static('.'));
@@ -87,7 +87,7 @@ const products = {
 
 // Opprett checkout-økt endepunkt
 // Oppdater endepunktet med eksplisitt CORS
-app.post('/create-checkout-session', cors(corsOptions), async (req, res) => {
+app.post('/api/create-checkout-session', async (req, res) => {
     try {
         const items = req.body.items || [];
         const lineItems = items.map(item => ({
