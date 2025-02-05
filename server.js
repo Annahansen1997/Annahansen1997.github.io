@@ -145,7 +145,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
 });
 
 // Start serveren
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Serveren kjører på port ${port}`);
 });

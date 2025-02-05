@@ -367,7 +367,7 @@ function goToCheckout() {
     closeModal('cart-modal');
     
     // Send forespørsel til serveren for å opprette en Stripe Checkout Session
-    fetch('http://localhost:3001/create-checkout-session', {
+    fetch('http://localhost:3000/create-checkout-session', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
