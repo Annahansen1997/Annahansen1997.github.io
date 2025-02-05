@@ -355,8 +355,8 @@ document.querySelector('.about-link').addEventListener('click', function (e) {
 // Stripe konfigurasjon
 const stripe = Stripe(config.STRIPE_PUBLISHABLE_KEY);
 
-function goToCheckout() {
-    // Hent handlekurvdata
+
+async function goToCheckout() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     if (cartItems.length === 0) {
         alert('Handlekurven er tom');
@@ -365,34 +365,33 @@ function goToCheckout() {
 
     // Lukk handlekurv-modalen
     closeModal('cart-modal');
-    
-    // Send forespørsel til serveren for å opprette en Stripe Checkout Session
-    fetch('http://localhost:3000/create-checkout-session', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            items: cartItems.map(item => ({
-                id: item.id.toString(),
-                quantity: 1
-            }))
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
+
+    try {
+        const response = await fetch('http://localhost:3000/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                items: cartItems.map(item => ({
+                    id: item.id.toString(),
+                    price: item.price
+                }))
+            })
+        });
+
+        const data = await response.json();
         if (data.url) {
-            // Redirect til Stripe Checkout
-            window.location.href = data.url;
+            window.location.href = data.url; // Redirect til Stripe Checkout
         } else {
             throw new Error('Kunne ikke opprette checkout session');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error:', error);
         alert('Det oppstod en feil. Vennligst prøv igjen senere.');
-    });
+    }
 }
+
 
 // Bildekarusell funksjonalitet
 let currentImageIndex = 0;
