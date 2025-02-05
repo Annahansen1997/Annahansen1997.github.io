@@ -35,37 +35,37 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Produktkonfigurasjon
 const PRODUCTS = {
     'vinterkos': {
-        price: 4900,
+        price: 4500,
         name: 'Vinterkos Aktivitetshefte',
         description: 'Digital nedlasting - PDF format',
         filename: 'vinterkos_aktivitetshefte.pdf'
     },
     'påskekos': {
-        price: 4900,
+        price: 4500,
         name: 'Påskekos Aktivitetshefte',
         description: 'Digital nedlasting - PDF format',
         filename: 'paskekos_aktivitetshefte.pdf'
     },
     'dinosaur': {
-        price: 4900,
+        price: 4500,
         name: 'Dinosaur Aktivitetshefte',
         description: 'Digital nedlasting - PDF format',
         filename: 'dinosaur_aktivitetshefte.pdf'
     },
     'enhjørning': {
-        price: 4900,
+        price: 4500,
         name: 'Enhjørning Aktivitetshefte',
         description: 'Digital nedlasting - PDF format',
         filename: 'enhjorning_aktivitetshefte.pdf'
     },
     'bilbingo': {
-        price: 4900,
+        price: 3500,
         name: 'Bilbingo',
         description: 'Digital nedlasting - PDF format',
         filename: 'bilbingo.pdf'
     },
     'flybingo': {
-        price: 4900,
+        price: 3500,
         name: 'Flybingo',
         description: 'Digital nedlasting - PDF format',
         filename: 'flybingo.pdf'
