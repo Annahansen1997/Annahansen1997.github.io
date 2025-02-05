@@ -366,6 +366,8 @@ document.addEventListener('DOMContentLoaded', function() {
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Qmu3ULPxmfy63yEbYUAv6FZFaaGsoSTp8XF7nUEol9ksHgNid71K4FogSAhBwBDdNYa8syBZ4DAP4c9BS0qHaBQ00aT9p4bcV';
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
+// ... existing code ...
+
 async function handleCheckout() {
     const cartModal = document.getElementById('cart-modal');
     cartModal.style.display = 'none';
@@ -379,7 +381,8 @@ async function handleCheckout() {
             throw new Error('Handlekurven er tom');
         }
 
-        const response = await fetch('https://api.kreativmoro.no/api/create-checkout-session', {
+        // Endre URL til lokal server
+        const response = await fetch('http://localhost:3000/api/create-checkout-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
