@@ -14,8 +14,14 @@ const corsOptions = {
 };
 
 // Legg til CORS middleware
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));  // Enable pre-flight for all routes
+app.use(cors({
+    origin: ['https://kreativmoro.no', 'http://localhost:3000'],
+    methods: ['POST', 'GET', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'stripe-signature'],
+    credentials: true
+}));
+
+app.options('*', cors()); // Håndter pre-flight OPTIONS-forespørsler globalt
 
 app.use(express.json());
 app.use(express.static('.'));

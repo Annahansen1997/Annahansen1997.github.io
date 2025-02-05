@@ -367,7 +367,7 @@ async function goToCheckout() {
     closeModal('cart-modal');
 
     try {
-        const response = await fetch('http://localhost:3000/create-checkout-session', {
+        const response = await fetch('https://kreativmoro.no/api/create-checkout-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ async function goToCheckout() {
                     price: item.price
                 }))
             })
-        });
+        })
 
         const data = await response.json();
         if (data.url) {
