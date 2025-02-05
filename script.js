@@ -369,9 +369,17 @@ const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 async function handleCheckout() {
     const cartModal = document.getElementById('cart-modal');
     cartModal.style.display = 'none';
+    
+    // Vis loading indikator
+    showLoadingMessage('Behandler betalingen...');
 
     try {
-        const response = await fetch('https://api.kreativmoro.no/create-checkout-session', {
+        // Sjekk om handlekurven er tom
+        if (!cart || cart.length === 0) {
+            throw new Error('Handlekurven er tom');
+        }
+
+        const response = await fetch('https://api.kreativmoro.no/api/create-checkout-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -389,21 +397,61 @@ async function handleCheckout() {
             })
         });
 
+        // Fjern loading indikator
+        hideLoadingMessage();
+
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || 'Nettverksrespons var ikke OK');
+            let errorMessage = 'Det oppstod en feil ved behandling av betalingen.';
+            try {
+                const errorData = await response.json();
+                if (errorData && errorData.error) {
+                    errorMessage = errorData.error;
+                }
+            } catch (e) {
+                console.error('Kunne ikke parse error response:', e);
+            }
+            throw new Error(errorMessage);
         }
 
-        const { url } = await response.json();
-        if (url) {
-            window.location.href = url;
-        } else {
-            throw new Error('Ingen URL mottatt fra server');
+        const data = await response.json();
+        
+        if (!data.url) {
+            throw new Error('Ingen betalings-URL mottatt fra serveren');
         }
+
+        // Redirect til Stripe Checkout
+        window.location.href = data.url;
+
     } catch (error) {
+        // Fjern loading indikator hvis den fortsatt vises
+        hideLoadingMessage();
+        
         console.error('Checkout Error:', error);
-        alert('Det oppstod en feil ved behandling av betalingen. Vennligst prøv igjen senere eller kontakt kundeservice.');
+        
+        // Vis feilmelding til bruker
+        alert(error.message || 'Det oppstod en feil ved behandling av betalingen. Vennligst prøv igjen senere eller kontakt kundeservice.');
+        
+        // Vis handlekurven igjen
         cartModal.style.display = 'block';
+    }
+}
+
+// Hjelpefunksjoner for loading indikator
+function showLoadingMessage(message) {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loading-message';
+    loadingDiv.className = 'loading-message';
+    loadingDiv.innerHTML = `
+        <div class="spinner"></div>
+        <p>${message}</p>
+    `;
+    document.body.appendChild(loadingDiv);
+}
+
+function hideLoadingMessage() {
+    const loadingDiv = document.getElementById('loading-message');
+    if (loadingDiv) {
+        loadingDiv.remove();
     }
 }
 
