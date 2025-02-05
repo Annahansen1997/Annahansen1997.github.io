@@ -371,25 +371,27 @@ async function handleCheckout() {
     cartModal.style.display = 'none';
 
     try {
-        const response = await fetch('https://kreativmoro.no/create-checkout-session', {
+        const response = await fetch('https://api.kreativmoro.no/create-checkout-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                items: cart.map(item => ({ 
+                items: cart.map(item => ({
                     id: item.id === 0 ? 'vinterkos' :
                          item.id === 1 ? 'påskekos' :
                          item.id === 2 ? 'dinosaur' :
                          item.id === 3 ? 'enhjørning' :
                          item.id === 4 ? 'bilbingo' :
-                         'flybingo'
+                         'flybingo',
+                    price: item.price
                 }))
             })
         });
 
         if (!response.ok) {
-            throw new Error('Nettverksrespons var ikke OK');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Nettverksrespons var ikke OK');
         }
 
         const { url } = await response.json();
@@ -399,8 +401,8 @@ async function handleCheckout() {
             throw new Error('Ingen URL mottatt fra server');
         }
     } catch (error) {
-        console.error('Error:', error);
-        alert('Det oppstod en feil. Vennligst prøv igjen senere.');
+        console.error('Checkout Error:', error);
+        alert('Det oppstod en feil ved behandling av betalingen. Vennligst prøv igjen senere eller kontakt kundeservice.');
         cartModal.style.display = 'block';
     }
 }

@@ -1,142 +1,213 @@
 require('dotenv').config();
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const nodemailer = require('nodemailer');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const path = require('path');
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
-// Konfigurer e-post-tjeneste
-const transporter = nodemailer.createTransport({
-    service: 'hotmail',
-    auth: {
-        user: 'hombgames@hotmail.com',
-        pass: process.env.EMAIL_PASSWORD
-    }
+// Sikkerhetstiltak
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutter
+    max: 100 // maks 100 requests per vindu
 });
+app.use('/api/', limiter);
 
-// Stripe Price IDs for products
-const STRIPE_PRICE_IDS = {
-    'flybingo': 'price_1QnxbQLPxmfy63yEgOJpONGp',
-    'bilbingo': 'price_1QnxbQLPxmfy63yEhKMpQOYp',
-    'enhjørning': 'price_1QnxbQLPxmfy63yEiRNpFCBG',
-    'dinosaur': 'price_1QnxbQLPxmfy63yEjSOpXHZb',
-    'påskekos': 'price_1QnxbQLPxmfy63yEkTQqYIZc',
-    'vinterkos': 'price_1QnxbQLPxmfy63yElURrZJad'
-};
+// Logging
+app.use(morgan('combined'));
 
-// Produktkatalog
-const products = {
-    '0': {
-        name: 'Vinterkos',
-        price: 4500, // 45 NOK i øre
-        description: 'Digitalt aktivitetshefte for vinteren',
-        filename: 'Vinterkos_Aktivitetshefte.pdf'
+// CORS konfigurasjon
+app.use(cors({
+    origin: ['https://kreativmoro.no', 'https://www.kreativmoro.no'],
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Produktkonfigurasjon
+const PRODUCTS = {
+    'vinterkos': {
+        price: 4900,
+        name: 'Vinterkos Aktivitetshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'vinterkos_aktivitetshefte.pdf'
     },
-    '1': {
-        name: 'Påskekos',
-        price: 4500, // 45 NOK i øre
-        description: 'Digitalt aktivitetshefte for påsken',
-        filename: 'Påskekos_Aktivitetshefte.pdf'
+    'påskekos': {
+        price: 4900,
+        name: 'Påskekos Aktivitetshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'paskekos_aktivitetshefte.pdf'
     },
-    '2': {
-        name: 'På eventyr med dinosaurene',
-        price: 4500, // 45 NOK i øre
-        description: 'Digitalt aktivitetshefte med dinosaurer',
-        filename: 'Dinosaur_Aktivitetshefte.pdf'
+    'dinosaur': {
+        price: 4900,
+        name: 'Dinosaur Aktivitetshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'dinosaur_aktivitetshefte.pdf'
     },
-    '3': {
-        name: 'Enhjørningens magiske eventyrhefte',
-        price: 4500, // 45 NOK i øre
-        description: 'Digitalt aktivitetshefte med enhjørninger',
-        filename: 'Enhjørning_Aktivitetshefte.pdf'
+    'enhjørning': {
+        price: 4900,
+        name: 'Enhjørning Aktivitetshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'enhjorning_aktivitetshefte.pdf'
     },
-    '4': {
+    'bilbingo': {
+        price: 4900,
         name: 'Bilbingo',
-        price: 3500, // 35 NOK i øre
-        description: 'Digitalt bilbingo for bilturen',
-        filename: 'Bilbingo.pdf'
+        description: 'Digital nedlasting - PDF format',
+        filename: 'bilbingo.pdf'
     },
-    '5': {
+    'flybingo': {
+        price: 4900,
         name: 'Flybingo',
-        price: 3500, // 35 NOK i øre
-        description: 'Digitalt flybingo for flyreisen',
-        filename: 'Flybingo.pdf'
+        description: 'Digital nedlasting - PDF format',
+        filename: 'flybingo.pdf'
     }
 };
 
-app.post('/create-checkout-session', async (req, res) => {
+// Webhook secret for Stripe
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+// Checkout session endpoint
+app.post('/api/create-checkout-session', async (req, res) => {
     try {
-        const { items } = req.body;
-        
+        if (!req.body.items || !Array.isArray(req.body.items)) {
+            return res.status(400).json({ 
+                error: 'Ugyldig forespørsel: items er påkrevd og må være en array' 
+            });
+        }
+
+        const lineItems = req.body.items.map(item => {
+            const product = PRODUCTS[item.id];
+            if (!product) {
+                throw new Error(`Ugyldig produkt ID: ${item.id}`);
+            }
+            return {
+                price_data: {
+                    currency: 'nok',
+                    product_data: {
+                        name: product.name,
+                        description: product.description,
+                    },
+                    unit_amount: product.price,
+                },
+                quantity: 1,
+            };
+        });
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            line_items: items.map(item => ({
-                price: STRIPE_PRICE_IDS[item.id],
-                quantity: 1,
-            })),
+            line_items: lineItems,
             mode: 'payment',
-            success_url: `${req.headers.origin}/success.html`,
-            cancel_url: `${req.headers.origin}/cancel.html`,
-            automatic_tax: { enabled: true },
-            billing_address_collection: 'required',
-            shipping_address_collection: {
-                allowed_countries: ['NO'],
+            success_url: `${process.env.DOMAIN}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.DOMAIN}`,
+            locale: 'no',
+            payment_intent_data: {
+                description: 'Kreativ Moro - Digital nedlasting',
             },
+            metadata: {
+                products: JSON.stringify(req.body.items.map(item => item.id))
+            }
         });
 
         res.json({ url: session.url });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Checkout Error:', error);
+        res.status(500).json({ 
+            error: 'Det oppstod en feil ved opprettelse av checkout session',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });
 
-// Webhook for å håndtere vellykkede betalinger
+// Stripe webhook handler
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
     const sig = request.headers['stripe-signature'];
+
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
     } catch (err) {
-        response.status(400).send(`Webhook-feil: ${err.message}`);
+        response.status(400).send(`Webhook Error: ${err.message}`);
         return;
     }
 
-    // Håndter vellykket betaling
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-        const purchasedProducts = JSON.parse(session.metadata.purchasedProducts);
-        
-        // Send PDF til kunden
-        const mailOptions = {
-            from: 'hombgames@hotmail.com',
-            to: session.metadata.customerEmail,
-            subject: 'Dine aktivitetshefter fra Kreativ Moro',
-            text: 'Tusen takk for kjøpet! Her er dine aktivitetshefter. God fornøyelse!',
-            attachments: purchasedProducts.map(product => ({
-                filename: product.filename,
-                path: `./${product.filename}` // Sørg for at filene ligger i riktig mappe
-            }))
-        };
-
-        transporter.sendMail(mailOptions, function(error, info) {
-            if (error) {
-                console.log('E-postfeil:', error);
-            } else {
-                console.log('E-post sendt:', info.response);
-            }
-        });
+    // Handle the event
+    switch (event.type) {
+        case 'checkout.session.completed':
+            const session = event.data.object;
+            
+            // Her kan du legge til kode for å:
+            // 1. Sende e-post med nedlastingslenke
+            // 2. Oppdatere ordrestatus i database
+            // 3. Generere nedlastingslenker
+            
+            console.log('Betaling fullført:', session);
+            break;
+            
+        case 'payment_intent.succeeded':
+            const paymentIntent = event.data.object;
+            console.log('PaymentIntent var vellykket:', paymentIntent);
+            break;
+            
+        case 'payment_intent.payment_failed':
+            const failedPayment = event.data.object;
+            console.log('Betaling feilet:', failedPayment);
+            break;
+            
+        default:
+            console.log(`Uhåndtert event type ${event.type}`);
     }
 
-    response.json({received: true});
+    response.send();
 });
 
-// Start serveren
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+// Helsesjekk endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'OK', 
+        timestamp: new Date().toISOString(),
+        version: process.env.npm_package_version
+    });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        error: 'En feil oppstod på serveren',
+        details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT, () => {
+    console.log(`Server kjører på port ${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM signal mottatt: lukker server');
+    server.close(() => {
+        console.log('Server lukket');
+        process.exit(0);
+    });
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
 });
