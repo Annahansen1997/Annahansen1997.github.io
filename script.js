@@ -132,22 +132,27 @@ function showAddedToCartMessage(productName) {
 }
 
 // Søkefunksjonalitet
-const searchInput = document.querySelector('.search-container input');
-const productCards = document.querySelectorAll('.product-card');
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-container input');
+    const productCards = document.querySelectorAll('.product-card');
+    
+    // Sjekk om søkefeltet eksisterer før vi legger til event listener
+    if (searchInput) {
+        searchInput.addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
 
-searchInput.addEventListener('input', function (e) {
-    const searchTerm = e.target.value.toLowerCase();
+            productCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
 
-    productCards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const description = card.querySelector('p').textContent.toLowerCase();
-
-        if (title.includes(searchTerm) || description.includes(searchTerm)) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
-    });
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
 });
 
 // Modal funksjoner
