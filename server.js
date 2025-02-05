@@ -2,7 +2,20 @@ require('dotenv').config();
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
+const cors = require('cors');  // Legg til denne linjen
 const app = express();
+
+// CORS konfigurasjon
+const corsOptions = {
+    origin: ['https://kreativmoro.no', 'http://localhost:3000'], // Tillat både produksjon og lokal utvikling
+    methods: ['POST', 'GET', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'stripe-signature'],
+    credentials: true
+};
+
+// Legg til CORS middleware
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));  // Enable pre-flight for all routes
 
 app.use(express.json());
 app.use(express.static('.'));
@@ -67,7 +80,8 @@ const products = {
 };
 
 // Opprett checkout-økt endepunkt
-app.post('/create-checkout-session', async (req, res) => {
+// Oppdater endepunktet med eksplisitt CORS
+app.post('/create-checkout-session', cors(corsOptions), async (req, res) => {
     try {
         const items = req.body.items || [];
         const lineItems = items.map(item => ({
@@ -75,7 +89,6 @@ app.post('/create-checkout-session', async (req, res) => {
             quantity: 1
         }));
 
-        // Lagre produktinformasjon for e-postlevering
         const purchasedProducts = items.map(item => ({
             name: products[item.id].name,
             filename: products[item.id].filename
