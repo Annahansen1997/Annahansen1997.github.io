@@ -352,9 +352,15 @@ function showSuccessMessage(message) {
 }
 
 // Om Oss-funksjonalitet
-document.querySelector('.about-link').addEventListener('click', function (e) {
-    e.preventDefault();
-    openModal('about-modal');
+document.addEventListener('DOMContentLoaded', function() {
+    const aboutLink = document.querySelector('.about-link');
+    
+    if (aboutLink) {
+        aboutLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            openModal('about-modal');
+        });
+    }
 });
 
 // Stripe konfigurasjon
