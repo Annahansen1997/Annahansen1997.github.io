@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 
+const cors = require('cors');  // Legg til denne linjen
 const app = express();
 
 // Sikkerhetstiltak
@@ -28,6 +29,24 @@ app.use(cors({
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// CORS konfigurasjon
+const corsOptions = {
+    origin: ['https://kreativmoro.no', 'http://localhost:3000'], // Tillat både produksjon og lokal utvikling
+    methods: ['POST', 'GET', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'stripe-signature'],
+    credentials: true
+};
+
+app.use(cors({
+    origin: ['https://kreativmoro.no'],
+    methods: ['POST', 'GET', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true
+}));
+
+app.options('*', cors()); // Pre-flight OPTIONS
+
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -72,16 +91,11 @@ const PRODUCTS = {
     }
 };
 
-// Webhook secret for Stripe
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-// Checkout session endpoint
+// Opprett checkout-økt endepunkt
 app.post('/api/create-checkout-session', async (req, res) => {
     try {
         if (!req.body.items || !Array.isArray(req.body.items)) {
-            return res.status(400).json({ 
-                error: 'Ugyldig forespørsel: items er påkrevd og må være en array' 
-            });
+            return res.status(400).json({ error: 'Ugyldig forespørsel: items er påkrevd og må være en array' });
         }
 
         const lineItems = req.body.items.map(item => {
@@ -108,24 +122,15 @@ app.post('/api/create-checkout-session', async (req, res) => {
             mode: 'payment',
             success_url: `${process.env.DOMAIN}/success.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.DOMAIN}`,
-            locale: 'no',
-            payment_intent_data: {
-                description: 'Kreativ Moro - Digital nedlasting',
-            },
-            metadata: {
-                products: JSON.stringify(req.body.items.map(item => item.id))
-            }
         });
 
         res.json({ url: session.url });
     } catch (error) {
         console.error('Checkout Error:', error);
-        res.status(500).json({ 
-            error: 'Det oppstod en feil ved opprettelse av checkout session',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        res.status(500).json({ error: 'Det oppstod en feil ved opprettelse av checkout session' });
     }
 });
+
 
 // Stripe webhook handler
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
@@ -202,12 +207,8 @@ process.on('SIGTERM', () => {
     });
 });
 
-process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-    process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    process.exit(1);
+// Start serveren
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Serveren kjører på port ${port}`);
 });

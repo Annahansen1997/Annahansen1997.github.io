@@ -5,7 +5,7 @@ let currentModal = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Oppdater handlekurven når siden lastes
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateCartCount();
     updateCartDisplay();
     // Legg til event listeners for handlekurv-knapper
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Legg til kontakt-knapp lytter
     document.querySelectorAll('.nav-link').forEach(link => {
         if (link.textContent.trim() === 'Kontakt') {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
                 openContactModal();
             });
@@ -28,16 +28,16 @@ document.addEventListener('DOMContentLoaded', function() {
 function addToCart(product) {
     // Sjekk om produktet allerede er i handlekurven
     const existingItem = cart.find(item => item.id === product.id);
-    
+
     if (existingItem) {
         // Vis melding om at produktet allerede er i handlekurven
         showAddedToCartMessage(`${product.name} er allerede i handlekurven`);
         return;
     }
-    
+
     // Legg til produktet (alltid med quantity = 1 siden det er PDF)
     cart.push({ ...product, quantity: 1 });
-    
+
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     updateCartDisplay();
@@ -52,21 +52,21 @@ function updateCartCount() {
 function updateCartDisplay() {
     const cartItems = document.getElementById('cart-items');
     const cartTotal = document.getElementById('cart-total');
-    
+
     if (!cartItems || !cartTotal) return;
-    
+
     if (cart.length === 0) {
         cartItems.innerHTML = '<div class="empty-cart-message">Handlekurven er tom</div>';
         cartTotal.textContent = '0,00 NOK';
         return;
     }
-    
+
     let html = '';
     let total = 0;
-    
+
     cart.forEach(item => {
         total += item.price;
-        
+
         html += `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}">
@@ -82,7 +82,7 @@ function updateCartDisplay() {
             </div>
         `;
     });
-    
+
     cartItems.innerHTML = html;
     cartTotal.textContent = total.toFixed(2) + ' NOK';
 }
@@ -90,9 +90,9 @@ function updateCartDisplay() {
 function updateQuantity(productId, change) {
     const item = cart.find(item => item.id === productId);
     if (!item) return;
-    
+
     item.quantity += change;
-    
+
     if (item.quantity <= 0) {
         removeFromCart(productId);
     } else {
@@ -161,7 +161,7 @@ function openModal(modalId) {
     if (modal) {
         modal.style.display = 'block';
         document.body.classList.add('modal-open');
-        
+
         if (modalId === 'cart-modal') {
             updateCartDisplay();
         }
@@ -179,16 +179,16 @@ function closeModal(modalId) {
 function initializeCarousel(modal) {
     // Reset current slide
     currentSlide = 0;
-    
+
     // Get carousel elements for the current modal
     slides = modal.querySelectorAll('.carousel-image');
     if (slides.length === 0) return;
-    
+
     // Clear existing dots
     const dotsContainer = modal.querySelector('.carousel-dots');
     if (!dotsContainer) return;
     dotsContainer.innerHTML = '';
-    
+
     // Create dots for each slide
     slides.forEach((_, index) => {
         const dot = document.createElement('span');
@@ -196,24 +196,24 @@ function initializeCarousel(modal) {
         dot.onclick = () => goToSlide(index);
         dotsContainer.appendChild(dot);
     });
-    
+
     // Update dots array
     dots = modal.querySelectorAll('.dot');
-    
+
     // Show first slide
     showSlide(0);
 }
 
 function showSlide(n) {
     if (!currentModal || slides.length === 0) return;
-    
+
     // Remove active class from all slides and dots
     slides.forEach(slide => slide.classList.remove('active'));
     dots.forEach(dot => dot.classList.remove('active'));
-    
+
     // Update current slide index
     currentSlide = (n + slides.length) % slides.length;
-    
+
     // Add active class to current slide and dot
     slides[currentSlide].classList.add('active');
     dots[currentSlide].classList.add('active');
@@ -230,16 +230,16 @@ function goToSlide(n) {
 }
 
 // Close modal when clicking outside
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (event.target.classList.contains('modal')) {
         closeModal(event.target.id);
     }
 }
 
 // Handle keyboard navigation
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (!currentModal) return;
-    
+
     if (event.key === 'ArrowLeft') {
         moveSlide(-1);
     } else if (event.key === 'ArrowRight') {
@@ -257,9 +257,9 @@ function showCartMessage() {
         <span>Produkt lagt i handlekurv!</span>
         <button class="view-cart-btn" onclick="openModal('cart-modal')">Se handlekurv</button>
     `;
-    
+
     document.body.appendChild(message);
-    
+
     setTimeout(() => {
         message.remove();
     }, 3000);
@@ -366,97 +366,45 @@ document.addEventListener('DOMContentLoaded', function() {
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Qmu3ULPxmfy63yEbYUAv6FZFaaGsoSTp8XF7nUEol9ksHgNid71K4FogSAhBwBDdNYa8syBZ4DAP4c9BS0qHaBQ00aT9p4bcV';
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
-// ... existing code ...
+function goToCheckout() {
+    // Hent handlekurvdata
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cartItems.length === 0) {
+        alert('Handlekurven er tom');
+        return;
+    }
 
-async function handleCheckout() {
-    const cartModal = document.getElementById('cart-modal');
-    cartModal.style.display = 'none';
+    // Lukk handlekurv-modalen
+    closeModal('cart-modal');
     
-    // Vis loading indikator
-    showLoadingMessage('Behandler betalingen...');
-
-    try {
-        // Sjekk om handlekurven er tom
-        if (!cart || cart.length === 0) {
-            throw new Error('Handlekurven er tom');
+    // Send forespørsel til serveren for å opprette en Stripe Checkout Session
+    fetch('http://localhost:3001/create-checkout-session', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            items: cartItems.map(item => ({
+                id: item.id.toString(),
+                quantity: 1
+            }))
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.url) {
+            // Redirect til Stripe Checkout
+            window.location.href = data.url;
+        } else {
+            throw new Error('Kunne ikke opprette checkout session');
         }
-
-        // Endre URL til lokal server
-        const response = await fetch('http://localhost:3000/api/create-checkout-session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                items: cart.map(item => ({
-                    id: item.id === 0 ? 'vinterkos' :
-                         item.id === 1 ? 'påskekos' :
-                         item.id === 2 ? 'dinosaur' :
-                         item.id === 3 ? 'enhjørning' :
-                         item.id === 4 ? 'bilbingo' :
-                         'flybingo',
-                    price: item.price
-                }))
-            })
-        });
-
-        // Fjern loading indikator
-        hideLoadingMessage();
-
-        if (!response.ok) {
-            let errorMessage = 'Det oppstod en feil ved behandling av betalingen.';
-            try {
-                const errorData = await response.json();
-                if (errorData && errorData.error) {
-                    errorMessage = errorData.error;
-                }
-            } catch (e) {
-                console.error('Kunne ikke parse error response:', e);
-            }
-            throw new Error(errorMessage);
-        }
-
-        const data = await response.json();
-        
-        if (!data.url) {
-            throw new Error('Ingen betalings-URL mottatt fra serveren');
-        }
-
-        // Redirect til Stripe Checkout
-        window.location.href = data.url;
-
-    } catch (error) {
-        // Fjern loading indikator hvis den fortsatt vises
-        hideLoadingMessage();
-        
-        console.error('Checkout Error:', error);
-        
-        // Vis feilmelding til bruker
-        alert(error.message || 'Det oppstod en feil ved behandling av betalingen. Vennligst prøv igjen senere eller kontakt kundeservice.');
-        
-        // Vis handlekurven igjen
-        cartModal.style.display = 'block';
-    }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Det oppstod en feil. Vennligst prøv igjen senere.');
+    });
 }
 
-// Hjelpefunksjoner for loading indikator
-function showLoadingMessage(message) {
-    const loadingDiv = document.createElement('div');
-    loadingDiv.id = 'loading-message';
-    loadingDiv.className = 'loading-message';
-    loadingDiv.innerHTML = `
-        <div class="spinner"></div>
-        <p>${message}</p>
-    `;
-    document.body.appendChild(loadingDiv);
-}
-
-function hideLoadingMessage() {
-    const loadingDiv = document.getElementById('loading-message');
-    if (loadingDiv) {
-        loadingDiv.remove();
-    }
-}
 
 // Bildekarusell funksjonalitet
 let currentImageIndex = 0;
@@ -536,10 +484,10 @@ function initializeStarRating() {
     document.querySelectorAll('.star-rating').forEach(ratingContainer => {
         const stars = ratingContainer.querySelectorAll('.star');
         const ratingText = ratingContainer.querySelector('.star-rating-text');
-        
+
         stars.forEach(star => {
             // Når musen er over en stjerne
-            star.addEventListener('mouseover', function() {
+            star.addEventListener('mouseover', function () {
                 const rating = parseInt(this.dataset.rating);
                 const description = this.dataset.description;
                 highlightStars(stars, rating);
@@ -550,7 +498,7 @@ function initializeStarRating() {
             });
 
             // Når musen forlater stjerneområdet
-            ratingContainer.addEventListener('mouseleave', function() {
+            ratingContainer.addEventListener('mouseleave', function () {
                 highlightStars(stars, currentRating);
                 if (ratingText) {
                     if (currentRating > 0) {
@@ -563,7 +511,7 @@ function initializeStarRating() {
             });
 
             // Når en stjerne klikkes
-            star.addEventListener('click', function() {
+            star.addEventListener('click', function () {
                 const rating = parseInt(this.dataset.rating);
                 const description = this.dataset.description;
                 currentRating = rating;
@@ -571,7 +519,7 @@ function initializeStarRating() {
                 if (ratingText) {
                     ratingText.textContent = description;
                 }
-                
+
                 // Legg til en visuell bekreftelse
                 star.style.transform = 'scale(1.2)';
                 setTimeout(() => {
@@ -742,13 +690,13 @@ function hideLoadingMessage() {
 function buyNow(product) {
     // Legg til produktet i handlekurven
     addToCart(product);
-    
+
     // Lukk den nåværende produkt-modalen
     const currentModal = document.querySelector('.modal[style*="display: block"]');
     if (currentModal) {
         closeModal(currentModal.id);
     }
-    
+
     // Åpne handlekurv-modalen
     openModal('cart-modal');
 }
@@ -756,7 +704,7 @@ function buyNow(product) {
 function generateCheckoutItemsHTML() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     let html = '';
-    
+
     cartItems.forEach(item => {
         html += `
             <div class="checkout-item">
@@ -769,7 +717,7 @@ function generateCheckoutItemsHTML() {
             </div>
         `;
     });
-    
+
     return html;
 }
 
@@ -780,7 +728,7 @@ function backToCart() {
     if (checkoutModal) {
         checkoutModal.remove();
     }
-    
+
     // Åpne handlekurv-modalen igjen
     openModal('cart-modal');
 }
