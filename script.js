@@ -129,7 +129,7 @@ function showAddedToCartMessage(productName) {
 
     setTimeout(() => {
         messageContainer.remove();
-    }, 3001);
+    }, 3002);
 }
 
 // Søkefunksjonalitet
@@ -349,7 +349,7 @@ function showSuccessMessage(message) {
 
     setTimeout(() => {
         successMessage.remove();
-    }, 3001);
+    }, 3002);
 }
 
 // Om Oss-funksjonalitet
@@ -405,7 +405,7 @@ async function goToCheckout() {
 
 
 // Send forespørsel til serveren for å opprette en Stripe Checkout Session
-fetch('http://localhost:3001/create-checkout-session', {
+fetch('http://localhost:3002/create-checkout-session', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',

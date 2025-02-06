@@ -31,7 +31,7 @@ app.use(cors({
 
 // CORS konfigurasjon
 const corsOptions = {
-    origin: ['https://kreativmoro.no', 'http://localhost:3001'], // Tillat både produksjon og lokal utvikling
+    origin: ['https://kreativmoro.no', 'http://localhost:3002'], // Tillat både produksjon og lokal utvikling
     methods: ['POST', 'GET', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'stripe-signature'],
     credentials: true
@@ -192,7 +192,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 const server = app.listen(PORT, () => {
     console.log(`Server kjører på port ${PORT}`);
 });
@@ -207,7 +207,7 @@ process.on('SIGTERM', () => {
 });
 
 // Start serveren
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 app.listen(port, () => {
     console.log(`Serveren kjører på port ${port}`);
 });
