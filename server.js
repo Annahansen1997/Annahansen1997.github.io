@@ -7,7 +7,6 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 
-const cors = require('cors');  // Legg til denne linjen
 const app = express();
 
 // Sikkerhetstiltak
