@@ -4,25 +4,26 @@ let dots = [];
 let currentModal = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-// Oppdater handlekurven når siden lastes
 document.addEventListener('DOMContentLoaded', function () {
     updateCartCount();
     updateCartDisplay();
+
     // Legg til event listeners for handlekurv-knapper
     const checkoutButton = document.querySelector('.checkout-button');
     if (checkoutButton) {
-        checkoutButton.addEventListener('click', handleCheckout);
+        checkoutButton.addEventListener('click', goToCheckout); // Endret fra handleCheckout til goToCheckout
     }
+});
 
-    // Legg til kontakt-knapp lytter
-    document.querySelectorAll('.nav-link').forEach(link => {
-        if (link.textContent.trim() === 'Kontakt') {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-                openContactModal();
-            });
-        }
-    });
+
+// Legg til kontakt-knapp lytter
+document.querySelectorAll('.nav-link').forEach(link => {
+    if (link.textContent.trim() === 'Kontakt') {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            openContactModal();
+        });
+    }
 });
 
 function addToCart(product) {
@@ -132,10 +133,10 @@ function showAddedToCartMessage(productName) {
 }
 
 // Søkefunksjonalitet
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.querySelector('.search-container input');
     const productCards = document.querySelectorAll('.product-card');
-    
+
     // Sjekk om søkefeltet eksisterer før vi legger til event listener
     if (searchInput) {
         searchInput.addEventListener('input', function (e) {
@@ -352,9 +353,9 @@ function showSuccessMessage(message) {
 }
 
 // Om Oss-funksjonalitet
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const aboutLink = document.querySelector('.about-link');
-    
+
     if (aboutLink) {
         aboutLink.addEventListener('click', function (e) {
             e.preventDefault();
@@ -366,8 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Qmu3ULPxmfy63yEbYUAv6FZFaaGsoSTp8XF7nUEol9ksHgNid71K4FogSAhBwBDdNYa8syBZ4DAP4c9BS0qHaBQ00aT9p4bcV';
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
-function goToCheckout() {
-    // Hent handlekurvdata
+async function goToCheckout() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     if (cartItems.length === 0) {
         alert('Handlekurven er tom');
@@ -376,20 +376,47 @@ function goToCheckout() {
 
     // Lukk handlekurv-modalen
     closeModal('cart-modal');
-    
-    // Send forespørsel til serveren for å opprette en Stripe Checkout Session
-    fetch('http://localhost:3001/create-checkout-session', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            items: cartItems.map(item => ({
-                id: item.id.toString(),
-                quantity: 1
-            }))
-        })
+
+    try {
+        const response = await fetch('https://kreativmoro.no/api/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                items: cartItems.map(item => ({
+                    id: item.id.toString(),
+                    price: item.price
+                }))
+            })
+        });
+
+        const data = await response.json();
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            throw new Error('Kunne ikke opprette checkout session');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Det oppstod en feil. Vennligst prøv igjen senere.');
+    }
+}
+
+
+// Send forespørsel til serveren for å opprette en Stripe Checkout Session
+fetch('http://localhost:3001/create-checkout-session', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        items: cartItems.map(item => ({
+            id: item.id.toString(),
+            quantity: 1
+        }))
     })
+})
     .then(response => response.json())
     .then(data => {
         if (data.url) {
@@ -403,7 +430,6 @@ function goToCheckout() {
         console.error('Error:', error);
         alert('Det oppstod en feil. Vennligst prøv igjen senere.');
     });
-}
 
 
 // Bildekarusell funksjonalitet
