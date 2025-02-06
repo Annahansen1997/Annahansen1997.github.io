@@ -403,35 +403,6 @@ async function goToCheckout() {
     }
 }
 
-
-// Send forespørsel til serveren for å opprette en Stripe Checkout Session
-fetch('http://localhost:3000/create-checkout-session', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        items: cartItems.map(item => ({
-            id: item.id.toString(),
-            quantity: 1
-        }))
-    })
-})
-    .then(response => response.json())
-    .then(data => {
-        if (data.url) {
-            // Redirect til Stripe Checkout
-            window.location.href = data.url;
-        } else {
-            throw new Error('Kunne ikke opprette checkout session');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Det oppstod en feil. Vennligst prøv igjen senere.');
-    });
-
-
 // Bildekarusell funksjonalitet
 let currentImageIndex = 0;
 
