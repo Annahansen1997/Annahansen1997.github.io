@@ -205,9 +205,3 @@ process.on('SIGTERM', () => {
         process.exit(0);
     });
 });
-
-// Start serveren
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Serveren kjører på port ${port}`);
-});
