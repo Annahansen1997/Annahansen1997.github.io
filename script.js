@@ -129,7 +129,7 @@ function showAddedToCartMessage(productName) {
 
     setTimeout(() => {
         messageContainer.remove();
-    }, 3000);
+    }, 3001);
 }
 
 // Søkefunksjonalitet
@@ -263,7 +263,7 @@ function showCartMessage() {
 
     setTimeout(() => {
         message.remove();
-    }, 3000);
+    }, 3001);
 }
 
 // Kontakt-funksjonalitet
@@ -349,7 +349,7 @@ function showSuccessMessage(message) {
 
     setTimeout(() => {
         successMessage.remove();
-    }, 3000);
+    }, 3001);
 }
 
 // Om Oss-funksjonalitet
