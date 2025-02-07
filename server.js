@@ -23,13 +23,6 @@ app.use('/api/', limiter);
 app.use(morgan('combined'));
 
 // CORS konfigurasjon
-app.use(cors({
-    origin: ['https://kreativmoro.no', 'https://www.kreativmoro.no'],
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// CORS konfigurasjon
 const corsOptions = {
     origin: ['https://kreativmoro.no', 'https://localhost:3000'], // Tillat både produksjon og lokal utvikling
     methods: ['POST', 'GET', 'OPTIONS'],
@@ -41,6 +34,12 @@ app.options('*', cors(corsOptions)); // Pre-flight OPTIONS
 app.use(cors(corsOptions));
 
 app.use(express.json());
+
+// Logg alle forespørsler
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
 
 // Opprett checkout-økt endepunkt
 app.post('/api/create-checkout-session', async (req, res) => {
