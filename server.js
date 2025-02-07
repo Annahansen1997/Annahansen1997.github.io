@@ -45,7 +45,10 @@ app.use(express.json());
 // Opprett checkout-økt endepunkt
 app.post('/api/create-checkout-session', async (req, res) => {
     try {
+        console.log('Request mottatt:', req.body); // Logg hva som kommer fra frontend
+
         if (!req.body.items || !Array.isArray(req.body.items)) {
+            console.error('Feil: items er påkrevd og må være en array');
             return res.status(400).json({ error: 'Ugyldig forespørsel: items er påkrevd og må være en array' });
         }
 
@@ -67,6 +70,8 @@ app.post('/api/create-checkout-session', async (req, res) => {
             };
         });
 
+        console.log('Line items:', lineItems);
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: lineItems,
@@ -75,12 +80,15 @@ app.post('/api/create-checkout-session', async (req, res) => {
             cancel_url: `${process.env.DOMAIN}`,
         });
 
+        console.log('Stripe session opprettet:', session);
         res.json({ url: session.url });
+
     } catch (error) {
-        console.error('Checkout Error:', error);
-        res.status(500).json({ error: 'Det oppstod en feil ved opprettelse av checkout session' });
+        console.error('Checkout Error:', error); // Logg feilen
+        res.status(500).json({ error: error.message });
     }
 });
+
 
 
 app.use(express.static(path.join(__dirname, 'public')));
