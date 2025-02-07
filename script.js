@@ -393,11 +393,18 @@ async function goToCheckout() {
             })
         });
 
-        const data = await response.json();
-        if (data.url) {
-            window.location.href = data.url;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                throw new Error('Kunne ikke opprette checkout session');
+            }
         } else {
-            throw new Error('Kunne ikke opprette checkout session');
+            const text = await response.text();
+            console.error('Unexpected response:', text);
+            throw new Error('Serveren returnerte ikke JSON');
         }
     } catch (error) {
         console.error('Error:', error);

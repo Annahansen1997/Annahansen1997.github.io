@@ -37,8 +37,8 @@ const corsOptions = {
     credentials: true
 };
 
-app.options('*', cors()); // Pre-flight OPTIONS
-
+app.options('*', cors(corsOptions)); // Pre-flight OPTIONS
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -88,8 +88,6 @@ app.post('/api/create-checkout-session', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 
