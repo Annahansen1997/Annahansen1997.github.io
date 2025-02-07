@@ -382,7 +382,9 @@ async function goToCheckout() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({
                 items: cartItems.map(item => ({
                     id: item.id.toString(),
