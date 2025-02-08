@@ -400,7 +400,7 @@ async function goToCheckout() {
     }
 
     try {
-        const response = await fetch('/create-checkout-session', {
+        const response = await fetch('https://kreativmoro.onrender.com/create-checkout-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -411,6 +411,8 @@ async function goToCheckout() {
         });
 
         if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Server response:', errorData);
             throw new Error('Network response was not ok');
         }
 

@@ -24,13 +24,17 @@ app.use(morgan('combined'));
 
 // CORS konfigurasjon
 const corsOptions = {
-    origin: ['https://kreativmoro.no', 'https://www.kreativmoro.no'],
+    origin: [
+        'https://kreativmoro.no',
+        'https://www.kreativmoro.no',
+        'https://annahansen1997.github.io'
+    ],
     methods: ['POST', 'GET', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'stripe-signature'],
     credentials: true
 };
 
-app.options('*', cors(corsOptions)); // Pre-flight OPTIONS
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 
 app.use(express.json());
@@ -50,10 +54,14 @@ app.post('/create-checkout-session', async (req, res) => {
             return res.status(400).json({ error: 'Invalid cart data' });
         }
 
+        console.log('Received cart:', cart); // Logging for debugging
+
         const lineItems = cart.map(item => ({
             price: item.priceId,
             quantity: item.quantity
         }));
+
+        console.log('Created line items:', lineItems); // Logging for debugging
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -69,10 +77,14 @@ app.post('/create-checkout-session', async (req, res) => {
             }
         });
 
+        console.log('Created Stripe session:', session.id); // Logging for debugging
         res.json({ url: session.url });
     } catch (error) {
         console.error('Stripe error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ 
+            error: error.message,
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
 
