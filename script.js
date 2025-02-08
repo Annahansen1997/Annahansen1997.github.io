@@ -5,13 +5,23 @@ let currentModal = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Last handlekurv fra localStorage
+    cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Oppdater handlekurv-visning
     updateCartCount();
     updateCartDisplay();
 
-    // Legg til event listeners for handlekurv-knapper
+    // Legg til event listeners
     const checkoutButton = document.querySelector('.checkout-button');
     if (checkoutButton) {
-        checkoutButton.addEventListener('click', goToCheckout); // Endret fra handleCheckout til goToCheckout
+        checkoutButton.addEventListener('click', goToCheckout);
+    }
+
+    // Initialiser bildekarusell hvis den finnes
+    const modal = document.querySelector('.modal.active');
+    if (modal) {
+        initializeCarousel(modal);
     }
 });
 
@@ -26,16 +36,16 @@ document.querySelectorAll('.nav-link').forEach(link => {
     }
 });
 
-function addToCart(productId, name, price, priceId) {
+function addToCart(product) {
     const item = {
-        id: productId,
-        name: name,
-        price: price,
-        priceId: priceId,
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        priceId: product.priceId,
         quantity: 1
     };
     
-    const existingItem = cart.find(i => i.id === productId);
+    const existingItem = cart.find(i => i.id === product.id);
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
@@ -45,7 +55,7 @@ function addToCart(productId, name, price, priceId) {
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     updateCartDisplay();
-    showAddedToCartMessage(name);
+    showAddedToCartMessage(product.name);
 }
 
 function updateCartCount() {
@@ -54,10 +64,11 @@ function updateCartCount() {
 }
 
 function updateCartDisplay() {
-    const cartElement = document.getElementById('cart');
-    if (!cartElement) return;
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotalElement = document.getElementById('cart-total');
+    if (!cartItemsContainer) return;
     
-    cartElement.innerHTML = '';
+    cartItemsContainer.innerHTML = '';
     let total = 0;
     
     cart.forEach(item => {
@@ -65,22 +76,40 @@ function updateCartDisplay() {
         total += itemTotal;
         
         const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
         itemElement.innerHTML = `
-            ${item.name} x ${item.quantity} = ${itemTotal} kr
-            <button onclick="removeFromCart('${item.id}')">Fjern</button>
+            <div class="cart-item-details">
+                <h3>${item.name}</h3>
+                <p>Pris: ${item.price.toFixed(2)} NOK</p>
+            </div>
+            <div class="cart-item-quantity">
+                <button class="quantity-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
+                <span>${item.quantity}</span>
+                <button class="quantity-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+            </div>
+            <div class="cart-item-price">${itemTotal.toFixed(2)} NOK</div>
+            <button class="delete-btn" onclick="removeFromCart('${item.id}')">×</button>
         `;
-        cartElement.appendChild(itemElement);
+        cartItemsContainer.appendChild(itemElement);
     });
     
-    const totalElement = document.createElement('div');
-    totalElement.innerHTML = `Totalt: ${total} kr`;
-    cartElement.appendChild(totalElement);
+    if (cartTotalElement) {
+        cartTotalElement.textContent = `${total.toFixed(2)} NOK`;
+    }
+
+    // Vis eller skjul knapper basert på om handlekurven er tom
+    const checkoutButton = document.querySelector('.checkout-button');
+    const emptyCartButton = document.querySelector('.empty-cart-button');
     
-    if (cart.length > 0) {
-        const checkoutButton = document.createElement('button');
-        checkoutButton.innerHTML = 'Gå til betaling';
-        checkoutButton.onclick = initiateCheckout;
-        cartElement.appendChild(checkoutButton);
+    if (checkoutButton && emptyCartButton) {
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p class="empty-cart-message">Handlekurven er tom</p>';
+            checkoutButton.style.display = 'none';
+            emptyCartButton.style.display = 'none';
+        } else {
+            checkoutButton.style.display = 'block';
+            emptyCartButton.style.display = 'block';
+        }
     }
 }
 
@@ -681,7 +710,7 @@ function hideLoadingMessage() {
 
 function buyNow(product) {
     // Legg til produktet i handlekurven
-    addToCart(product.id, product.name, product.price, product.priceId);
+    addToCart(product);
 
     // Lukk den nåværende produkt-modalen
     const currentModal = document.querySelector('.modal[style*="display: block"]');
