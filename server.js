@@ -27,7 +27,9 @@ const corsOptions = {
     origin: [
         'https://kreativmoro.no',
         'https://www.kreativmoro.no',
-        'https://annahansen1997.github.io'
+        'https://annahansen1997.github.io',
+        'http://kreativmoro.no',
+        'http://www.kreativmoro.no'
     ],
     methods: ['POST', 'GET', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'stripe-signature'],
@@ -76,8 +78,8 @@ app.post('/create-checkout-session', async (req, res) => {
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            success_url: `${req.protocol}://${req.get('host')}/success.html`,
-            cancel_url: `${req.protocol}://${req.get('host')}/cancel.html`,
+            success_url: 'https://annahansen1997.github.io/success.html',
+            cancel_url: 'https://annahansen1997.github.io/cancel.html',
             metadata: {
                 order_items: JSON.stringify(cart.map(item => ({
                     name: item.name,
