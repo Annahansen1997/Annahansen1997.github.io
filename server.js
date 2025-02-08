@@ -18,9 +18,17 @@ app.use(helmet({
                 "'self'",
                 "'unsafe-inline'",
                 "'unsafe-eval'",
+                "'unsafe-hashes'",
                 "https://js.stripe.com",
                 "https://cdn.jsdelivr.net",
                 "https://www.google-analytics.com"
+            ],
+            scriptSrcAttr: ["'unsafe-inline'"],
+            scriptSrcElem: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://js.stripe.com",
+                "https://cdn.jsdelivr.net"
             ],
             styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
             imgSrc: ["'self'", "data:", "https:"],
