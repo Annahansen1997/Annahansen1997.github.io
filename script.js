@@ -405,8 +405,7 @@ async function goToCheckout() {
         const response = await fetch('https://kreativmoro.onrender.com/create-checkout-session', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': 'https://annahansen1997.github.io'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 cart: cartItems

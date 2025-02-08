@@ -76,12 +76,23 @@ const corsOptions = {
         'http://www.kreativmoro.no'
     ],
     methods: ['POST', 'GET', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'stripe-signature'],
-    credentials: true
+    allowedHeaders: [
+        'Content-Type',
+        'stripe-signature',
+        'Access-Control-Allow-Origin',
+        'Access-Control-Allow-Methods',
+        'Access-Control-Allow-Headers'
+    ],
+    exposedHeaders: ['Access-Control-Allow-Origin'],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 };
 
-app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
+
+// Håndter preflight requests
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
