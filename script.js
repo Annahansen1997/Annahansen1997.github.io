@@ -42,6 +42,7 @@ function addToCart(product) {
         name: product.name,
         price: product.price,
         priceId: product.priceId,
+        image: product.image,
         quantity: 1
     };
     
