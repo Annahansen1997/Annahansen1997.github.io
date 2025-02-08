@@ -1,31 +1,18 @@
 {
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "express-rate-limit": "^7.5.0",
-    "helmet": "^8.0.0",
-    "morgan": "^1.10.0",
-    "nodemailer": "^6.10.0",
-    "stripe": "^17.6.0"
-  },
-  "name": "annahansen1997.github.io",
+  "name": "kreativmoro",
   "version": "1.0.0",
-  "description": "Aktivitetshefter og kreative oppgaver for barn",
-  "main": "config.js",
+  "description": "Kreativ Moro nettbutikk",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Annahansen1997/Annahansen1997.github.io.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Annahansen1997/Annahansen1997.github.io/issues"
-  },
-  "homepage": "https://github.com/Annahansen1997/Annahansen1997.github.io#readme"
+  "dependencies": {
+    "express": "^4.18.2",
+    "stripe": "^14.19.0",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
+  }
 }

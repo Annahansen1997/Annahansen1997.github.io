@@ -24,7 +24,7 @@ app.use(morgan('combined'));
 
 // CORS konfigurasjon
 const corsOptions = {
-    origin: ['https://kreativmoro.no', 'https://localhost:3000'], // Tillat både produksjon og lokal utvikling
+    origin: ['https://kreativmoro.no', 'https://www.kreativmoro.no'],
     methods: ['POST', 'GET', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'stripe-signature'],
     credentials: true
