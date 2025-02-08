@@ -406,6 +406,7 @@ async function goToCheckout() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': 'https://annahansen1997.github.io'
             },
             body: JSON.stringify({
                 cart: cartItems
