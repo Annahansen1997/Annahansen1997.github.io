@@ -22,6 +22,19 @@ app.use('/api/', limiter);
 // Logging
 app.use(morgan('combined'));
 
+// Serve static files
+app.use(express.static(path.join(__dirname)));
+
+// Root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Handle all other routes to support SPA
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // CORS konfigurasjon
 const corsOptions = {
     origin: [
@@ -98,8 +111,6 @@ app.post('/create-checkout-session', async (req, res) => {
         });
     }
 });
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Produktkonfigurasjon
 const PRODUCTS = {
