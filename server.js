@@ -6,6 +6,8 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const app = express();
 
@@ -102,6 +104,74 @@ app.use((req, res, next) => {
     next();
 });
 
+// Konfigurer e-post transport
+const transporter = nodemailer.createTransport({
+    host: "smtp-mail.outlook.com",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: process.env.EMAIL_USER, // din hotmail/outlook e-post
+        pass: process.env.EMAIL_PASSWORD // ditt vanlige passord
+    },
+    tls: {
+        ciphers: 'SSLv3'
+    }
+});
+
+// Funksjon for å generere sikker nedlastingslenke
+function generateDownloadToken(orderId, productId) {
+    const secret = process.env.DOWNLOAD_SECRET_KEY;
+    return crypto
+        .createHmac('sha256', secret)
+        .update(`${orderId}-${productId}`)
+        .digest('hex');
+}
+
+// Funksjon for å sende ordre-e-post
+async function sendOrderEmail(customerEmail, products, orderId) {
+    // Map produkt ID til produktnøkler
+    const productMapping = {
+        0: 'vinterkos',
+        1: 'påskekos',
+        2: 'dinosaur',
+        3: 'enhjørning',
+        4: 'bilbingo',
+        5: 'flybingo'
+    };
+
+    const downloadLinks = products.map(product => {
+        const productKey = productMapping[product.id];
+        const productInfo = PRODUCTS[productKey];
+        const token = generateDownloadToken(orderId, product.id);
+        return {
+            name: productInfo.name,
+            url: `${process.env.DOMAIN}/download/${orderId}/${product.id}/${token}`
+        };
+    });
+
+    const emailTemplate = `
+        <h1>Takk for din bestilling hos Kreativ Moro!</h1>
+        <p>Her er dine nedlastingslenker:</p>
+        <ul>
+            ${downloadLinks.map(link => `
+                <li><a href="${link.url}">${link.name}</a></li>
+            `).join('')}
+        </ul>
+        <p>Lenkene er gyldige i 48 timer.</p>
+        <p>Med vennlig hilsen,<br>Kreativ Moro</p>
+    `;
+
+    await transporter.sendMail({
+        from: {
+            name: 'Kreativ Moro',
+            address: process.env.EMAIL_USER
+        },
+        to: customerEmail,
+        subject: 'Din bestilling fra Kreativ Moro',
+        html: emailTemplate
+    });
+}
+
 // Opprett checkout-økt endepunkt
 app.post('/create-checkout-session', async (req, res) => {
     try {
@@ -194,77 +264,12 @@ const PRODUCTS = {
     }
 };
 
-// Stripe webhook handler
+// Oppdater webhook handler
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
     const sig = request.headers['stripe-signature'];
-
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+        event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
-        response.status(400).send(`Webhook Error: ${err.message}`);
-        return;
-    }
-
-    // Handle the event
-    switch (event.type) {
-        case 'checkout.session.completed':
-            const session = event.data.object;
-            
-            // Her kan du legge til kode for å:
-            // 1. Sende e-post med nedlastingslenke
-            // 2. Oppdatere ordrestatus i database
-            // 3. Generere nedlastingslenker
-            
-            console.log('Betaling fullført:', session);
-            break;
-            
-        case 'payment_intent.succeeded':
-            const paymentIntent = event.data.object;
-            console.log('PaymentIntent var vellykket:', paymentIntent);
-            break;
-            
-        case 'payment_intent.payment_failed':
-            const failedPayment = event.data.object;
-            console.log('Betaling feilet:', failedPayment);
-            break;
-            
-        default:
-            console.log(`Uhåndtert event type ${event.type}`);
-    }
-
-    response.send();
-});
-
-// Helsesjekk endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'OK', 
-        timestamp: new Date().toISOString(),
-        version: process.env.npm_package_version
-    });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        error: 'En feil oppstod på serveren',
-        details: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-});
-
-const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => {
-    console.log(`Server kjører på port ${PORT}`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-    console.log('SIGTERM signal mottatt: lukker server');
-    server.close(() => {
-        console.log('Server lukket');
-        process.exit(0);
-    });
-});
+        response.status(400).send(`
