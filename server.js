@@ -9,8 +9,31 @@ const path = require('path');
 
 const app = express();
 
-// Sikkerhetstiltak
-app.use(helmet());
+// Sikkerhetstiltak med tilpasset CSP
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "'unsafe-eval'",
+                "https://js.stripe.com",
+                "https://cdn.jsdelivr.net",
+                "https://www.google-analytics.com"
+            ],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'", "https://api.stripe.com", "https://kreativmoro.onrender.com"],
+            frameSrc: ["'self'", "https://js.stripe.com"],
+            fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+            objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            childSrc: ["'self'", "https://js.stripe.com"]
+        }
+    },
+    crossOriginEmbedderPolicy: false
+}));
 
 // Rate limiting
 const limiter = rateLimit({
