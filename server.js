@@ -56,6 +56,15 @@ app.post('/create-checkout-session', async (req, res) => {
 
         console.log('Received cart:', cart); // Logging for debugging
 
+        // Validere at alle produkter har priceId
+        const invalidItems = cart.filter(item => !item.priceId);
+        if (invalidItems.length > 0) {
+            return res.status(400).json({ 
+                error: 'Missing priceId for some products',
+                items: invalidItems
+            });
+        }
+
         const lineItems = cart.map(item => ({
             price: item.priceId,
             quantity: item.quantity
