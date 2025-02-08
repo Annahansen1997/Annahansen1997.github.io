@@ -78,6 +78,7 @@ function updateCartDisplay() {
         const itemElement = document.createElement('div');
         itemElement.className = 'cart-item';
         itemElement.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" class="cart-item-image">
             <div class="cart-item-details">
                 <h3>${item.name}</h3>
                 <p>Pris: ${item.price.toFixed(2)} NOK</p>
