@@ -12,5 +12,3 @@ const PRODUCT_PRICES = {
     "Påskekos Aktivitetshefte": "price_1Qo9MJLPxmfy63yETbGYTyLJ",
     "Vinterkos Aktivitetshefte": "price_1Qo9IPLPxmfy63yEXy1w1l8T"
 };
-
-export { config, PRODUCT_PRICES };
