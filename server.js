@@ -139,25 +139,26 @@ async function sendOrderEmail(customerEmail, products, orderId) {
         5: 'flybingo'
     };
 
-    const downloadLinks = products.map(product => {
+    const attachments = products.map(product => {
         const productKey = productMapping[product.id];
         const productInfo = PRODUCTS[productKey];
-        const token = generateDownloadToken(orderId, product.id);
         return {
-            name: productInfo.name,
-            url: `${process.env.DOMAIN}/download/${orderId}/${product.id}/${token}`
+            filename: productInfo.filename,
+            path: path.join(__dirname, 'products', productInfo.filename)
         };
     });
 
     const emailTemplate = `
         <h1>Takk for din bestilling hos Kreativ Moro!</h1>
-        <p>Her er dine nedlastingslenker:</p>
+        <p>Her er dine bestilte aktivitetshefter:</p>
         <ul>
-            ${downloadLinks.map(link => `
-                <li><a href="${link.url}">${link.name}</a></li>
-            `).join('')}
+            ${products.map(product => {
+                const productKey = productMapping[product.id];
+                const productInfo = PRODUCTS[productKey];
+                return `<li>${productInfo.name}</li>`;
+            }).join('')}
         </ul>
-        <p>Lenkene er gyldige i 48 timer.</p>
+        <p>Du finner PDF-filene som vedlegg i denne e-posten.</p>
         <p>Med vennlig hilsen,<br>Kreativ Moro</p>
     `;
 
@@ -168,7 +169,8 @@ async function sendOrderEmail(customerEmail, products, orderId) {
         },
         to: customerEmail,
         subject: 'Din bestilling fra Kreativ Moro',
-        html: emailTemplate
+        html: emailTemplate,
+        attachments: attachments
     });
 }
 
@@ -272,4 +274,41 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
     try {
         event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
-        response.status(400).send(`
+        response.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
+
+    // Håndter ulike event typer
+    switch (event.type) {
+        case 'checkout.session.completed':
+            const session = event.data.object;
+            
+            try {
+                // Hent kundens e-post fra sesjonen
+                const customerEmail = session.customer_details.email;
+                
+                // Hent ordre-detaljer fra metadata
+                const orderItems = JSON.parse(session.metadata.order_items);
+                
+                // Send e-post med PDF-vedlegg
+                await sendOrderEmail(customerEmail, orderItems, session.id);
+                
+                console.log('Ordre e-post sendt til:', customerEmail);
+            } catch (error) {
+                console.error('Feil ved sending av ordre e-post:', error);
+                // Vi sender fortsatt 200 OK til Stripe for å unngå gjentatte webhook-forsøk
+            }
+            break;
+            
+        default:
+            console.log(`Uhandled event type: ${event.type}`);
+    }
+
+    response.json({received: true});
+});
+
+// Start serveren
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server kjører på port ${PORT}`);
+});
