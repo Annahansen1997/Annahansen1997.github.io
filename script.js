@@ -26,23 +26,26 @@ document.querySelectorAll('.nav-link').forEach(link => {
     }
 });
 
-function addToCart(product) {
-    // Sjekk om produktet allerede er i handlekurven
-    const existingItem = cart.find(item => item.id === product.id);
-
+function addToCart(productId, name, price, priceId) {
+    const item = {
+        id: productId,
+        name: name,
+        price: price,
+        priceId: priceId,
+        quantity: 1
+    };
+    
+    const existingItem = cart.find(i => i.id === productId);
     if (existingItem) {
-        // Vis melding om at produktet allerede er i handlekurven
-        showAddedToCartMessage(`${product.name} er allerede i handlekurven`);
-        return;
+        existingItem.quantity += 1;
+    } else {
+        cart.push(item);
     }
-
-    // Legg til produktet (alltid med quantity = 1 siden det er PDF)
-    cart.push({ ...product, quantity: 1 });
-
+    
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     updateCartDisplay();
-    showAddedToCartMessage(product.name);
+    showAddedToCartMessage(name);
 }
 
 function updateCartCount() {
@@ -51,41 +54,34 @@ function updateCartCount() {
 }
 
 function updateCartDisplay() {
-    const cartItems = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
-
-    if (!cartItems || !cartTotal) return;
-
-    if (cart.length === 0) {
-        cartItems.innerHTML = '<div class="empty-cart-message">Handlekurven er tom</div>';
-        cartTotal.textContent = '0,00 NOK';
-        return;
-    }
-
-    let html = '';
+    const cartElement = document.getElementById('cart');
+    if (!cartElement) return;
+    
+    cartElement.innerHTML = '';
     let total = 0;
-
+    
     cart.forEach(item => {
-        total += item.price;
-
-        html += `
-            <div class="cart-item">
-                <img src="${item.image}" alt="${item.name}">
-                <div class="cart-item-details">
-                    <h3>${item.name}</h3>
-                    <p>${item.price.toFixed(2)} NOK</p>
-                </div>
-                <button class="delete-btn" onclick="removeFromCart(${item.id})">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        const itemElement = document.createElement('div');
+        itemElement.innerHTML = `
+            ${item.name} x ${item.quantity} = ${itemTotal} kr
+            <button onclick="removeFromCart('${item.id}')">Fjern</button>
         `;
+        cartElement.appendChild(itemElement);
     });
-
-    cartItems.innerHTML = html;
-    cartTotal.textContent = total.toFixed(2) + ' NOK';
+    
+    const totalElement = document.createElement('div');
+    totalElement.innerHTML = `Totalt: ${total} kr`;
+    cartElement.appendChild(totalElement);
+    
+    if (cart.length > 0) {
+        const checkoutButton = document.createElement('button');
+        checkoutButton.innerHTML = 'Gå til betaling';
+        checkoutButton.onclick = initiateCheckout;
+        cartElement.appendChild(checkoutButton);
+    }
 }
 
 function updateQuantity(productId, change) {
@@ -374,41 +370,31 @@ async function goToCheckout() {
         return;
     }
 
-    // Lukk handlekurv-modalen
-    closeModal('cart-modal');
-
     try {
-        const response = await fetch('https://kreativmoro.no/api/create-checkout-session', {
+        const response = await fetch('/create-checkout-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
             },
-            credentials: 'include',
             body: JSON.stringify({
-                items: cartItems.map(item => ({
-                    id: item.id.toString(),
-                    price: item.price
-                }))
+                cart: cartItems
             })
         });
 
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            const data = await response.json();
-            if (data.url) {
-                window.location.href = data.url;
-            } else {
-                throw new Error('Kunne ikke opprette checkout session');
-            }
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const session = await response.json();
+        
+        if (session.url) {
+            window.location.href = session.url;
         } else {
-            const text = await response.text();
-            console.error('Unexpected response:', text);
-            throw new Error('Serveren returnerte ikke JSON');
+            throw new Error('Ingen betalings-URL mottatt');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Det oppstod en feil. Vennligst prøv igjen senere.');
+        alert('Det oppstod en feil ved betaling. Vennligst prøv igjen senere.');
     }
 }
 
@@ -695,7 +681,7 @@ function hideLoadingMessage() {
 
 function buyNow(product) {
     // Legg til produktet i handlekurven
-    addToCart(product);
+    addToCart(product.id, product.name, product.price, product.priceId);
 
     // Lukk den nåværende produkt-modalen
     const currentModal = document.querySelector('.modal[style*="display: block"]');
@@ -738,3 +724,29 @@ function backToCart() {
     // Åpne handlekurv-modalen igjen
     openModal('cart-modal');
 }
+
+async function initiateCheckout() {
+    try {
+        const response = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cart })
+        });
+        
+        const session = await response.json();
+        
+        if (session.url) {
+            window.location = session.url;
+        } else {
+            alert('Det oppstod en feil ved opprettelse av betalingsøkt. Vennligst prøv igjen.');
+        }
+    } catch (error) {
+        console.error('Betalingsfeil:', error);
+        alert('Det oppstod en feil ved betaling. Vennligst prøv igjen.');
+    }
+}
+
+// Initialiser handlekurven når siden lastes
+document.addEventListener('DOMContentLoaded', updateCartDisplay);

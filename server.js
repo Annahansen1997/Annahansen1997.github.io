@@ -42,48 +42,36 @@ app.use((req, res, next) => {
 });
 
 // Opprett checkout-økt endepunkt
-app.post('/api/create-checkout-session', async (req, res) => {
+app.post('/create-checkout-session', async (req, res) => {
     try {
-        console.log('Request mottatt:', req.body); // Logg hva som kommer fra frontend
-
-        if (!req.body.items || !Array.isArray(req.body.items)) {
-            console.error('Feil: items er påkrevd og må være en array');
-            return res.status(400).json({ error: 'Ugyldig forespørsel: items er påkrevd og må være en array' });
+        const { cart } = req.body;
+        
+        if (!cart || !Array.isArray(cart) || cart.length === 0) {
+            return res.status(400).json({ error: 'Invalid cart data' });
         }
 
-        const lineItems = req.body.items.map(item => {
-            const product = PRODUCTS[item.id];
-            if (!product) {
-                throw new Error(`Ugyldig produkt ID: ${item.id}`);
-            }
-            return {
-                price_data: {
-                    currency: 'nok',
-                    product_data: {
-                        name: product.name,
-                        description: product.description,
-                    },
-                    unit_amount: product.price,
-                },
-                quantity: 1,
-            };
-        });
-
-        console.log('Line items:', lineItems);
+        const lineItems = cart.map(item => ({
+            price: item.priceId,
+            quantity: item.quantity
+        }));
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            success_url: `${process.env.DOMAIN}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.DOMAIN}`,
+            success_url: `${req.protocol}://${req.get('host')}/success.html`,
+            cancel_url: `${req.protocol}://${req.get('host')}/cancel.html`,
+            metadata: {
+                order_items: JSON.stringify(cart.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity
+                })))
+            }
         });
 
-        console.log('Stripe session opprettet:', session);
         res.json({ url: session.url });
-
     } catch (error) {
-        console.error('Checkout Error:', error); // Logg feilen
+        console.error('Stripe error:', error);
         res.status(500).json({ error: error.message });
     }
 });
