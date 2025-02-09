@@ -10,5 +10,7 @@ const PRODUCT_PRICES = {
     "Enhjørningens magiske eventyrhefte": "price_1Qo9ODLPxmfy63yEtbAchGtn",
     "På eventyr med dinosaurene": "price_1Qo9NKLPxmfy63yEAoCoz18f",
     "Påskekos Aktivitetshefte": "price_1Qo9MJLPxmfy63yETbGYTyLJ",
-    "Vinterkos Aktivitetshefte": "price_1Qo9IPLPxmfy63yEXy1w1l8T"
+    "Vinterkos Aktivitetshefte": "price_1Qo9IPLPxmfy63yEXy1w1l8T",
+    "Brev fra Påskeharen": "price_1QqhMBLPxmfy63yEHKyJ21FW",
+    "Dyrene i Skogen Fargeleggingshefte": "price_1QqhLDLPxmfy63yErSiWyw6O"
 };
