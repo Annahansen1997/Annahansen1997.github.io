@@ -196,6 +196,52 @@
                         })">Legg i handlekurv</button>
                     </div>
                 </div>
+
+                <div class="product-card" onclick="openModal('modal6')">
+                    <img src="Brev_fra_påskeharen.png" alt="Brev fra Påskeharen">
+                    <h3>Brev fra Påskeharen</h3>
+                    <p>Alder 3-8</p>
+                    <p class="price">Pris: 20,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 6,
+                            name: 'Brev fra Påskeharen',
+                            price: 20.00,
+                            priceId: 'price_XXXXX',
+                            image: 'Brev_fra_påskeharen.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 6,
+                            name: 'Brev fra Påskeharen',
+                            price: 20.00,
+                            priceId: 'price_XXXXX',
+                            image: 'Brev_fra_påskeharen.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="openModal('modal7')">
+                    <img src="Dyrene_i_skogen.png" alt="Dyrene i Skogen">
+                    <h3>Dyrene i Skogen Fargeleggingshefte</h3>
+                    <p>Alder 3-8</p>
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 7,
+                            name: 'Dyrene i Skogen Fargeleggingshefte',
+                            price: 45.00,
+                            priceId: 'price_XXXXX',
+                            image: 'Dyrene_i_skogen.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 7,
+                            name: 'Dyrene i Skogen Fargeleggingshefte',
+                            price: 45.00,
+                            priceId: 'price_XXXXX',
+                            image: 'Dyrene_i_skogen.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -637,6 +683,138 @@
                             name: 'Flybingo',
                             price: 35.00,
                             image: 'Flybingo.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Dyrene i Skogen -->
+        <div id="modal7" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal7')">&times;</span>
+                <h2>Dyrene i Skogen Fargeleggingshefte</h2>
+
+                <div class="single-image">
+                    <img src="Dyrene_i_skogen.png" alt="Dyrene i Skogen forside">
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Utforsk skogens magiske verden med vårt 14-siders fargeleggingshefte! 
+                        Perfekt for barn som elsker dyr og natur, med detaljerte tegninger av dyrene som bor i skogen.
+                    </p>
+
+                    <div class="content-section">
+                        <h3>Dette får du</h3>
+                        <ul class="bullet-list">
+                            <li>• 14 unike sider med forskjellige skogsdyr</li>
+                            <li>• Detaljerte tegninger tilpasset barn 3-8 år</li>
+                            <li>• Perfekt for å lære om dyr mens man farger</li>
+                            <li>• Kan skrives ut så mange ganger du vil</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Perfekt for</h3>
+                        <ul class="bullet-list">
+                            <li>• Rolige aktiviteter hjemme</li>
+                            <li>• Læring om skogsdyr</li>
+                            <li>• Utvikling av kreativitet og finmotorikk</li>
+                            <li>• Kvalitetstid med barna</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        La barna utforske skogens mangfold gjennom farger og kreativitet!
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Heftet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <p class="price">Pris: 45,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 7,
+                            name: 'Dyrene i Skogen Fargeleggingshefte',
+                            price: 45.00,
+                            priceId: 'price_XXXXX',
+                            image: 'Dyrene_i_skogen.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 7,
+                            name: 'Dyrene i Skogen Fargeleggingshefte',
+                            price: 45.00,
+                            priceId: 'price_XXXXX',
+                            image: 'Dyrene_i_skogen.png'
+                        })">Legg i handlekurv</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Brev fra Påskeharen -->
+        <div id="modal6" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal6')">&times;</span>
+                <h2>Brev fra Påskeharen</h2>
+
+                <div class="single-image">
+                    <img src="Brev_fra_påskeharen.png" alt="Brev fra Påskeharen">
+                </div>
+
+                <div class="modal-info">
+                    <p class="intro-text">
+                        Skap magiske påskeminner med et personlig brev fra selveste påskeharen! 
+                        Dette søte og koselige brevet vil garantert bringe glede og spenning til påskefeiringen.
+                    </p>
+
+                    <div class="content-section">
+                        <h3>Dette får du</h3>
+                        <ul class="bullet-list">
+                            <li>• Et vakkert utformet brev fra påskeharen</li>
+                            <li>• Personlig og engasjerende innhold</li>
+                            <li>• Perfekt som en overraskelse i påskeeggjakten</li>
+                            <li>• Kan skrives ut så mange ganger du vil</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-section">
+                        <h3>Perfekt for</h3>
+                        <ul class="bullet-list">
+                            <li>• Å gjøre påsken ekstra magisk</li>
+                            <li>• En koselig tradisjon</li>
+                            <li>• Å skape glede og forventning</li>
+                            <li>• Barn i alderen 3-8 år</li>
+                        </ul>
+                    </div>
+
+                    <p class="highlight-text">
+                        La påskeharen spre glede og magi i påsken med dette personlige brevet!
+                    </p>
+
+                    <div class="notice-box">
+                        <p><strong>Viktig:</strong> Alle rettigheter tilhører @Kreativ.Moro.
+                            Brevet er kun til privat bruk og skal ikke deles videre.</p>
+                    </div>
+
+                    <p class="price">Pris: 20,00 NOK</p>
+                    <div class="button-group">
+                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                            id: 6,
+                            name: 'Brev fra Påskeharen',
+                            price: 20.00,
+                            priceId: 'price_XXXXX',
+                            image: 'Brev_fra_påskeharen.png'
+                        }); openModal('cart-modal')">Kjøp nå</button>
+                        <button class="add-to-cart-button" onclick="addToCart({
+                            id: 6,
+                            name: 'Brev fra Påskeharen',
+                            price: 20.00,
+                            priceId: 'price_XXXXX',
+                            image: 'Brev_fra_påskeharen.png'
                         })">Legg i handlekurv</button>
                     </div>
                 </div>
