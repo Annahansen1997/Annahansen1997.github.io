@@ -136,7 +136,9 @@ async function sendOrderEmail(customerEmail, products, orderId) {
         2: 'dinosaur',
         3: 'enhjørning',
         4: 'bilbingo',
-        5: 'flybingo'
+        5: 'flybingo',
+        6: 'brev_fra_påskeharen',
+        7: 'dyrene_i_skogen'
     };
 
     const attachments = products.map(product => {
@@ -263,6 +265,18 @@ const PRODUCTS = {
         name: 'Flybingo',
         description: 'Digital nedlasting - PDF format',
         filename: 'flybingo.pdf'
+    },
+    'brev_fra_påskeharen': {
+        price: 2000,
+        name: 'Brev fra Påskeharen',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'brev_fra_paskeharen.pdf'
+    },
+    'dyrene_i_skogen': {
+        price: 4500,
+        name: 'Dyrene i Skogen Fargeleggingshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'dyrene_i_skogen.pdf'
     }
 };
 
