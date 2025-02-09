@@ -112,7 +112,7 @@
                 </div>
 
                 <div class="product-card" onclick="openModal('modal6')">
-                    <img src="Brev_fra_påskeharen.png" alt="Brev fra Påskeharen">
+                    <img src="brev_paskeharen.png" alt="Brev fra Påskeharen">
                     <h3>Brev fra Påskeharen</h3>
                     <p>Alder 3-8</p>
                     <p class="price">Pris: 20,00 NOK</p>
@@ -122,14 +122,14 @@
                             name: 'Brev fra Påskeharen',
                             price: 20.00,
                             priceId: 'price_1QqhMBLPxmfy63yEHKyJ21FW',
-                            image: 'Brev_fra_påskeharen.png'
+                            image: 'brev_paskeharen.png'
                         }); openModal('cart-modal')">Kjøp nå</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 6,
                             name: 'Brev fra Påskeharen',
                             price: 20.00,
                             priceId: 'price_1QqhMBLPxmfy63yEHKyJ21FW',
-                            image: 'Brev_fra_påskeharen.png'
+                            image: 'brev_paskeharen.png'
                         })">Legg i handlekurv</button>
                     </div>
                 </div>
@@ -179,7 +179,7 @@
                 </div>
 
                 <div class="product-card" onclick="openModal('modal7')">
-                    <img src="Dyrene_i_skogen.png" alt="Dyrene i Skogen">
+                    <img src="dyrene_i_skogen.png" alt="Dyrene i Skogen">
                     <h3>Dyrene i Skogen Fargeleggingshefte</h3>
                     <p>Alder 3-8</p>
                     <p class="price">Pris: 45,00 NOK</p>
@@ -189,14 +189,14 @@
                             name: 'Dyrene i Skogen Fargeleggingshefte',
                             price: 45.00,
                             priceId: 'price_1QqhLDLPxmfy63yErSiWyw6O',
-                            image: 'Dyrene_i_skogen.png'
+                            image: 'dyrene_i_skogen.png'
                         }); openModal('cart-modal')">Kjøp nå</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 7,
                             name: 'Dyrene i Skogen Fargeleggingshefte',
                             price: 45.00,
                             priceId: 'price_1QqhLDLPxmfy63yErSiWyw6O',
-                            image: 'Dyrene_i_skogen.png'
+                            image: 'dyrene_i_skogen.png'
                         })">Legg i handlekurv</button>
                     </div>
                 </div>
@@ -418,7 +418,15 @@
                 <h2>Brev fra Påskeharen</h2>
 
                 <div class="single-image">
-                    <img src="Brev_fra_påskeharen.png" alt="Brev fra Påskeharen">
+                    <div class="image-carousel">
+                        <div class="carousel-container">
+                            <img src="brev_paskeharen.png" alt="Brev fra Påskeharen forside" class="carousel-image active">
+                            <img src="brev_paskeharen1.png" alt="Brev fra Påskeharen variant" class="carousel-image">
+                        </div>
+                        <button class="carousel-button prev" onclick="moveSlide(-1)">❮</button>
+                        <button class="carousel-button next" onclick="moveSlide(1)">❯</button>
+                        <div class="carousel-dots"></div>
+                    </div>
                 </div>
 
                 <div class="modal-info">
@@ -463,14 +471,14 @@
                             name: 'Brev fra Påskeharen',
                             price: 20.00,
                             priceId: 'price_1QqhMBLPxmfy63yEHKyJ21FW',
-                            image: 'Brev_fra_påskeharen.png'
+                            image: 'brev_paskeharen.png'
                         }); openModal('cart-modal')">Kjøp nå</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 6,
                             name: 'Brev fra Påskeharen',
                             price: 20.00,
                             priceId: 'price_1QqhMBLPxmfy63yEHKyJ21FW',
-                            image: 'Brev_fra_påskeharen.png'
+                            image: 'brev_paskeharen.png'
                         })">Legg i handlekurv</button>
                     </div>
                 </div>
@@ -638,7 +646,16 @@
                 <h2>Dyrene i Skogen Fargeleggingshefte</h2>
 
                 <div class="single-image">
-                    <img src="Dyrene_i_skogen.png" alt="Dyrene i Skogen forside">
+                    <div class="image-carousel">
+                        <div class="carousel-container">
+                            <img src="dyrene_i_skogen.png" alt="Dyrene i Skogen forside" class="carousel-image active">
+                            <img src="dyrene_i_skogen1.png" alt="Dyrene i Skogen side 1" class="carousel-image">
+                            <img src="dyrene_i_skogen2.png" alt="Dyrene i Skogen side 2" class="carousel-image">
+                        </div>
+                        <button class="carousel-button prev" onclick="moveSlide(-1)">❮</button>
+                        <button class="carousel-button next" onclick="moveSlide(1)">❯</button>
+                        <div class="carousel-dots"></div>
+                    </div>
                 </div>
 
                 <div class="modal-info">
@@ -683,14 +700,14 @@
                             name: 'Dyrene i Skogen Fargeleggingshefte',
                             price: 45.00,
                             priceId: 'price_1QqhLDLPxmfy63yErSiWyw6O',
-                            image: 'Dyrene_i_skogen.png'
+                            image: 'dyrene_i_skogen.png'
                         }); openModal('cart-modal')">Kjøp nå</button>
                         <button class="add-to-cart-button" onclick="addToCart({
                             id: 7,
                             name: 'Dyrene i Skogen Fargeleggingshefte',
                             price: 45.00,
                             priceId: 'price_1QqhLDLPxmfy63yErSiWyw6O',
-                            image: 'Dyrene_i_skogen.png'
+                            image: 'dyrene_i_skogen.png'
                         })">Legg i handlekurv</button>
                     </div>
                 </div>
@@ -896,7 +913,7 @@
                             Hos oss tror vi på læring gjennom lek og kreativitet. Vår filosofi er at barn utvikler seg
                             best når de får utforske, være kreative og ha det gøy samtidig. Derfor designer vi
                             aktivitetshefter som ikke bare underholder, men som også stimulerer nysgjerrighet og læring
-                            på en morsom måte.
+                            på morsom måte.
                         </p>
 
                         <p>

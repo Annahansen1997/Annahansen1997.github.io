@@ -270,7 +270,7 @@ const PRODUCTS = {
         price: 2000,
         name: 'Brev fra Påskeharen',
         description: 'Digital nedlasting - To PDF varianter (rosa og blå)',
-        filename: 'brev_fra_paskeharen.pdf'
+        filename: 'brev_paskeharen.pdf'
     },
     'dyrene_i_skogen': {
         price: 4500,
