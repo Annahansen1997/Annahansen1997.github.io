@@ -186,13 +186,17 @@ document.addEventListener('DOMContentLoaded', function () {
 // Modal funksjoner
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'block';
-        document.body.classList.add('modal-open');
+    if (!modal) return;
 
-        if (modalId === 'cart-modal') {
-            updateCartDisplay();
-        }
+    modal.style.display = 'block';
+    document.body.classList.add('modal-open');
+    currentModal = modal;
+
+    // Initialiser karusell hvis den finnes i modalen
+    initializeCarousel(modal);
+
+    if (modalId === 'cart-modal') {
+        updateCartDisplay();
     }
 }
 
@@ -205,56 +209,88 @@ function closeModal(modalId) {
 }
 
 function initializeCarousel(modal) {
-    // Reset current slide
-    currentSlide = 0;
+    const carousel = modal.querySelector('.image-carousel');
+    if (!carousel) return;
 
-    // Get carousel elements for the current modal
-    slides = modal.querySelectorAll('.carousel-image');
+    const slides = carousel.querySelectorAll('.carousel-image');
     if (slides.length === 0) return;
 
-    // Clear existing dots
-    const dotsContainer = modal.querySelector('.carousel-dots');
+    const dotsContainer = carousel.querySelector('.carousel-dots');
     if (!dotsContainer) return;
+
+    // Tøm eksisterende dots
     dotsContainer.innerHTML = '';
 
-    // Create dots for each slide
+    // Opprett dots for hvert bilde
     slides.forEach((_, index) => {
         const dot = document.createElement('span');
         dot.className = 'dot';
-        dot.onclick = () => goToSlide(index);
+        if (index === 0) dot.classList.add('active');
+        dot.onclick = () => showSlide(modal, index);
         dotsContainer.appendChild(dot);
     });
 
-    // Update dots array
-    dots = modal.querySelectorAll('.dot');
+    // Vis første bilde
+    showSlide(modal, 0);
 
-    // Show first slide
-    showSlide(0);
+    // Legg til event listeners for prev/next knapper
+    const prevButton = carousel.querySelector('.carousel-button.prev');
+    const nextButton = carousel.querySelector('.carousel-button.next');
+
+    if (prevButton) {
+        prevButton.onclick = (e) => {
+            e.stopPropagation();
+            moveSlide(modal, -1);
+        };
+    }
+
+    if (nextButton) {
+        nextButton.onclick = (e) => {
+            e.stopPropagation();
+            moveSlide(modal, 1);
+        };
+    }
 }
 
-function showSlide(n) {
-    if (!currentModal || slides.length === 0) return;
+function showSlide(modal, index) {
+    const carousel = modal.querySelector('.image-carousel');
+    if (!carousel) return;
 
-    // Remove active class from all slides and dots
+    const slides = carousel.querySelectorAll('.carousel-image');
+    const dots = carousel.querySelectorAll('.dot');
+    
+    if (slides.length === 0) return;
+
+    // Håndter wrap-around
+    let slideIndex = index;
+    if (index >= slides.length) slideIndex = 0;
+    if (index < 0) slideIndex = slides.length - 1;
+
+    // Fjern active class fra alle slides og dots
     slides.forEach(slide => slide.classList.remove('active'));
     dots.forEach(dot => dot.classList.remove('active'));
 
-    // Update current slide index
-    currentSlide = (n + slides.length) % slides.length;
-
-    // Add active class to current slide and dot
-    slides[currentSlide].classList.add('active');
-    dots[currentSlide].classList.add('active');
+    // Legg til active class på current slide og dot
+    slides[slideIndex].classList.add('active');
+    dots[slideIndex].classList.add('active');
 }
 
-function moveSlide(direction) {
-    if (!currentModal) return;
-    showSlide(currentSlide + direction);
-}
+function moveSlide(modal, direction) {
+    const carousel = modal.querySelector('.image-carousel');
+    if (!carousel) return;
 
-function goToSlide(n) {
-    if (!currentModal) return;
-    showSlide(n);
+    const slides = carousel.querySelectorAll('.carousel-image');
+    const currentSlide = carousel.querySelector('.carousel-image.active');
+    
+    if (!currentSlide) return;
+
+    let currentIndex = Array.from(slides).indexOf(currentSlide);
+    let newIndex = currentIndex + direction;
+
+    if (newIndex >= slides.length) newIndex = 0;
+    if (newIndex < 0) newIndex = slides.length - 1;
+
+    showSlide(modal, newIndex);
 }
 
 // Close modal when clicking outside
@@ -269,9 +305,9 @@ document.addEventListener('keydown', function (event) {
     if (!currentModal) return;
 
     if (event.key === 'ArrowLeft') {
-        moveSlide(-1);
+        moveSlide(currentModal, -1);
     } else if (event.key === 'ArrowRight') {
-        moveSlide(1);
+        moveSlide(currentModal, 1);
     } else if (event.key === 'Escape') {
         closeModal(currentModal.id);
     }
