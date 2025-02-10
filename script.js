@@ -388,13 +388,7 @@ function openContactModal() {
 
 // EmailJS konfigurasjon
 (function() {
-    emailjs.init({
-        publicKey: "Ug6P_Hy_7jBVwVMZv",
-        blockHeadless: false,
-        limitRate: {
-            throttle: 10000 // 10 seconds
-        }
-    });
+    emailjs.init("QnvwE_3_avTq6RTuA"); // Public key fra playground
 })();
 
 // Kontaktskjema funksjonalitet
@@ -446,14 +440,14 @@ function handleContactSubmit(event) {
 
     // Send e-post via EmailJS
     emailjs.send(
-        'service_v1g2fr8', // Din EmailJS Service ID
-        'template_bs5yh6j', // Din Template ID for kontaktskjema
+        'default_service', // Service ID fra playground
+        'template_bs5yh6j', // Template ID for kontaktskjema
         {
             from_name: name,
-            from_email: email,
             subject: subject,
+            from_email: email,
             message: message,
-            to_email: 'kreativmoro@outlook.com'
+            reply_to: email
         }
     ).then(
         function(response) {
@@ -474,18 +468,15 @@ function handleContactSubmit(event) {
 // Funksjon for å sende ordrebekreftelse
 function sendOrderConfirmation(orderDetails) {
     return emailjs.send(
-        'service_v1g2fr8', // Din EmailJS Service ID
-        'template_slf2zpr', // Din Template ID for ordrebekreftelse
+        'default_service', // Service ID fra playground
+        'template_slf2zpr', // Template ID for ordrebekreftelse
         {
-            to_email: orderDetails.email,
-            from_email: 'kreativmoro@outlook.com',
             product_name: orderDetails.productName,
             order_number: orderDetails.orderNumber,
             purchase_date: new Date().toLocaleDateString('no-NO'),
             total_price: `${orderDetails.price.toFixed(2)} NOK`,
-            company_name: 'Kreativ Moro',
-            company_email: 'kreativmoro@outlook.com',
-            company_website: 'www.kreativmoro.no'
+            to_email: orderDetails.email,
+            reply_to: 'kreativmoro@outlook.com'
         }
     ).then(
         function(response) {
