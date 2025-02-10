@@ -399,10 +399,13 @@ function handleContactSubmit(event) {
     document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
 
     // Get form fields
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
+    const name = document.getElementById('from_name').value;
+    const email = document.getElementById('from_email').value;
     const subject = document.getElementById('subject').value;
     const message = document.getElementById('message').value;
+
+    // Set reply_to field
+    document.getElementById('reply_to').value = email;
 
     // Validate fields
     let isValid = true;
