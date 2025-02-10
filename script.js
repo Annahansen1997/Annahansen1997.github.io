@@ -388,7 +388,13 @@ function openContactModal() {
 
 // EmailJS konfigurasjon
 (function() {
-    emailjs.init("Ug6P_Hy_7jBVwVMZv"); // Din EmailJS Public Key
+    emailjs.init({
+        publicKey: "Ug6P_Hy_7jBVwVMZv",
+        blockHeadless: false,
+        limitRate: {
+            throttle: 10000 // 10 seconds
+        }
+    });
 })();
 
 // Kontaktskjema funksjonalitet
@@ -451,15 +457,16 @@ function handleContactSubmit(event) {
         }
     ).then(
         function(response) {
+            console.log('SUCCESS!', response.status, response.text);
             hideLoadingMessage();
             showSuccessMessage('Takk for din henvendelse! Vi vil svare deg så snart som mulig.');
             document.getElementById('contactForm').reset();
             closeModal('contact-modal');
         },
         function(error) {
-            hideLoadingMessage();
-            showMessage('Beklager, noe gikk galt. Vennligst prøv igjen senere.', 'error');
             console.error('EmailJS error:', error);
+            hideLoadingMessage();
+            showMessage('Beklager, noe gikk galt. Vennligst prøv igjen senere eller send en e-post direkte til kreativmoro@outlook.com', 'error');
         }
     );
 }
