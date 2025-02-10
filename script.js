@@ -86,6 +86,11 @@ function updateCartDisplay() {
                 <h3>${item.name}</h3>
                 <p>Pris: ${item.price.toFixed(2)} NOK</p>
                 <p>Digital nedlasting (PDF)</p>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
+                    <span class="quantity-display">${item.quantity}</span>
+                    <button class="quantity-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+                </div>
             </div>
             <div class="cart-item-price">${itemTotal.toFixed(2)} NOK</div>
             <button class="delete-btn" onclick="removeFromCart('${item.id}')">×</button>
@@ -114,25 +119,51 @@ function updateCartDisplay() {
 }
 
 function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-    updateCartDisplay();
-    showMessage('Produkt fjernet fra handlekurven');
+    // Finn indeksen til produktet i handlekurven
+    const index = cart.findIndex(item => item.id.toString() === productId.toString());
+    
+    if (index !== -1) {
+        // Fjern produktet fra cart-arrayet
+        cart.splice(index, 1);
+        
+        // Oppdater localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // Oppdater visningen
+        updateCartCount();
+        updateCartDisplay();
+        
+        // Vis melding
+        showMessage('Produkt fjernet fra handlekurven');
+    }
 }
 
 function updateQuantity(productId, change) {
-    const item = cart.find(item => item.id === productId);
+    const item = cart.find(item => item.id.toString() === productId.toString());
     if (!item) return;
 
-    item.quantity += change;
-
-    if (item.quantity <= 0) {
-        removeFromCart(productId);
+    const newQuantity = item.quantity + change;
+    
+    // Ikke la antallet gå under 1
+    if (newQuantity < 1) {
+        return;
+    }
+    
+    // Oppdater antallet
+    item.quantity = newQuantity;
+    
+    // Oppdater localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Oppdater visningen
+    updateCartCount();
+    updateCartDisplay();
+    
+    // Vis bekreftelsesmelding
+    if (change > 0) {
+        showMessage(`Antall ${item.name} økt til ${newQuantity}`);
     } else {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCount();
-        updateCartDisplay();
+        showMessage(`Antall ${item.name} redusert til ${newQuantity}`);
     }
 }
 
