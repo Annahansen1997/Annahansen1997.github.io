@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function() {
+            emailjs.init("Ug6P_Hy_7jBVwVMZv");
+        })();
+    </script>
     <script src="config.js"></script>
     <script src="script.js"></script>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
@@ -1030,13 +1036,6 @@
             <a href="#" onclick="event.preventDefault(); openModal('privacy-modal')" class="footer-link">Personvern</a>
         </p>
     </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        (function () {
-            emailjs.init("DIN_PUBLIC_KEY"); // Erstatt med din public key fra EmailJS
-        })();
-    </script>
 </body>
 
 </html>

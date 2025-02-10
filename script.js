@@ -37,6 +37,14 @@ document.querySelectorAll('.nav-link').forEach(link => {
 });
 
 function addToCart(product) {
+    const existingItem = cart.find(i => i.id === product.id);
+    if (existingItem) {
+        // Hvis produktet allerede finnes i handlekurven, vis en melding
+        showMessage('Dette produktet er allerede i handlekurven');
+        return;
+    }
+    
+    // Legg til produktet med quantity = 1
     const item = {
         id: product.id,
         name: product.name,
@@ -46,13 +54,7 @@ function addToCart(product) {
         quantity: 1
     };
     
-    const existingItem = cart.find(i => i.id === product.id);
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push(item);
-    }
-    
+    cart.push(item);
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     updateCartDisplay();
@@ -83,11 +85,7 @@ function updateCartDisplay() {
             <div class="cart-item-details">
                 <h3>${item.name}</h3>
                 <p>Pris: ${item.price.toFixed(2)} NOK</p>
-            </div>
-            <div class="cart-item-quantity">
-                <button class="quantity-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
-                <span>${item.quantity}</span>
-                <button class="quantity-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+                <p>Digital nedlasting (PDF)</p>
             </div>
             <div class="cart-item-price">${itemTotal.toFixed(2)} NOK</div>
             <button class="delete-btn" onclick="removeFromCart('${item.id}')">×</button>
@@ -115,6 +113,14 @@ function updateCartDisplay() {
     }
 }
 
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    updateCartDisplay();
+    showMessage('Produkt fjernet fra handlekurven');
+}
+
 function updateQuantity(productId, change) {
     const item = cart.find(item => item.id === productId);
     if (!item) return;
@@ -128,13 +134,6 @@ function updateQuantity(productId, change) {
         updateCartCount();
         updateCartDisplay();
     }
-}
-
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-    updateCartDisplay();
 }
 
 function emptyCart() {
@@ -215,6 +214,10 @@ function initializeCarousel(modal) {
     const slides = carousel.querySelectorAll('.carousel-image');
     if (slides.length === 0) return;
 
+    // Vis første bilde umiddelbart
+    slides[0].style.display = 'block';
+    slides[0].classList.add('active');
+
     const dotsContainer = carousel.querySelector('.carousel-dots');
     if (!dotsContainer) return;
 
@@ -229,9 +232,6 @@ function initializeCarousel(modal) {
         dot.onclick = () => showSlide(modal, index);
         dotsContainer.appendChild(dot);
     });
-
-    // Vis første bilde
-    showSlide(modal, 0);
 
     // Legg til event listeners for prev/next knapper
     const prevButton = carousel.querySelector('.carousel-button.prev');
@@ -266,11 +266,15 @@ function showSlide(modal, index) {
     if (index >= slides.length) slideIndex = 0;
     if (index < 0) slideIndex = slides.length - 1;
 
-    // Fjern active class fra alle slides og dots
-    slides.forEach(slide => slide.classList.remove('active'));
+    // Skjul alle bilder først
+    slides.forEach(slide => {
+        slide.style.display = 'none';
+        slide.classList.remove('active');
+    });
     dots.forEach(dot => dot.classList.remove('active'));
 
-    // Legg til active class på current slide og dot
+    // Vis det aktive bildet
+    slides[slideIndex].style.display = 'block';
     slides[slideIndex].classList.add('active');
     dots[slideIndex].classList.add('active');
 }
@@ -338,12 +342,12 @@ function openContactModal() {
     }
 }
 
-// Legg til denne konstanten øverst i filen (utenfor alle funksjoner)
-const CONTACT_CONFIG = {
-    recipientEmail: 'hombgames@hotmail.com' // Dette er kun for backend-bruk
-};
+// EmailJS konfigurasjon
+(function() {
+    emailjs.init("Ug6P_Hy_7jBVwVMZv"); // Din EmailJS Public Key
+})();
 
-// Oppdater handleContactSubmit funksjonen
+// Kontaktskjema funksjonalitet
 function handleContactSubmit(event) {
     event.preventDefault();
 
@@ -351,26 +355,33 @@ function handleContactSubmit(event) {
     document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
 
     // Get form fields
-    const email = document.getElementById('email');
-    const subject = document.getElementById('subject');
-    const message = document.getElementById('message');
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
 
     // Validate fields
     let isValid = true;
 
-    if (!email.value || !email.value.includes('@')) {
+    if (!name.trim()) {
+        document.getElementById('name-error').textContent = 'Navn er påkrevd';
+        document.getElementById('name-error').style.display = 'block';
+        isValid = false;
+    }
+
+    if (!email || !email.includes('@')) {
         document.getElementById('email-error').textContent = 'Vennligst oppgi en gyldig e-postadresse';
         document.getElementById('email-error').style.display = 'block';
         isValid = false;
     }
 
-    if (!subject.value.trim()) {
+    if (!subject.trim()) {
         document.getElementById('subject-error').textContent = 'Emne er påkrevd';
         document.getElementById('subject-error').style.display = 'block';
         isValid = false;
     }
 
-    if (!message.value.trim()) {
+    if (!message.trim()) {
         document.getElementById('message-error').textContent = 'Melding er påkrevd';
         document.getElementById('message-error').style.display = 'block';
         isValid = false;
@@ -380,28 +391,102 @@ function handleContactSubmit(event) {
         return;
     }
 
-    const formData = {
-        email: email.value,
-        subject: subject.value,
-        message: message.value,
-        to_email: CONTACT_CONFIG.recipientEmail
-    };
+    // Vis laste-indikator
+    showLoadingMessage('Sender melding...');
 
     // Send e-post via EmailJS
     emailjs.send(
-        'DIN_SERVICE_ID',
-        'DIN_TEMPLATE_ID',
-        formData
+        'service_v1g2fr8', // Din EmailJS Service ID
+        'template_bs5yh6j', // Din Template ID for kontaktskjema
+        {
+            from_name: name,
+            from_email: email,
+            subject: subject,
+            message: message,
+            to_email: 'kreativmoro@outlook.com'
+        }
     ).then(
-        function (response) {
+        function(response) {
+            hideLoadingMessage();
             showSuccessMessage('Takk for din henvendelse! Vi vil svare deg så snart som mulig.');
             document.getElementById('contactForm').reset();
             closeModal('contact-modal');
         },
-        function (error) {
-            showSuccessMessage('Beklager, noe gikk galt. Vennligst prøv igjen senere.', 'error');
+        function(error) {
+            hideLoadingMessage();
+            showMessage('Beklager, noe gikk galt. Vennligst prøv igjen senere.', 'error');
+            console.error('EmailJS error:', error);
         }
     );
+}
+
+// Funksjon for å sende ordrebekreftelse
+function sendOrderConfirmation(orderDetails) {
+    return emailjs.send(
+        'service_v1g2fr8', // Din EmailJS Service ID
+        'template_slf2zpr', // Din Template ID for ordrebekreftelse
+        {
+            to_email: orderDetails.email,
+            from_email: 'kreativmoro@outlook.com',
+            product_name: orderDetails.productName,
+            order_number: orderDetails.orderNumber,
+            purchase_date: new Date().toLocaleDateString('no-NO'),
+            total_price: `${orderDetails.price.toFixed(2)} NOK`,
+            company_name: 'Kreativ Moro',
+            company_email: 'kreativmoro@outlook.com',
+            company_website: 'www.kreativmoro.no'
+        }
+    ).then(
+        function(response) {
+            console.log('Ordrebekreftelse sendt:', response);
+            return response;
+        },
+        function(error) {
+            console.error('Feil ved sending av ordrebekreftelse:', error);
+            throw error;
+        }
+    );
+}
+
+// Oppdatert handlePurchase funksjon
+async function handlePurchase(productId, productName, price) {
+    const customerEmail = prompt('Vennligst skriv inn din e-postadresse for å motta produktet:');
+
+    if (!customerEmail || !customerEmail.includes('@')) {
+        alert('Vennligst oppgi en gyldig e-postadresse.');
+        return;
+    }
+
+    showLoadingMessage('Behandler din bestilling...');
+
+    try {
+        const orderNumber = 'ORDER-' + Date.now();
+        await sendOrderConfirmation({
+            email: customerEmail,
+            productName: productName,
+            orderNumber: orderNumber,
+            price: price
+        });
+
+        hideLoadingMessage();
+        showSuccessMessage('Takk for ditt kjøp! Produktet er sendt til din e-post.');
+        removeFromCart(productId);
+        closeModal('cart-modal');
+    } catch (error) {
+        hideLoadingMessage();
+        showMessage('Beklager, noe gikk galt. Vennligst kontakt kundeservice.', 'error');
+        console.error('E-post feil:', error);
+    }
+}
+
+function showLoadingMessage(message) {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'loading-message';
+    loadingDiv.innerHTML = `
+        <div class="spinner"></div>
+        <p>${message}</p>
+    `;
+    document.body.appendChild(loadingDiv);
 }
 
 function showSuccessMessage(message) {
@@ -680,46 +765,6 @@ const productPDFs = {
     5: 'flybingo.pdf'
 };
 
-// Funksjon for å håndtere kjøp
-function handlePurchase(productId, productName, price) {
-    // Spør om kundens e-postadresse
-    const customerEmail = prompt('Vennligst skriv inn din e-postadresse for å motta produktet:');
-
-    if (!customerEmail || !customerEmail.includes('@')) {
-        alert('Vennligst oppgi en gyldig e-postadresse.');
-        return;
-    }
-
-    // Vis laste-indikator
-    showLoadingMessage('Behandler din bestilling...');
-
-    // Send e-post med produktet
-    emailjs.send(
-        'DIN_SERVICE_ID', // Erstatt med din EmailJS service ID
-        'DIN_TEMPLATE_ID', // Erstatt med din EmailJS template ID
-        {
-            to_email: customerEmail,
-            product_name: productName,
-            product_file: productPDFs[productId],
-            purchase_date: new Date().toLocaleDateString('no-NO'),
-            total_price: price.toFixed(2) + ' NOK'
-        }
-    ).then(
-        function (response) {
-            hideLoadingMessage();
-            showSuccessMessage('Takk for ditt kjøp! Produktet er sendt til din e-post.');
-            // Fjern produktet fra handlekurven hvis det var kjøpt derfra
-            removeFromCart(productId);
-            closeModal('cart-modal');
-        },
-        function (error) {
-            hideLoadingMessage();
-            showSuccessMessage('Beklager, noe gikk galt. Vennligst kontakt kundeservice.', 'error');
-            console.error('E-post feil:', error);
-        }
-    );
-}
-
 // Oppdater buy-button click handlers
 document.querySelectorAll('.buy-button').forEach(button => {
     const modalContent = button.closest('.modal-content');
@@ -729,17 +774,6 @@ document.querySelectorAll('.buy-button').forEach(button => {
 
     button.onclick = () => handlePurchase(productId, productName, price);
 });
-
-// Loading message
-function showLoadingMessage(message) {
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'loading-message';
-    loadingDiv.innerHTML = `
-        <div class="spinner"></div>
-        <p>${message}</p>
-    `;
-    document.body.appendChild(loadingDiv);
-}
 
 function hideLoadingMessage() {
     const loadingDiv = document.querySelector('.loading-message');
@@ -819,3 +853,14 @@ async function initiateCheckout() {
 
 // Initialiser handlekurven når siden lastes
 document.addEventListener('DOMContentLoaded', updateCartDisplay);
+
+function showMessage(message) {
+    const messageContainer = document.createElement('div');
+    messageContainer.className = 'cart-message';
+    messageContainer.innerHTML = message;
+    document.body.appendChild(messageContainer);
+
+    setTimeout(() => {
+        messageContainer.remove();
+    }, 3000);
+}

@@ -407,9 +407,7 @@ body.modal-open {
     border-radius: 4px;
     animation: slideIn 0.3s ease-out;
     z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .view-cart-btn {
@@ -777,20 +775,14 @@ body.modal-open {
 
 .carousel-image {
     position: relative;
-    left: 0;
-    top: 0;
-    transform: none;
     width: 100%;
     height: auto;
     max-height: 50vh;
     object-fit: contain;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
     display: none;
 }
 
 .carousel-image.active {
-    opacity: 1;
     display: block;
 }
 
@@ -1576,4 +1568,15 @@ body.modal-open {
 
 .modal-content .single-image {
     margin-top: 20px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
