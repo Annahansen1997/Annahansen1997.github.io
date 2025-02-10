@@ -9,8 +9,15 @@ document.addEventListener('DOMContentLoaded', function () {
     cart = JSON.parse(localStorage.getItem('cart')) || [];
     
     // Oppdater handlekurv-visning
-    updateCartCount();
-    updateCartDisplay();
+    const cartCountElement = document.querySelector('.cart-count');
+    if (cartCountElement) {
+        updateCartCount();
+    }
+    
+    const cartItemsContainer = document.getElementById('cart-items');
+    if (cartItemsContainer) {
+        updateCartDisplay();
+    }
 
     // Legg til event listeners
     const checkoutButton = document.querySelector('.checkout-button');
@@ -23,15 +30,45 @@ document.addEventListener('DOMContentLoaded', function () {
     if (modal) {
         initializeCarousel(modal);
     }
-});
 
+    // Initialiser søkefunksjonalitet
+    const searchInput = document.querySelector('.search-container input');
+    const productCards = document.querySelectorAll('.product-card');
 
-// Legg til kontakt-knapp lytter
-document.querySelectorAll('.nav-link').forEach(link => {
-    if (link.textContent.trim() === 'Kontakt') {
-        link.addEventListener('click', function (e) {
+    if (searchInput && productCards.length > 0) {
+        searchInput.addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+
+            productCards.forEach(card => {
+                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const description = card.querySelector('p')?.textContent.toLowerCase() || '';
+
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // Initialiser kontakt-knapp
+    const contactLinks = document.querySelectorAll('.nav-link');
+    contactLinks.forEach(link => {
+        if (link.textContent.trim() === 'Kontakt') {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                openContactModal();
+            });
+        }
+    });
+
+    // Initialiser Om Oss-funksjonalitet
+    const aboutLink = document.querySelector('.about-link');
+    if (aboutLink) {
+        aboutLink.addEventListener('click', function (e) {
             e.preventDefault();
-            openContactModal();
+            openModal('about-modal');
         });
     }
 });
@@ -188,30 +225,6 @@ function showAddedToCartMessage(productName) {
         messageContainer.remove();
     }, 3000);
 }
-
-// Søkefunksjonalitet
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.querySelector('.search-container input');
-    const productCards = document.querySelectorAll('.product-card');
-
-    // Sjekk om søkefeltet eksisterer før vi legger til event listener
-    if (searchInput) {
-        searchInput.addEventListener('input', function (e) {
-            const searchTerm = e.target.value.toLowerCase();
-
-            productCards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                const description = card.querySelector('p').textContent.toLowerCase();
-
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    }
-});
 
 // Modal funksjoner
 function openModal(modalId) {
