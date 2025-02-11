@@ -5,14 +5,8 @@ let currentModal = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialiser EmailJS
-    emailjs.init({
-        publicKey: "Ug6P_Hy_7jBVwVMZv",
-        blockHeadless: false,
-        blockList: {
-            referrers: [],
-        }
-    });
+    // Initialiser EmailJS med bare public key
+    emailjs.init("QnvwE_3_avTq6RTuA");
     
     // Last handlekurv fra localStorage
     cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -439,7 +433,8 @@ async function handleContactSubmit(event) {
         const response = await emailjs.send(
             'default_service',
             'template_bs5yh6j',
-            formData
+            formData,
+            'QnvwE_3_avTq6RTuA'
         );
         console.log('SUCCESS!', response);
         alert('Meldingen din er sendt! Vi vil svare så snart som mulig.');
