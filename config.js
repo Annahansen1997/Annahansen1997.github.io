@@ -17,7 +17,7 @@ const PRODUCT_PRICES = {
 
 // EmailJS Configuration
 const emailjsConfig = {
-    publicKey: 'Ug6P_Hy_7jBVwVMZv',
+    publicKey: 'QnvwE_3_avTq6RTuA',
     serviceId: 'default_service',
     templateId: 'template_bs5yh6j',
     testTemplateId: 'template_slf2zpr'
