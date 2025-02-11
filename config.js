@@ -17,10 +17,10 @@ const PRODUCT_PRICES = {
 
 // EmailJS Configuration
 const emailjsConfig = {
-    publicKey: process.env.EMAILJS_PUBLIC_KEY || 'Ug6P_Hy_7jBVwVMZv',
-    serviceId: process.env.EMAILJS_SERVICE_ID || 'default_service',
-    templateId: process.env.EMAILJS_TEMPLATE_ID || 'template_bs5yh6j',
-    testTemplateId: process.env.EMAILJS_TEST_TEMPLATE_ID || 'template_slf2zpr'
+    publicKey: 'Ug6P_Hy_7jBVwVMZv',
+    serviceId: 'default_service',
+    templateId: 'template_bs5yh6j',
+    testTemplateId: 'template_slf2zpr'
 };
 
 // Initialize EmailJS
