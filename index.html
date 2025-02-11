@@ -17,18 +17,6 @@
         frame-src 'self' https://js.stripe.com;">
     <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        (function() {
-            emailjs.init({
-                publicKey: emailjsConfig.publicKey,
-                blockHeadless: false,
-                limitRate: false,
-                blockList: {
-                    referrers: [] // Allow all referrers
-                }
-            });
-        })();
-    </script>
     <script src="script.js"></script>
 </head>
 

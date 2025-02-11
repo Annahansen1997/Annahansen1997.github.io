@@ -22,3 +22,13 @@ const emailjsConfig = {
     templateId: 'template_bs5yh6j',
     testTemplateId: 'template_slf2zpr'
 };
+
+// Initialize EmailJS with configuration
+emailjs.init({
+    publicKey: emailjsConfig.publicKey,
+    blockHeadless: false,
+    limitRate: false,
+    blockList: {
+        referrers: [] // Allow all referrers
+    }
+});
