@@ -389,33 +389,6 @@ function openContactModal() {
     }
 }
 
-// EmailJS konfigurasjon
-(function() {
-    emailjs.init({
-        publicKey: "Ug6P_Hy_7jBVwVMZv",
-        blockHeadless: false,
-        blockList: {
-            referrers: [],
-        }
-    });
-
-    // Test EmailJS tilkobling
-    emailjs.send("default_service", "template_bs5yh6j", {
-        from_name: "Test",
-        subject: "API Test",
-        from_email: "test@test.com",
-        message: "Dette er en test-melding",
-        reply_to: "test@test.com"
-    }).then(
-        function(response) {
-            console.log("EmailJS tilkobling vellykket!", response);
-        },
-        function(error) {
-            console.error("EmailJS tilkoblingsfeil:", error);
-        }
-    );
-})();
-
 // Kontaktskjema funksjonalitet
 async function handleContactSubmit(event) {
     event.preventDefault();
