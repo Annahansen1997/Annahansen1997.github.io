@@ -5,6 +5,9 @@ let currentModal = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Initialiser EmailJS
+    emailjs.init('Ug6P_Hy_7jBVwVMZv');
+    
     // Last handlekurv fra localStorage
     cart = JSON.parse(localStorage.getItem('cart')) || [];
     
@@ -427,15 +430,13 @@ async function handleContactSubmit(event) {
     };
 
     try {
-        await emailjs.send(
-            emailjsConfig.serviceId,
-            emailjsConfig.templateId,
+        const response = await emailjs.send(
+            'default_service',
+            'template_bs5yh6j',
             formData,
-            {
-                publicKey: emailjsConfig.publicKey,
-                blockHeadless: false
-            }
+            'Ug6P_Hy_7jBVwVMZv'
         );
+        console.log('SUCCESS!', response);
         alert('Meldingen din er sendt! Vi vil svare så snart som mulig.');
         closeModal('contact-modal');
         form.reset();
