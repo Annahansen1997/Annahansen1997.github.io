@@ -392,29 +392,35 @@ function openContactModal() {
 // Kontaktskjema funksjonalitet
 async function handleContactSubmit(event) {
     event.preventDefault();
-    
-    const form = event.target;
-    const formData = {
-        from_name: form.from_name.value,
-        from_email: form.from_email.value,
-        subject: form.subject.value,
-        message: form.message.value,
-        reply_to: form.from_email.value
-    };
 
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    // Set reply_to to be the same as from_email
+    document.getElementById('reply_to').value = formData.get('from_email');
+    
     try {
         const response = await emailjs.send(
-            'default_service',
-            'template_bs5yh6j',
-            formData,
-            'QnvwE_3_avTq6RTuA'
+            emailjsConfig.serviceId,
+            emailjsConfig.templateId,
+            {
+                from_name: formData.get('from_name'),
+                from_email: formData.get('from_email'),
+                subject: formData.get('subject'),
+                message: formData.get('message'),
+                reply_to: formData.get('from_email')
+            }
         );
-        console.log('SUCCESS!', response);
-        alert('Meldingen din er sendt! Vi vil svare så snart som mulig.');
-        closeModal('contact-modal');
-        form.reset();
+
+        if (response.status === 200) {
+            alert('Meldingen din er sendt! Vi vil svare deg så snart som mulig.');
+            form.reset();
+            closeModal('contact-modal');
+        } else {
+            throw new Error('Failed to send message');
+        }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('EmailJS error:', error);
         alert('Beklager, det oppstod en feil ved sending av meldingen. Vennligst prøv igjen senere.');
     }
 }
