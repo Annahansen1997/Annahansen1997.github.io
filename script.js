@@ -414,80 +414,35 @@ function openContactModal() {
 })();
 
 // Kontaktskjema funksjonalitet
-function handleContactSubmit(event) {
+async function handleContactSubmit(event) {
     event.preventDefault();
+    
+    const form = event.target;
+    const formData = {
+        from_name: form.from_name.value,
+        from_email: form.from_email.value,
+        subject: form.subject.value,
+        message: form.message.value,
+        reply_to: form.from_email.value
+    };
 
-    // Reset error messages
-    document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
-
-    // Get form fields
-    const name = document.getElementById('from_name').value;
-    const email = document.getElementById('from_email').value;
-    const subject = document.getElementById('subject').value;
-    const message = document.getElementById('message').value;
-
-    // Set reply_to field
-    document.getElementById('reply_to').value = email;
-
-    // Validate fields
-    let isValid = true;
-
-    if (!name.trim()) {
-        document.getElementById('name-error').textContent = 'Navn er påkrevd';
-        document.getElementById('name-error').style.display = 'block';
-        isValid = false;
+    try {
+        await emailjs.send(
+            emailjsConfig.serviceId,
+            emailjsConfig.templateId,
+            formData,
+            {
+                publicKey: emailjsConfig.publicKey,
+                blockHeadless: false
+            }
+        );
+        alert('Meldingen din er sendt! Vi vil svare så snart som mulig.');
+        closeModal('contact-modal');
+        form.reset();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Beklager, det oppstod en feil ved sending av meldingen. Vennligst prøv igjen senere.');
     }
-
-    if (!email || !email.includes('@')) {
-        document.getElementById('email-error').textContent = 'Vennligst oppgi en gyldig e-postadresse';
-        document.getElementById('email-error').style.display = 'block';
-        isValid = false;
-    }
-
-    if (!subject.trim()) {
-        document.getElementById('subject-error').textContent = 'Emne er påkrevd';
-        document.getElementById('subject-error').style.display = 'block';
-        isValid = false;
-    }
-
-    if (!message.trim()) {
-        document.getElementById('message-error').textContent = 'Melding er påkrevd';
-        document.getElementById('message-error').style.display = 'block';
-        isValid = false;
-    }
-
-    if (!isValid) {
-        return;
-    }
-
-    // Vis laste-indikator
-    showLoadingMessage('Sender melding...');
-
-    // Send e-post via EmailJS
-    emailjs.send(
-        'default_service', // Service ID fra playground
-        'template_bs5yh6j', // Template ID for kontaktskjema
-        {
-            from_name: name,
-            subject: subject,
-            from_email: email,
-            message: message,
-            reply_to: email
-        }
-    ).then(
-        function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-            hideLoadingMessage();
-            showSuccessMessage('Takk for din henvendelse! Vi vil svare deg så snart som mulig.');
-            document.getElementById('contactForm').reset();
-            closeModal('contact-modal');
-        },
-        function(error) {
-            console.error('EmailJS error:', error);
-            hideLoadingMessage();
-            showMessage('Beklager, noe gikk galt. Vennligst prøv igjen senere eller send en e-post direkte til kreativmoro@outlook.com', 'error');
-        }
-    );
 }
 
 // Funksjon for å sende ordrebekreftelse
