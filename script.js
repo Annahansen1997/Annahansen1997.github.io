@@ -1,13 +1,3 @@
-// Initialize EmailJS with configuration
-emailjs.init({
-    publicKey: emailjsConfig.publicKey,
-    blockHeadless: false,
-    limitRate: false,
-    blockList: {
-        referrers: [] // Allow all referrers
-    }
-});
-
 let currentSlide = 0;
 let slides = [];
 let dots = [];
@@ -15,8 +5,14 @@ let currentModal = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialiser EmailJS med bare public key
+    // En enkelt initialisering av EmailJS
     emailjs.init("QnvwE_3_avTq6RTuA");
+    
+    // Sett opp skjemahåndtering
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', handleContactSubmit);
+    }
     
     // Last handlekurv fra localStorage
     cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -402,36 +398,51 @@ function openContactModal() {
 // Kontaktskjema funksjonalitet
 async function handleContactSubmit(event) {
     event.preventDefault();
-
-    const form = event.target;
-    const formData = new FormData(form);
     
-    // Set reply_to to be the same as from_email
-    document.getElementById('reply_to').value = formData.get('from_email');
+    const form = event.target;
+    const submitButton = form.querySelector('.submit-button');
+    const originalButtonText = submitButton.textContent;
+    
+    // Reset error messages
+    document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
     
     try {
+        // Disable submit button and show loading state
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sender...';
+        
+        // Set reply_to to match from_email
+        const emailInput = document.getElementById('from_email');
+        document.getElementById('reply_to').value = emailInput.value;
+        
+        const templateParams = {
+            from_name: document.getElementById('from_name').value,
+            from_email: emailInput.value,
+            subject: document.getElementById('subject').value,
+            message: document.getElementById('message').value,
+            reply_to: emailInput.value
+        };
+
         const response = await emailjs.send(
             emailjsConfig.serviceId,
             emailjsConfig.templateId,
-            {
-                from_name: formData.get('from_name'),
-                from_email: formData.get('from_email'),
-                subject: formData.get('subject'),
-                message: formData.get('message'),
-                reply_to: formData.get('from_email')
-            }
+            templateParams
         );
 
         if (response.status === 200) {
-            alert('Meldingen din er sendt! Vi vil svare deg så snart som mulig.');
+            showMessage('Meldingen din er sendt! Vi vil svare deg så snart som mulig.');
             form.reset();
             closeModal('contact-modal');
         } else {
-            throw new Error('Failed to send message');
+            throw new Error('Feil ved sending av melding');
         }
     } catch (error) {
         console.error('EmailJS error:', error);
-        alert('Beklager, det oppstod en feil ved sending av meldingen. Vennligst prøv igjen senere.');
+        showMessage('Beklager, det oppstod en feil ved sending av meldingen. Vennligst prøv igjen senere.', 'error');
+    } finally {
+        // Restore submit button
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
     }
 }
 
@@ -866,10 +877,10 @@ async function initiateCheckout() {
 // Initialiser handlekurven når siden lastes
 document.addEventListener('DOMContentLoaded', updateCartDisplay);
 
-function showMessage(message) {
+function showMessage(message, type = 'success') {
     const messageContainer = document.createElement('div');
-    messageContainer.className = 'cart-message';
-    messageContainer.innerHTML = message;
+    messageContainer.className = `message ${type}`;
+    messageContainer.textContent = message;
     document.body.appendChild(messageContainer);
 
     setTimeout(() => {

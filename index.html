@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://js.stripe.com/v3/"></script>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
-        script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://*.emailjs.com; 
-        connect-src 'self' https://*.emailjs.com https://api.stripe.com https://kreativmoro.onrender.com; 
-        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; 
-        font-src 'self' https://cdnjs.cloudflare.com; 
-        img-src 'self' data:; 
-        frame-src 'self' https://js.stripe.com;">
+    script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://api.emailjs.com; 
+    connect-src 'self' https://api.emailjs.com https://api.stripe.com https://kreativmoro.onrender.com; 
+    style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; 
+    font-src 'self' https://cdnjs.cloudflare.com; 
+    img-src 'self' data:; 
+    frame-src 'self' https://js.stripe.com;">
     <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="script.js"></script>
@@ -31,11 +31,11 @@
             <div class="search-container">
                 <input type="search" placeholder="Søk etter aktiviteter...">
                 <button class="search-button">Søk</button>
-                    <svg xmlns="https://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+                <svg xmlns="https://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
                 </button>
             </div>
 
@@ -278,7 +278,7 @@
                         Dette digitale heftet er fylt med koselige vinteraktiviteter som vil holde barna
                         engasjert og kreative gjennom de kalde vintermånedene.
                     </p>
-                
+
                     <div class="content-section">
                         <h3>Hva inneholder heftet?</h3>
                         <ul class="bullet-list">
@@ -427,7 +427,8 @@
                 <div class="single-image">
                     <div class="image-carousel">
                         <div class="carousel-container">
-                            <img src="brev_paskeharen.png" alt="Brev fra Påskeharen forside" class="carousel-image active">
+                            <img src="brev_paskeharen.png" alt="Brev fra Påskeharen forside"
+                                class="carousel-image active">
                             <img src="brev_paskeharen1.png" alt="Brev fra Påskeharen variant" class="carousel-image">
                         </div>
                         <button class="carousel-button prev" onclick="moveSlide(-1)">❮</button>
@@ -438,7 +439,7 @@
 
                 <div class="modal-info">
                     <p class="intro-text">
-                        Skap magiske påskeminner med et koselig brev fra selveste påskeharen! 
+                        Skap magiske påskeminner med et koselig brev fra selveste påskeharen!
                         Dette søte brevet vil garantert bringe glede og spenning til påskefeiringen.
                     </p>
 
@@ -667,7 +668,7 @@
 
                 <div class="modal-info">
                     <p class="intro-text">
-                        Utforsk skogens magiske verden med vårt 14-siders fargeleggingshefte! 
+                        Utforsk skogens magiske verden med vårt 14-siders fargeleggingshefte!
                         Perfekt for barn som elsker dyr og natur, med detaljerte tegninger av dyrene som bor i skogen.
                     </p>
 
@@ -864,7 +865,7 @@
                     </div>
                     <p class="terms-note">Ved å gjennomføre kjøpet aksepterer du våre <a href="#"
                             onclick="event.preventDefault(); openModal('terms-modal')">kjøpsvilkår</a></p>
-                            <button class="checkout-button" onclick="goToCheckout()">Gå til kasse</button>
+                    <button class="checkout-button" onclick="goToCheckout()">Gå til kasse</button>
                     <button class="empty-cart-button" onclick="emptyCart()">Tøm handlekurv</button>
                 </div>
             </div>
