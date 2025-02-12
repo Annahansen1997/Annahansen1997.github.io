@@ -1,0 +1,7 @@
+{
+  "headers": {
+    "/": {
+      "Content-Security-Policy": "default-src 'self'; connect-src 'self' https://api.emailjs.com https://kreativmoro.onrender.com;"
+    }
+  }
+}
