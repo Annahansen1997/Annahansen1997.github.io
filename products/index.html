@@ -21,7 +21,7 @@
 
         <div id="contact-modal" class="modal">
             <div class="modal-content contact-modal-content">
-                <span class="close" onclick="closeModal('contact-modal')">&times;</span>
+                <span class="close" onclick="event.preventDefault(); closeModal('contact-modal')">&times;</span>
                 <div class="contact-info">
                     <h2>Kontakt oss</h2>
                     <p>Har du spørsmål eller tilbakemeldinger? Vi er her for å hjelpe!</p>
@@ -225,3 +225,16 @@
             })">Legg i handlekurv</button>
         </div>
     </div>
+
+    <span class="close" onclick="event.preventDefault(); closeModal('modal0')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('modal1')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('modal2')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('modal3')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('modal4')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('modal5')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('modal6')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('modal7')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('cart-modal')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('about-modal')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('terms-modal')">&times;</span>
+    <span class="close" onclick="event.preventDefault(); closeModal('privacy-modal')">&times;</span>

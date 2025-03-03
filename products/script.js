@@ -4,6 +4,9 @@ let dots = [];
 let currentModal = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+// Lagre scroll-posisjon når en modal åpnes
+let lastScrollPosition = 0;
+
 document.addEventListener('DOMContentLoaded', function () {
     // Last handlekurv fra localStorage
     cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -144,6 +147,9 @@ function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
 
+    // Lagre nåværende scroll-posisjon
+    lastScrollPosition = window.scrollY;
+
     if (currentModal) {
         currentModal.classList.remove('active');
     }
@@ -154,6 +160,11 @@ function openModal(modalId) {
     if (modalId === 'product-modal') {
         initializeCarousel(modal);
     }
+
+    // Forhindre scrolling av bakgrunnen
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${lastScrollPosition}px`;
+    document.body.style.width = '100%';
 }
 
 function closeModal(modalId) {
@@ -164,6 +175,12 @@ function closeModal(modalId) {
     if (currentModal === modal) {
         currentModal = null;
     }
+
+    // Gjenopprett scrolling og posisjon
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, lastScrollPosition);
 }
 
 function initializeCarousel(modal) {
@@ -207,6 +224,7 @@ function previousSlide() {
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal')) {
+        event.preventDefault();
         closeModal(event.target.id);
     }
 }); 
