@@ -82,28 +82,40 @@ function updateCartDisplay() {
         total += itemTotal;
 
         itemElement.innerHTML = `
-            <span>${item.name}</span>
-            <span>${item.quantity} x ${item.price} kr</span>
-            <button onclick="removeFromCart(${index})">Fjern</button>
+            <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+            <div class="cart-item-details">
+                <span class="cart-item-name">${item.name}</span>
+                <span class="cart-item-price">${item.quantity} x ${item.price.toFixed(2)} kr</span>
+                <button onclick="removeFromCart(${index})" class="remove-button">Fjern</button>
+            </div>
         `;
         
         cartItemsContainer.appendChild(itemElement);
     });
 
     if (totalElement) {
-        totalElement.textContent = `${total} kr`;
+        totalElement.textContent = `${total.toFixed(2)} kr`;
+    }
+
+    // Oppdater checkout knapp
+    const checkoutButton = document.querySelector('.checkout-button');
+    if (checkoutButton) {
+        checkoutButton.disabled = cart.length === 0;
     }
 }
 
-function addToCart(productName, price) {
-    const existingItem = cart.find(item => item.name === productName);
+function addToCart(product) {
+    const existingItem = cart.find(item => item.id === product.id);
     
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
         cart.push({
-            name: productName,
-            price: price,
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            priceId: product.priceId,
+            image: product.image,
             quantity: 1
         });
     }
