@@ -348,6 +348,35 @@ main {
 
 /* Responsivt design */
 @media (max-width: 768px) {
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .header-nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: nowrap;
+        width: 100%;
+    }
+
+    .nav-link {
+        flex: 0 1 auto;
+        white-space: nowrap;
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+
+    .modal {
+        padding: 0;
+        -webkit-overflow-scrolling: touch;
+        overflow-y: auto;
+    }
+
     .nav-links {
         gap: 1rem;
     }
