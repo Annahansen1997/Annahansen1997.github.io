@@ -3,6 +3,7 @@ let slides = [];
 let dots = [];
 let currentModal = null;
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let lastScrollPosition = 0;
 
 document.addEventListener('DOMContentLoaded', function () {
     // En enkelt initialisering av EmailJS
@@ -250,6 +251,11 @@ function openModal(modalId) {
     if (modalId === 'cart-modal') {
         updateCartDisplay();
     }
+
+    lastScrollPosition = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${lastScrollPosition}px`;
+    document.body.style.width = '100%';
 }
 
 function closeModal(modalId) {
@@ -258,6 +264,11 @@ function closeModal(modalId) {
         modal.style.display = 'none';
         document.body.classList.remove('modal-open');
     }
+
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, lastScrollPosition);
 }
 
 function initializeCarousel(modal) {

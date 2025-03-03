@@ -167,6 +167,30 @@ main {
     position: relative;
 }
 
+/* Lukkeknapp */
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    z-index: 1001;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.close:hover {
+    color: #666;
+}
+
 /* Handlekurv modal */
 .cart-modal-content {
     background-color: white;
