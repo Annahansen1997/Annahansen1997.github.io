@@ -71,14 +71,16 @@
         <section class="featured">
             <h2>Utvalgte aktiviteter</h2>
             <div class="product-grid">
-                <!-- New Vinterkos product card -->
-                <div class="product-card" onclick="openModal('modal0')">
-                    <img src="Vinterkos.png" alt="Vinterkos">
-                    <h3>Vinterkos</h3>
-                    <p>Alder 3-8</p>
-                    <p class="price">Pris: 45,00 NOK</p>
+                <!-- Vinterkos -->
+                <div class="product-card">
+                    <div onclick="openModal('modal0')" style="cursor: pointer;">
+                        <img src="Vinterkos.png" alt="Vinterkos">
+                        <h3>Vinterkos</h3>
+                        <p>Alder 3-8</p>
+                        <p class="price">Pris: 45,00 NOK</p>
+                    </div>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="buy-button" onclick="addToCart({
                             id: 0,
                             name: 'Vinterkos',
                             price: 45.00,
@@ -95,20 +97,23 @@
                     </div>
                 </div>
 
-                <div class="product-card" onclick="openModal('modal1')">
-                    <img src="Påskekos.png" alt="Påskekos">
-                    <h3>Påskekos</h3>
-                    <p>Alder 3-8</p>
-                    <p class="price">Pris: 45,00 NOK</p>
+                <!-- Påskekos -->
+                <div class="product-card">
+                    <div onclick="openModal('modal1')" style="cursor: pointer;">
+                        <img src="Påskekos.png" alt="Påskekos">
+                        <h3>Påskekos</h3>
+                        <p>Alder 3-8</p>
+                        <p class="price">Pris: 45,00 NOK</p>
+                    </div>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="buy-button" onclick="addToCart({
                             id: 1,
                             name: 'Påskekos',
                             price: 45.00,
                             priceId: 'price_1Qo9MJLPxmfy63yETbGYTyLJ',
                             image: 'Påskekos.png'
                         }); openModal('cart-modal')">Kjøp nå</button>
-                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="add-to-cart-button" onclick="addToCart({
                             id: 1,
                             name: 'Påskekos',
                             price: 45.00,
@@ -118,13 +123,16 @@
                     </div>
                 </div>
 
-                <div class="product-card" onclick="openModal('modal6')">
-                    <img src="brev_paskeharen.png" alt="Brev fra Påskeharen">
-                    <h3>Brev fra Påskeharen</h3>
-                    <p>Alder 3-8</p>
-                    <p class="price">Pris: 20,00 NOK</p>
+                <!-- Brev fra Påskeharen -->
+                <div class="product-card">
+                    <div onclick="openModal('modal6')" style="cursor: pointer;">
+                        <img src="brev_paskeharen.png" alt="Brev fra Påskeharen">
+                        <h3>Brev fra Påskeharen</h3>
+                        <p>Alder 3-8</p>
+                        <p class="price">Pris: 20,00 NOK</p>
+                    </div>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="buy-button" onclick="addToCart({
                             id: 6,
                             name: 'Brev fra Påskeharen',
                             price: 20.00,
@@ -141,20 +149,23 @@
                     </div>
                 </div>
 
-                <div class="product-card" onclick="openModal('modal2')">
-                    <img src="Dinosaur.png" alt="Dinosaureventyr">
-                    <h3>På eventyr med dinosaurene</h3>
-                    <p>Alder 3-8</p>
-                    <p class="price">Pris: 45,00 NOK</p>
+                <!-- På eventyr med dinosaurene -->
+                <div class="product-card">
+                    <div onclick="openModal('modal2')" style="cursor: pointer;">
+                        <img src="Dinosaur.png" alt="Dinosaureventyr">
+                        <h3>På eventyr med dinosaurene</h3>
+                        <p>Alder 3-8</p>
+                        <p class="price">Pris: 45,00 NOK</p>
+                    </div>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="buy-button" onclick="addToCart({
                             id: 2,
                             name: 'På eventyr med dinosaurene',
                             price: 45.00,
                             priceId: 'price_1Qo9NKLPxmfy63yEAoCoz18f',
                             image: 'Dinosaur.png'
                         }); openModal('cart-modal')">Kjøp nå</button>
-                        <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="add-to-cart-button" onclick="addToCart({
                             id: 2,
                             name: 'På eventyr med dinosaurene',
                             price: 45.00,
@@ -164,13 +175,16 @@
                     </div>
                 </div>
 
-                <div class="product-card" onclick="openModal('modal3')">
-                    <img src="Enhjørning.png" alt="Enhjørninghefte">
-                    <h3>Enhjørningens magiske eventyrhefte</h3>
-                    <p>Alder 3-8</p>
-                    <p class="price">Pris: 45,00 NOK</p>
+                <!-- Enhjørningens magiske eventyrhefte -->
+                <div class="product-card">
+                    <div onclick="openModal('modal3')" style="cursor: pointer;">
+                        <img src="Enhjørning.png" alt="Enhjørninghefte">
+                        <h3>Enhjørningens magiske eventyrhefte</h3>
+                        <p>Alder 3-8</p>
+                        <p class="price">Pris: 45,00 NOK</p>
+                    </div>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="buy-button" onclick="addToCart({
                             id: 3,
                             name: 'Enhjørningens magiske eventyrhefte',
                             price: 45.00,
@@ -185,13 +199,16 @@
                     </div>
                 </div>
 
-                <div class="product-card" onclick="openModal('modal7')">
-                    <img src="dyrene_i_skogen.png" alt="Dyrene i Skogen">
-                    <h3>Dyrene i Skogen Fargeleggingshefte</h3>
-                    <p>Alder 3-8</p>
-                    <p class="price">Pris: 45,00 NOK</p>
+                <!-- Dyrene i Skogen -->
+                <div class="product-card">
+                    <div onclick="openModal('modal7')" style="cursor: pointer;">
+                        <img src="dyrene_i_skogen.png" alt="Dyrene i Skogen">
+                        <h3>Dyrene i Skogen Fargeleggingshefte</h3>
+                        <p>Alder 3-8</p>
+                        <p class="price">Pris: 45,00 NOK</p>
+                    </div>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="buy-button" onclick="addToCart({
                             id: 7,
                             name: 'Dyrene i Skogen Fargeleggingshefte',
                             price: 45.00,
@@ -208,13 +225,16 @@
                     </div>
                 </div>
 
-                <div class="product-card" onclick="openModal('modal4')">
-                    <img src="Bilbingo.png" alt="Bilbingo">
-                    <h3>Bilbingo</h3>
-                    <p>Alder 4+</p>
-                    <p class="price">Pris: 35,00 NOK</p>
+                <!-- Bilbingo -->
+                <div class="product-card">
+                    <div onclick="openModal('modal4')" style="cursor: pointer;">
+                        <img src="Bilbingo.png" alt="Bilbingo">
+                        <h3>Bilbingo</h3>
+                        <p>Alder 4+</p>
+                        <p class="price">Pris: 35,00 NOK</p>
+                    </div>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="buy-button" onclick="addToCart({
                             id: 4,
                             name: 'Bilbingo',
                             price: 35.00,
@@ -229,13 +249,16 @@
                     </div>
                 </div>
 
-                <div class="product-card" onclick="openModal('modal5')">
-                    <img src="Flybingo.png" alt="Flybingo">
-                    <h3>Flybingo</h3>
-                    <p>Alder 4+</p>
-                    <p class="price">Pris: 35,00 NOK</p>
+                <!-- Flybingo -->
+                <div class="product-card">
+                    <div onclick="openModal('modal5')" style="cursor: pointer;">
+                        <img src="Flybingo.png" alt="Flybingo">
+                        <h3>Flybingo</h3>
+                        <p>Alder 4+</p>
+                        <p class="price">Pris: 35,00 NOK</p>
+                    </div>
                     <div class="button-group">
-                        <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+                        <button class="buy-button" onclick="addToCart({
                             id: 5,
                             name: 'Flybingo',
                             price: 35.00,

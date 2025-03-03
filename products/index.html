@@ -48,20 +48,22 @@
     <script src="config.js"></script>
     <script src="script.js"></script>
 
-    <div class="product-card" onclick="openModal('modal0')">
-        <img src="Vinterkos.png" alt="Vinterkos">
-        <h3>Vinterkos</h3>
-        <p>Alder 3-8</p>
-        <p class="price">Pris: 45,00 NOK</p>
+    <div class="product-card">
+        <div onclick="openModal('modal0')" style="cursor: pointer;">
+            <img src="Vinterkos.png" alt="Vinterkos">
+            <h3>Vinterkos</h3>
+            <p>Alder 3-8</p>
+            <p class="price">Pris: 45,00 NOK</p>
+        </div>
         <div class="button-group">
-            <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+            <button class="buy-button" onclick="addToCart({
                 id: 0,
                 name: 'Vinterkos',
                 price: 45.00,
                 priceId: 'price_1Qo9IPLPxmfy63yEXy1w1l8T',
                 image: 'Vinterkos.png'
             }); openModal('cart-modal')">Kjøp nå</button>
-            <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+            <button class="add-to-cart-button" onclick="addToCart({
                 id: 0,
                 name: 'Vinterkos',
                 price: 45.00,
@@ -71,24 +73,26 @@
         </div>
     </div>
 
-    <div class="product-card" onclick="openModal('modal1')">
-        <img src="Påskekos.png" alt="Påskekos">
-        <h3>Påskekos</h3>
-        <p>Alder 3-8</p>
-        <p class="price">Pris: 45,00 NOK</p>
+    <div class="product-card">
+        <div onclick="openModal('modal1')" style="cursor: pointer;">
+            <img src="Påskekos.png" alt="Påskekos">
+            <h3>Påskekos</h3>
+            <p>Alder 3-8</p>
+            <p class="price">Pris: 45,00 NOK</p>
+        </div>
         <div class="button-group">
-            <button class="buy-button" onclick="event.stopPropagation(); addToCart({
+            <button class="buy-button" onclick="addToCart({
                 id: 1,
                 name: 'Påskekos',
                 price: 45.00,
-                priceId: 'price_1Qo9MJLPxmfy63yETbGYTyLJ',
+                priceId: 'price_1Qo9IPLPxmfy63yEXy1w1l8T',
                 image: 'Påskekos.png'
             }); openModal('cart-modal')">Kjøp nå</button>
-            <button class="add-to-cart-button" onclick="event.stopPropagation(); addToCart({
+            <button class="add-to-cart-button" onclick="addToCart({
                 id: 1,
                 name: 'Påskekos',
                 price: 45.00,
-                priceId: 'price_1Qo9MJLPxmfy63yETbGYTyLJ',
+                priceId: 'price_1Qo9IPLPxmfy63yEXy1w1l8T',
                 image: 'Påskekos.png'
             })">Legg i handlekurv</button>
         </div>
