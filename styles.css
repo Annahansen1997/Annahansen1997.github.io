@@ -554,9 +554,13 @@ body.modal-open {
     background-color: white;
     padding: 2rem;
     border-radius: 8px;
-    max-width: 400px;
+    max-width: 500px;
     width: 90%;
     position: relative;
+    margin: 20px auto;
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .contact-info {
@@ -566,8 +570,8 @@ body.modal-open {
 }
 
 .contact-info p {
-    margin: 10px 0;
-    font-size: 1.1em;
+    margin: 15px 0;
+    font-size: 16px;
     color: #2c3e50;
 }
 
@@ -605,13 +609,14 @@ body.modal-open {
     }
 
     .contact-modal-content {
-        width: 80%;
-        max-width: 280px;
-        margin: 80px auto 20px auto;
-        padding: 15px;
+        width: 95%;
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 20px;
         height: auto;
-        max-height: 80vh;
+        max-height: 90vh;
         overflow-y: auto;
+        border-radius: 8px;
     }
 
     .close {
@@ -767,6 +772,22 @@ body.modal-open {
         margin: 0;
         padding: 12px;
         font-size: 16px;
+    }
+
+    .contact-info {
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .contact-info h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+    
+    .contact-info p {
+        margin: 15px 0;
+        font-size: 16px;
+        line-height: 1.5;
     }
 }
 
