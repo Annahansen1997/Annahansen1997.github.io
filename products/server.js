@@ -18,42 +18,29 @@ const corsOptions = {
         'http://localhost:3000'
     ],
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: [
-        'Content-Type',
-        'Authorization',
-        'Origin',
-        'Accept',
-        'X-Requested-With',
-        'Access-Control-Request-Method',
-        'Access-Control-Request-Headers'
-    ],
-    credentials: true,
-    exposedHeaders: ['Access-Control-Allow-Origin'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With'],
+    credentials: true
 };
 
 app.use(cors(corsOptions));
 
+// Parse JSON bodies
+app.use(express.json());
+
 // Håndter preflight requests
 app.options('*', cors(corsOptions));
 
-// Legg til CORS headers manuelt som backup
+// Legg til CORS headers for alle ruter
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', req.headers.origin);
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    
-    // Handle preflight
-    if (req.method === 'OPTIONS') {
-        res.sendStatus(204);
-    } else {
-        next();
+    const origin = req.headers.origin;
+    if (corsOptions.origin.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
     }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
 });
-
-app.use(express.json());
 
 // Produktkonfigurasjon
 const PRODUCTS = {

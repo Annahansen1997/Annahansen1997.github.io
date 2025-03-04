@@ -1,4 +1,35 @@
 require('dotenv').config();
+
+// Legg til denne koden rett etter require('dotenv').config();
+console.log('Email configuration:', {
+    user: process.env.EMAIL_USER ? 'Satt' : 'Ikke satt',
+    password: process.env.EMAIL_PASSWORD ? 'Satt' : 'Ikke satt'
+});
+
+// Legg også til en test-rute for å sende en test-e-post
+app.get('/test-email', async (req, res) => {
+    try {
+        await transporter.sendMail({
+            from: {
+                name: 'Kreativ Moro',
+                address: process.env.EMAIL_USER
+            },
+            to: process.env.EMAIL_USER, // Sender til samme adresse for testing
+            subject: 'Test E-post fra Kreativ Moro',
+            text: 'Dette er en test-e-post for å verifisere at e-postkonfigurasjonen fungerer.',
+            attachments: [{
+                filename: 'test.txt',
+                content: 'Dette er en test-fil for å teste vedlegg.'
+            }]
+        });
+        
+        res.send('Test-e-post sendt! Sjekk innboksen din.');
+    } catch (error) {
+        console.error('Feil ved sending av test-e-post:', error);
+        res.status(500).send(`Feil ved sending av test-e-post: ${error.message}`);
+    }
+});
+
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
@@ -79,27 +110,29 @@ const corsOptions = {
         'http://localhost:3000'
     ],
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: [
-        'Content-Type',
-        'Authorization',
-        'Origin',
-        'Accept',
-        'X-Requested-With',
-        'Access-Control-Request-Method',
-        'Access-Control-Request-Headers'
-    ],
-    credentials: true,
-    exposedHeaders: ['Access-Control-Allow-Origin'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With'],
+    credentials: true
 };
 
 app.use(cors(corsOptions));
 
+// Parse JSON bodies
+app.use(express.json());
+
 // Håndter preflight requests
 app.options('*', cors(corsOptions));
 
-app.use(express.json());
+// Legg til CORS headers for alle ruter
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (corsOptions.origin.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
 
 // Logg alle forespørsler
 app.use((req, res, next) => {
@@ -131,52 +164,79 @@ function generateDownloadToken(orderId, productId) {
 }
 
 // Funksjon for å sende ordre-e-post
-async function sendOrderEmail(customerEmail, products, orderId) {
-    // Map produkt ID til produktnøkler
-    const productMapping = {
-        0: 'vinterkos',
-        1: 'påskekos',
-        2: 'dinosaur',
-        3: 'enhjørning',
-        4: 'bilbingo',
-        5: 'flybingo',
-        6: 'brev_fra_påskeharen',
-        7: 'dyrene_i_skogen'
-    };
+async function sendOrderEmail(customerEmail, orderData, products) {
+    try {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('no-NO', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
 
-    const attachments = products.map(product => {
-        const productKey = productMapping[product.id];
-        const productInfo = PRODUCTS[productKey];
-        return {
-            filename: productInfo.filename,
-            path: path.join(__dirname, 'products', productInfo.filename)
-        };
-    });
+        // Finn produktene basert på Stripe price IDs
+        const attachments = products.map(item => {
+            // Finn produktet som matcher Stripe price ID
+            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === item.price.id);
+            
+            if (!productInfo) {
+                console.error(`Kunne ikke finne produkt for price_id: ${item.price.id}`);
+                return null;
+            }
+            
+            return {
+                filename: productInfo.filename,
+                path: path.join(__dirname, 'products', productInfo.filename)
+            };
+        }).filter(Boolean); // Fjern null-verdier
 
-    const emailTemplate = `
-        <h1>Takk for din bestilling hos Kreativ Moro!</h1>
-        <p>Her er dine bestilte aktivitetshefter:</p>
-        <ul>
-            ${products.map(product => {
-                const productKey = productMapping[product.id];
-                const productInfo = PRODUCTS[productKey];
-                return `<li>${productInfo.name}</li>`;
-            }).join('')}
-        </ul>
-        <p>Du finner PDF-filene som vedlegg i denne e-posten.</p>
-        <p>Med vennlig hilsen,<br>Kreativ Moro</p>
-    `;
+        const productNames = products.map(item => {
+            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === item.price.id);
+            return productInfo ? productInfo.name : 'Ukjent produkt';
+        }).join(', ');
 
-    await transporter.sendMail({
-        from: {
-            name: 'Kreativ Moro',
-            address: process.env.EMAIL_USER
-        },
-        to: customerEmail,
-        subject: 'Din bestilling fra Kreativ Moro',
-        html: emailTemplate,
-        attachments: attachments
-    });
+        const emailTemplate = `
+Hei!
+
+Takk for din bestilling hos Kreativ Moro. Her er din(e) digitale produkt(er):
+
+Ordre detaljer:
+Produkt(er): ${productNames}
+Ordrenummer: ${orderData.order_number}
+Dato: ${formattedDate}
+Totalt betalt: ${(orderData.total_amount / 100).toFixed(2)} NOK
+
+Dine PDF-filer er vedlagt denne e-posten.
+
+Viktig informasjon:
+- PDF-filene er kun for personlig bruk
+- Ikke del filene med andre
+- Du kan skrive ut så mange kopier du ønsker til eget bruk
+
+Har du spørsmål om din bestilling? 
+Svar på denne e-posten eller kontakt oss via nettsiden.
+
+Med vennlig hilsen,
+Kreativ Moro
+
+---
+www.kreativmoro.no`;
+
+        await transporter.sendMail({
+            from: {
+                name: 'Kreativ Moro',
+                address: process.env.EMAIL_USER
+            },
+            to: customerEmail,
+            subject: 'Din bestilling fra Kreativ Moro',
+            text: emailTemplate,
+            attachments: attachments
+        });
+
+        console.log('Ordre e-post sendt til:', customerEmail, 'med vedlegg:', attachments.map(a => a.filename).join(', '));
+    } catch (error) {
+        console.error('Feil ved sending av ordre e-post:', error);
+        throw error;
+    }
 }
 
 // Sikker PDF nedlasting fra products-mappen
@@ -247,49 +307,57 @@ const PRODUCTS = {
         price: 4500,
         name: 'Vinterkos Aktivitetshefte',
         description: 'Digital nedlasting - PDF format',
-        filename: 'vinterkos_aktivitetshefte.pdf'
+        filename: 'vinterkos_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9IPLPxmfy63yEXy1w1l8T'
     },
     'påskekos': {
         price: 4500,
         name: 'Påskekos Aktivitetshefte',
         description: 'Digital nedlasting - PDF format',
-        filename: 'paskekos_aktivitetshefte.pdf'
+        filename: 'paskekos_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9MJLPxmfy63yETbGYTyLJ'
     },
     'dinosaur': {
         price: 4500,
         name: 'Dinosaur Aktivitetshefte',
         description: 'Digital nedlasting - PDF format',
-        filename: 'dinosaur_aktivitetshefte.pdf'
+        filename: 'dinosaur_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9NKLPxmfy63yEAoCoz18f'
     },
     'enhjørning': {
         price: 4500,
         name: 'Enhjørning Aktivitetshefte',
         description: 'Digital nedlasting - PDF format',
-        filename: 'enhjorning_aktivitetshefte.pdf'
+        filename: 'enhjorning_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9ODLPxmfy63yEtbAchGtn'
     },
     'bilbingo': {
         price: 3500,
         name: 'Bilbingo',
         description: 'Digital nedlasting - PDF format',
-        filename: 'bilbingo.pdf'
+        filename: 'bilbingo.pdf',
+        price_id: 'price_1Qo9P1LPxmfy63yES6FrJHo3'
     },
     'flybingo': {
         price: 3500,
         name: 'Flybingo',
         description: 'Digital nedlasting - PDF format',
-        filename: 'flybingo.pdf'
+        filename: 'flybingo.pdf',
+        price_id: 'price_1Qo9PnLPxmfy63yEf9cE5DIr'
     },
     'brev_fra_påskeharen': {
         price: 2000,
         name: 'Brev fra Påskeharen',
         description: 'Digital nedlasting - To PDF varianter (rosa og blå)',
-        filename: 'brev_paskeharen.pdf'
+        filename: 'brev_paskeharen.pdf',
+        price_id: 'price_1QqhMBLPxmfy63yEHKyJ21FW'
     },
     'dyrene_i_skogen': {
         price: 4500,
         name: 'Dyrene i Skogen Fargeleggingshefte',
         description: 'Digital nedlasting - PDF format',
-        filename: 'dyrene_i_skogen.pdf'
+        filename: 'dyrene_i_skogen.pdf',
+        price_id: 'price_1QqhLDLPxmfy63yErSiWyw6O'
     }
 };
 
@@ -305,25 +373,29 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
         return;
     }
 
-    // Håndter ulike event typer
     switch (event.type) {
         case 'checkout.session.completed':
             const session = event.data.object;
             
             try {
-                // Hent kundens e-post fra sesjonen
-                const customerEmail = session.customer_details.email;
-                
-                // Hent ordre-detaljer fra metadata
-                const orderItems = JSON.parse(session.metadata.order_items);
+                // Hent komplett sesjonsinformasjon med line_items
+                const completeSession = await stripe.checkout.sessions.retrieve(session.id, {
+                    expand: ['line_items']
+                });
                 
                 // Send e-post med PDF-vedlegg
-                await sendOrderEmail(customerEmail, orderItems, session.id);
+                await sendOrderEmail(
+                    completeSession.customer_details.email,
+                    {
+                        order_number: completeSession.id,
+                        total_amount: completeSession.amount_total
+                    },
+                    completeSession.line_items.data
+                );
                 
-                console.log('Ordre e-post sendt til:', customerEmail);
+                console.log('Ordre e-post sendt til:', completeSession.customer_details.email);
             } catch (error) {
                 console.error('Feil ved sending av ordre e-post:', error);
-                // Vi sender fortsatt 200 OK til Stripe for å unngå gjentatte webhook-forsøk
             }
             break;
             
