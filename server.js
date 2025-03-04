@@ -143,16 +143,17 @@ app.use((req, res, next) => {
 
 // Konfigurer e-post transport
 const transporter = nodemailer.createTransport({
-    host: "smtp.office365.com",  // Endret fra smtp-mail.outlook.com
+    service: 'Office365',
+    host: "smtp.office365.com",
     port: 587,
     secure: false,
     auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD  // Bruk App Password her
+        pass: process.env.EMAIL_PASSWORD
     },
     tls: {
         ciphers: 'SSLv3',
-        rejectUnauthorized: false  // Legg til denne linjen
+        rejectUnauthorized: false
     }
 });
 

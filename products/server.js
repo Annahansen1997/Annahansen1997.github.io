@@ -250,6 +250,31 @@ app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', as
     }
 });
 
+// Konfigurer e-post transport
+const transporter = nodemailer.createTransport({
+    host: "smtp.office365.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+    },
+    requireTLS: true,
+    tls: {
+        ciphers: 'SSLv3',
+        minVersion: 'TLSv1.2'
+    }
+});
+
+// Verifiser tilkobling ved oppstart
+transporter.verify(function(error, success) {
+    if (error) {
+        console.error('E-postkonfigurasjon feil:', error);
+    } else {
+        console.log('E-postserver er klar til å sende meldinger');
+    }
+});
+
 // Funksjon for å sende ordre-e-post
 async function sendOrderEmail(customerEmail, orderData, products) {
     try {
