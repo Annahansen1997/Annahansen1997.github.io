@@ -143,7 +143,8 @@ app.use((req, res, next) => {
 
 // Konfigurer e-post transport
 const transporter = nodemailer.createTransport({
-    service: 'Office365',
+    pool: true,
+    maxConnections: 1,
     host: "smtp.office365.com",
     port: 587,
     secure: false,
@@ -153,7 +154,8 @@ const transporter = nodemailer.createTransport({
     },
     tls: {
         ciphers: 'SSLv3',
-        rejectUnauthorized: false
+        rejectUnauthorized: true,
+        minVersion: 'TLSv1.2'
     }
 });
 

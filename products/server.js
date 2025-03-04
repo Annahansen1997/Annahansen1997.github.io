@@ -252,6 +252,8 @@ app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', as
 
 // Konfigurer e-post transport
 const transporter = nodemailer.createTransport({
+    pool: true,
+    maxConnections: 1,
     host: "smtp.office365.com",
     port: 587,
     secure: false,
@@ -259,9 +261,9 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
     },
-    requireTLS: true,
     tls: {
         ciphers: 'SSLv3',
+        rejectUnauthorized: true,
         minVersion: 'TLSv1.2'
     }
 });
