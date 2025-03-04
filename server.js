@@ -176,55 +176,65 @@ async function sendOrderEmail(customerEmail, products, orderId) {
     });
 }
 
-// Opprett checkout-økt endepunkt
+// Sikker PDF nedlasting fra products-mappen
+app.get('/downloads/:filename', async (req, res) => {
+    try {
+        const { filename } = req.params;
+        
+        // Bruk products-mappen for PDF-filer
+        const filePath = path.join(__dirname, 'products', filename);
+        
+        // Send PDF-filen
+        res.sendFile(filePath, (err) => {
+            if (err) {
+                console.error('Feil ved sending av fil:', err);
+                res.status(404).send('Filen ble ikke funnet');
+            }
+        });
+    } catch (error) {
+        console.error('Feil ved nedlasting:', error);
+        res.status(500).send('Serverfeil ved nedlasting');
+    }
+});
+
+// Stripe checkout session
 app.post('/create-checkout-session', async (req, res) => {
     try {
         const { cart } = req.body;
         
-        if (!cart || !Array.isArray(cart) || cart.length === 0) {
-            return res.status(400).json({ error: 'Invalid cart data' });
-        }
-
-        console.log('Received cart:', cart); // Logging for debugging
-
-        // Validere at alle produkter har priceId
-        const invalidItems = cart.filter(item => !item.priceId);
-        if (invalidItems.length > 0) {
-            return res.status(400).json({ 
-                error: 'Missing priceId for some products',
-                items: invalidItems
-            });
-        }
-
-        const lineItems = cart.map(item => ({
-            price: item.priceId,
-            quantity: item.quantity
-        }));
-
-        console.log('Created line items:', lineItems); // Logging for debugging
-
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            line_items: lineItems,
+            line_items: cart.map(item => ({
+                price: item.priceId,
+                quantity: item.quantity,
+            })),
             mode: 'payment',
-            success_url: 'https://annahansen1997.github.io/success.html',
-            cancel_url: 'https://annahansen1997.github.io/cancel.html',
-            metadata: {
-                order_items: JSON.stringify(cart.map(item => ({
-                    name: item.name,
-                    quantity: item.quantity
-                })))
-            }
+            success_url: `${req.body.success_url}?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: req.body.cancel_url,
         });
 
-        console.log('Created Stripe session:', session.id); // Logging for debugging
         res.json({ url: session.url });
     } catch (error) {
-        console.error('Stripe error:', error);
-        res.status(500).json({ 
-            error: error.message,
-            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        console.error('Stripe feil:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Hent ordre-informasjon
+app.get('/order-complete', async (req, res) => {
+    try {
+        const { session_id } = req.query;
+        const session = await stripe.checkout.sessions.retrieve(session_id);
+        
+        res.json({
+            customer_email: session.customer_details.email,
+            items: session.line_items.data,
+            order_number: session.id,
+            total_amount: session.amount_total / 100
         });
+    } catch (error) {
+        console.error('Feil ved henting av ordre:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 

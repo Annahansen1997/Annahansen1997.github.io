@@ -922,7 +922,7 @@ async function handleSuccessfulPayment() {
         
         const orderData = await response.json();
         
-        // Send ordrebekreftelse og produkter på e-post
+        // Send ordrebekreftelse på e-post
         await sendOrderConfirmation({
             email: orderData.customer_email,
             productName: orderData.items.map(item => item.name).join(', '),
@@ -934,8 +934,41 @@ async function handleSuccessfulPayment() {
         // Tøm handlekurven
         emptyCart();
         
-        // Vis suksessmelding
-        showSuccessMessage('Takk for ditt kjøp! Produktene er sendt til din e-post.');
+        // Vis nedlastingsside med PDF-lenker
+        const successContainer = document.createElement('div');
+        successContainer.className = 'success-container';
+        successContainer.innerHTML = `
+            <h2>Takk for ditt kjøp!</h2>
+            <p>En e-post med ordrebekreftelse og produktene er sendt til din e-post.</p>
+            <div class="download-section">
+                <h3>Last ned dine produkter her:</h3>
+                <div class="download-links">
+                    ${orderData.items.map(item => `
+                        <div class="download-item">
+                            <img src="${item.image}" alt="${item.name}" class="download-thumbnail">
+                            <div class="download-info">
+                                <h4>${item.name}</h4>
+                                <a href="https://kreativmoro.onrender.com/downloads/${item.priceId}.pdf" 
+                                   target="_blank" 
+                                   class="download-button">
+                                   Åpne PDF
+                                </a>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        // Vis nedlastingssiden
+        let successPageContainer = document.querySelector('.success-page-container');
+        if (!successPageContainer) {
+            successPageContainer = document.createElement('div');
+            successPageContainer.className = 'success-page-container';
+            document.body.appendChild(successPageContainer);
+        }
+        successPageContainer.innerHTML = '';
+        successPageContainer.appendChild(successContainer);
         
     } catch (error) {
         console.error('Feil ved behandling av ordre:', error);

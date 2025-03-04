@@ -297,8 +297,42 @@ async function handleSuccessfulPayment() {
         // Tøm handlekurven
         emptyCart();
         
-        // Vis suksessmelding
-        showSuccessMessage('Takk for ditt kjøp! Produktene er sendt til din e-post.');
+        // Vis suksessmelding og opprett nedlastingslenker
+        const successContainer = document.createElement('div');
+        successContainer.className = 'success-container';
+        successContainer.innerHTML = `
+            <h2>Takk for ditt kjøp!</h2>
+            <p>En e-post med ordrebekreftelse og produktene er sendt til din e-post.</p>
+            <div class="download-section">
+                <h3>Last ned dine produkter her:</h3>
+                <div class="download-links">
+                    ${orderData.items.map(item => `
+                        <div class="download-item">
+                            <img src="${item.image}" alt="${item.name}" class="download-thumbnail">
+                            <div class="download-info">
+                                <h4>${item.name}</h4>
+                                <a href="https://kreativmoro.onrender.com/downloads/${item.priceId}.pdf" 
+                                   target="_blank" 
+                                   class="download-button">
+                                   Åpne PDF
+                                </a>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        // Finn eller opprett container for success-innhold
+        let successPageContainer = document.querySelector('.success-page-container');
+        if (!successPageContainer) {
+            successPageContainer = document.createElement('div');
+            successPageContainer.className = 'success-page-container';
+            document.body.appendChild(successPageContainer);
+        }
+        
+        successPageContainer.innerHTML = ''; // Tøm eksisterende innhold
+        successPageContainer.appendChild(successContainer);
         
     } catch (error) {
         console.error('Feil ved behandling av ordre:', error);
@@ -342,4 +376,82 @@ function sendOrderConfirmation(orderDetails) {
             throw error;
         }
     );
-} 
+}
+
+// Legg til nye stiler for success-siden
+const styles = `
+    .success-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .success-container h2 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .download-section {
+        margin-top: 30px;
+    }
+
+    .download-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .download-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: transform 0.2s;
+    }
+
+    .download-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .download-thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 15px;
+    }
+
+    .download-info {
+        flex: 1;
+    }
+
+    .download-info h4 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+    }
+
+    .download-button {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+    .download-button:hover {
+        background-color: #45a049;
+    }
+`;
+
+// Legg til stilene i dokumentet
+const styleSheet = document.createElement('style');
+styleSheet.textContent = styles;
+document.head.appendChild(styleSheet); 
