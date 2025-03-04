@@ -47,7 +47,9 @@
                     product_name: files.map(file => file.name).join(', '),
                     order_number: orderData.order_number,
                     purchase_date: formattedDate,
-                    total_price: `${orderData.total_amount.toFixed(2)} NOK`
+                    total_price: `${orderData.total_amount.toFixed(2)} NOK`,
+                    from_name: "Kreativ Moro",
+                    message: `Din bestilling er bekreftet! Du har kjøpt: ${files.map(file => file.name).join(', ')}`
                 };
 
                 await emailjs.send("service_v1g2fr8", "template_slf2zpr", templateParams);
