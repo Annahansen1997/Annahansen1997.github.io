@@ -7,6 +7,9 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 // Lagre scroll-posisjon når en modal åpnes
 let lastScrollPosition = 0;
 
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Qmu3ULPxmfy63yEbYUAv6FZFaaGsoSTp8XF7nUEol9ksHgNid71K4FogSAhBwBDdNYa8syBZ4DAP4c9BS0qHaBQ00aT9p4bcV';
+const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
 document.addEventListener('DOMContentLoaded', function () {
     // Last handlekurv fra localStorage
     cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -135,12 +138,46 @@ function removeFromCart(index) {
     updateCartDisplay();
 }
 
-function goToCheckout() {
-    if (cart.length === 0) {
+async function goToCheckout() {
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cartItems.length === 0) {
         alert('Handlekurven er tom');
         return;
     }
-    window.location.href = PAYMENT_LINK;
+
+    try {
+        showLoadingMessage('Behandler betalingen...');
+        
+        const response = await fetch('https://kreativmoro.onrender.com/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                cart: cartItems,
+                success_url: window.location.origin + '/success.html',
+                cancel_url: window.location.origin + '/cancel.html'
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Server response:', errorData);
+            throw new Error('Kunne ikke opprette betalingsøkt');
+        }
+
+        const session = await response.json();
+        
+        if (session.url) {
+            window.location.href = session.url;
+        } else {
+            throw new Error('Ingen betalings-URL mottatt');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        hideLoadingMessage();
+        showMessage('Det oppstod en feil ved betaling. Vennligst prøv igjen senere eller kontakt kundeservice.', 'error');
+    }
 }
 
 function openModal(modalId) {
