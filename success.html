@@ -5,18 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Betaling Vellykket - Kreativ Moro</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="success-container">
         <h1>Takk for din bestilling!</h1>
         <p>Din betaling er mottatt og du vil snart motta en e-post med dine aktivitetsark.</p>
-        <p>Hvis du ikke mottar e-posten innen få minutter, sjekk spam-mappen din.</p>
+        <div id="download-section" class="download-section">
+            <h2>Last ned dine filer</h2>
+            <p>Du kan laste ned filene dine direkte her:</p>
+            <div id="download-links"></div>
+        </div>
+        <p>Du vil også motta en e-post med filene. Hvis du ikke mottar e-posten innen få minutter, sjekk spam-mappen din.</p>
         <a href="/" class="back-to-home">Tilbake til butikken</a>
     </div>
 
+    <script src="config.js"></script>
     <script>
         // Tøm handlekurven etter vellykket kjøp
         localStorage.removeItem('cart');
+
+        // Initialiser EmailJS
+        (function() {
+            emailjs.init(emailjsConfig.publicKey);
+        })();
+
+        // Funksjon for å sende e-post med nedlastingslenker
+        async function sendEmailWithDownloadLinks(customerEmail, files) {
+            try {
+                const templateParams = {
+                    to_email: customerEmail,
+                    download_links: files.map(file => ({
+                        name: file.name,
+                        url: window.location.origin + file.downloadUrl
+                    })),
+                    files_list: files.map(file => file.name).join(', ')
+                };
+
+                await emailjs.send(
+                    emailjsConfig.serviceId,
+                    emailjsConfig.templateId,
+                    templateParams
+                );
+
+                console.log('E-post sendt vellykket');
+            } catch (error) {
+                console.error('Feil ved sending av e-post:', error);
+            }
+        }
+
+        // Funksjon for å vise nedlastingslenker
+        async function displayDownloadLinks() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            
+            if (!sessionId) return;
+
+            try {
+                const response = await fetch(`https://kreativmoro.onrender.com/order-complete?session_id=${sessionId}`);
+                if (!response.ok) throw new Error('Kunne ikke hente ordredetaljer');
+                
+                const orderData = await response.json();
+                const downloadSection = document.getElementById('download-links');
+                
+                // Hent produktinformasjon og vis nedlastingslenker
+                const downloadResponse = await fetch(`https://kreativmoro.onrender.com/get-download-links?session_id=${sessionId}`);
+                if (!downloadResponse.ok) throw new Error('Kunne ikke hente nedlastingslenker');
+                
+                const downloadData = await downloadResponse.json();
+                
+                downloadData.files.forEach(file => {
+                    const downloadButton = document.createElement('a');
+                    downloadButton.href = file.downloadUrl;
+                    downloadButton.className = 'download-button';
+                    downloadButton.innerHTML = `Last ned ${file.name} <i class="fas fa-download"></i>`;
+                    downloadButton.download = file.filename;
+                    downloadSection.appendChild(downloadButton);
+                });
+
+                // Send e-post med nedlastingslenker
+                if (orderData.customer_email) {
+                    await sendEmailWithDownloadLinks(orderData.customer_email, downloadData.files);
+                }
+            } catch (error) {
+                console.error('Feil ved henting av nedlastingslenker:', error);
+                document.getElementById('download-section').innerHTML = `
+                    <p class="error-message">Beklager, det oppstod en feil ved henting av nedlastingslenker. 
+                    Ikke bekymre deg - filene vil bli sendt til din e-post.</p>`;
+            }
+        }
+
+        // Start nedlastingsprosessen når siden lastes
+        document.addEventListener('DOMContentLoaded', displayDownloadLinks);
     </script>
 </body>
-</html>
+</html> 

@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path = require('path');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const app = express();
 
@@ -52,6 +54,66 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+
+// Produktkonfigurasjon
+const PRODUCTS = {
+    'vinterkos': {
+        price: 4500,
+        name: 'Vinterkos Aktivitetshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'vinterkos_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9IPLPxmfy63yEXy1w1l8T'
+    },
+    'påskekos': {
+        price: 4500,
+        name: 'Påskekos Aktivitetshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'paskekos_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9MJLPxmfy63yETbGYTyLJ'
+    },
+    'dinosaur': {
+        price: 4500,
+        name: 'På eventyr med dinosaurene',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'dinosaur_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9NKLPxmfy63yEAoCoz18f'
+    },
+    'enhjørning': {
+        price: 4500,
+        name: 'Enhjørningens magiske eventyrhefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'enhjorning_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9ODLPxmfy63yEtbAchGtn'
+    },
+    'bilbingo': {
+        price: 3500,
+        name: 'Bilbingo',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'bilbingo.pdf',
+        price_id: 'price_1Qo9P1LPxmfy63yES6FrJHo3'
+    },
+    'flybingo': {
+        price: 3500,
+        name: 'Flybingo',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'flybingo.pdf',
+        price_id: 'price_1Qo9PnLPxmfy63yEf9cE5DIr'
+    },
+    'brev_fra_påskeharen': {
+        price: 2000,
+        name: 'Brev fra Påskeharen',
+        description: 'Digital nedlasting - To PDF varianter (rosa og blå)',
+        filename: 'brev_paskeharen.pdf',
+        price_id: 'price_1QqhMBLPxmfy63yEHKyJ21FW'
+    },
+    'dyrene_i_skogen': {
+        price: 4500,
+        name: 'Dyrene i Skogen Fargeleggingshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'dyrene_i_skogen.pdf',
+        price_id: 'price_1QqhLDLPxmfy63yErSiWyw6O'
+    }
+};
 
 // Sikker PDF nedlasting fra products-mappen
 app.get('/downloads/:filename', async (req, res) => {
@@ -113,6 +175,206 @@ app.get('/order-complete', async (req, res) => {
         console.error('Feil ved henting av ordre:', error);
         res.status(500).json({ error: error.message });
     }
+});
+
+// Generer sikker nedlastingslenke
+function generateSecureDownloadUrl(sessionId, productId, filename) {
+    const timestamp = Date.now();
+    const token = crypto
+        .createHmac('sha256', process.env.DOWNLOAD_SECRET_KEY)
+        .update(`${sessionId}-${productId}-${timestamp}`)
+        .digest('hex');
+    
+    return `/secure-download/${sessionId}/${productId}/${timestamp}/${token}/${filename}`;
+}
+
+// Ny rute for å hente nedlastingslenker
+app.get('/get-download-links', async (req, res) => {
+    try {
+        const { session_id } = req.query;
+        const session = await stripe.checkout.sessions.retrieve(session_id, {
+            expand: ['line_items']
+        });
+
+        // Verifiser at betalingen er fullført
+        if (session.payment_status !== 'paid') {
+            return res.status(400).json({ error: 'Betaling ikke fullført' });
+        }
+
+        const files = session.line_items.data.map(item => {
+            const productId = item.price.product;
+            const product = Object.entries(PRODUCTS).find(([_, p]) => p.price_id === item.price.id);
+            
+            if (!product) return null;
+
+            const [key, productInfo] = product;
+            return {
+                name: productInfo.name,
+                filename: productInfo.filename,
+                downloadUrl: generateSecureDownloadUrl(session_id, productId, productInfo.filename)
+            };
+        }).filter(Boolean);
+
+        res.json({ files });
+    } catch (error) {
+        console.error('Feil ved generering av nedlastingslenker:', error);
+        res.status(500).json({ error: 'Kunne ikke generere nedlastingslenker' });
+    }
+});
+
+// Sikker nedlastingsrute
+app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', async (req, res) => {
+    try {
+        const { sessionId, productId, timestamp, token, filename } = req.params;
+        
+        // Verifiser token
+        const expectedToken = crypto
+            .createHmac('sha256', process.env.DOWNLOAD_SECRET_KEY)
+            .update(`${sessionId}-${productId}-${timestamp}`)
+            .digest('hex');
+        
+        if (token !== expectedToken) {
+            return res.status(403).send('Ugyldig nedlastingslenke');
+        }
+
+        // Sjekk om lenken er utløpt (f.eks. 24 timer)
+        const now = Date.now();
+        if (now - parseInt(timestamp) > 24 * 60 * 60 * 1000) {
+            return res.status(403).send('Nedlastingslenken er utløpt');
+        }
+
+        // Verifiser at sesjonen eksisterer og er betalt
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        if (session.payment_status !== 'paid') {
+            return res.status(403).send('Betaling ikke fullført');
+        }
+
+        // Send filen
+        const filePath = path.join(__dirname, 'products', filename);
+        res.download(filePath, filename, (err) => {
+            if (err) {
+                console.error('Feil ved nedlasting:', err);
+                res.status(500).send('Feil ved nedlasting av fil');
+            }
+        });
+    } catch (error) {
+        console.error('Feil ved sikker nedlasting:', error);
+        res.status(500).send('Serverfeil ved nedlasting');
+    }
+});
+
+// Funksjon for å sende ordre-e-post
+async function sendOrderEmail(customerEmail, orderData, products) {
+    try {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('no-NO', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        const attachments = products.map(product => {
+            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
+            if (!productInfo) return null;
+            
+            return {
+                filename: productInfo.filename,
+                path: path.join(__dirname, 'products', productInfo.filename)
+            };
+        }).filter(Boolean);
+
+        const emailTemplate = `
+Hei!
+
+Takk for din bestilling hos Kreativ Moro. Her er din(e) digitale produkt(er):
+
+Ordre detaljer:
+Produkt: ${products.map(product => {
+    const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
+    return productInfo ? productInfo.name : '';
+}).filter(Boolean).join(', ')}
+Ordrenummer: ${orderData.order_number}
+Dato: ${formattedDate}
+Totalt betalt: ${(orderData.total_amount / 100).toFixed(2)} NOK
+
+Dine PDF-filer er vedlagt denne e-posten.
+
+Viktig informasjon:
+- PDF-filene er kun for personlig bruk
+- Ikke del filene med andre
+- Du kan skrive ut så mange kopier du ønsker til eget bruk
+
+Har du spørsmål om din bestilling? 
+Svar på denne e-posten eller kontakt oss via nettsiden.
+
+Med vennlig hilsen,
+Kreativ Moro
+
+---
+www.kreativmoro.no`;
+
+        await transporter.sendMail({
+            from: {
+                name: 'Kreativ Moro',
+                address: process.env.EMAIL_USER
+            },
+            to: customerEmail,
+            subject: 'Din bestilling fra Kreativ Moro',
+            text: emailTemplate,
+            attachments: attachments
+        });
+
+        console.log('Ordre e-post sendt til:', customerEmail);
+    } catch (error) {
+        console.error('Feil ved sending av ordre e-post:', error);
+        throw error;
+    }
+}
+
+// Oppdater webhook handler
+app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
+    const sig = request.headers['stripe-signature'];
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    } catch (err) {
+        response.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
+
+    // Håndter ulike event typer
+    switch (event.type) {
+        case 'checkout.session.completed':
+            const session = event.data.object;
+            
+            try {
+                // Hent komplett sesjonsinformasjon med line_items
+                const completeSession = await stripe.checkout.sessions.retrieve(session.id, {
+                    expand: ['line_items']
+                });
+                
+                // Send e-post med PDF-vedlegg
+                await sendOrderEmail(
+                    completeSession.customer_details.email,
+                    {
+                        order_number: completeSession.id,
+                        total_amount: completeSession.amount_total
+                    },
+                    completeSession.line_items.data
+                );
+                
+                console.log('Ordre e-post sendt til:', completeSession.customer_details.email);
+            } catch (error) {
+                console.error('Feil ved sending av ordre e-post:', error);
+            }
+            break;
+            
+        default:
+            console.log(`Uhandled event type: ${event.type}`);
+    }
+
+    response.json({received: true});
 });
 
 const PORT = process.env.PORT || 3000;
