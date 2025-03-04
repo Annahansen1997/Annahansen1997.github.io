@@ -23,37 +23,37 @@
         <a href="/" class="back-to-home">Tilbake til butikken</a>
     </div>
 
-    <script src="config.js"></script>
     <script>
         // Tøm handlekurven etter vellykket kjøp
         localStorage.removeItem('cart');
 
         // Initialiser EmailJS
         (function() {
-            emailjs.init(emailjsConfig.publicKey);
+            emailjs.init("QnvwE_3_avTq6RTuA"); // Din public key
         })();
 
         // Funksjon for å sende e-post med nedlastingslenker
-        async function sendEmailWithDownloadLinks(customerEmail, files) {
+        async function sendEmailWithDownloadLinks(customerEmail, orderData, files) {
             try {
+                const now = new Date();
+                const formattedDate = now.toLocaleDateString('no-NO', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+
                 const templateParams = {
                     to_email: customerEmail,
-                    download_links: files.map(file => ({
-                        name: file.name,
-                        url: window.location.origin + file.downloadUrl
-                    })),
-                    files_list: files.map(file => file.name).join(', ')
+                    product_name: files.map(file => file.name).join(', '),
+                    order_number: orderData.order_number,
+                    purchase_date: formattedDate,
+                    total_price: `${orderData.total_amount.toFixed(2)} NOK`
                 };
 
-                await emailjs.send(
-                    emailjsConfig.serviceId,
-                    emailjsConfig.templateId,
-                    templateParams
-                );
-
-                console.log('E-post sendt vellykket');
+                await emailjs.send("service_v1g2fr8", "template_slf2zpr", templateParams);
+                console.log('Ordrebekreftelse sendt på e-post');
             } catch (error) {
-                console.error('Feil ved sending av e-post:', error);
+                console.error('Feil ved sending av ordrebekreftelse:', error);
             }
         }
 
@@ -86,9 +86,9 @@
                     downloadSection.appendChild(downloadButton);
                 });
 
-                // Send e-post med nedlastingslenker
+                // Send ordrebekreftelse på e-post med nedlastingslenker
                 if (orderData.customer_email) {
-                    await sendEmailWithDownloadLinks(orderData.customer_email, downloadData.files);
+                    await sendEmailWithDownloadLinks(orderData.customer_email, orderData, downloadData.files);
                 }
             } catch (error) {
                 console.error('Feil ved henting av nedlastingslenker:', error);
