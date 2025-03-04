@@ -23,14 +23,13 @@
         <a href="/" class="back-to-home">Tilbake til butikken</a>
     </div>
 
-    <script src="config.js"></script>
     <script>
         // Tøm handlekurven etter vellykket kjøp
         localStorage.removeItem('cart');
 
         // Initialiser EmailJS
         (function() {
-            emailjs.init(emailjsConfig.publicKey);
+            emailjs.init("QnvwE_3_avTq6RTuA"); // Din public key
         })();
 
         // Funksjon for å sende e-post med nedlastingslenker
@@ -51,12 +50,7 @@
                     total_price: `${orderData.total_amount.toFixed(2)} NOK`
                 };
 
-                await emailjs.send(
-                    emailjsConfig.serviceId,
-                    emailjsConfig.testTemplateId,
-                    templateParams
-                );
-
+                await emailjs.send("service_v1g2fr8", "template_slf2zpr", templateParams);
                 console.log('Ordrebekreftelse sendt på e-post');
             } catch (error) {
                 console.error('Feil ved sending av ordrebekreftelse:', error);
