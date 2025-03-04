@@ -10,19 +10,46 @@ const corsOptions = {
     origin: [
         'https://kreativmoro.no',
         'https://www.kreativmoro.no',
+        'http://kreativmoro.no',
+        'http://www.kreativmoro.no',
         'https://annahansen1997.github.io',
         'http://localhost:3000'
     ],
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'Origin',
+        'Accept',
+        'X-Requested-With',
+        'Access-Control-Request-Method',
+        'Access-Control-Request-Headers'
+    ],
     credentials: true,
-    optionsSuccessStatus: 200
+    exposedHeaders: ['Access-Control-Allow-Origin'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
 
-// Pre-flight requests
+// Håndter preflight requests
 app.options('*', cors(corsOptions));
+
+// Legg til CORS headers manuelt som backup
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(204);
+    } else {
+        next();
+    }
+});
 
 app.use(express.json());
 

@@ -73,13 +73,25 @@ const corsOptions = {
     origin: [
         'https://kreativmoro.no',
         'https://www.kreativmoro.no',
+        'http://kreativmoro.no',
+        'http://www.kreativmoro.no',
         'https://annahansen1997.github.io',
         'http://localhost:3000'
     ],
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'Origin',
+        'Accept',
+        'X-Requested-With',
+        'Access-Control-Request-Method',
+        'Access-Control-Request-Headers'
+    ],
     credentials: true,
-    optionsSuccessStatus: 200
+    exposedHeaders: ['Access-Control-Allow-Origin'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
