@@ -143,8 +143,6 @@ app.use((req, res, next) => {
 
 // Konfigurer e-post transport
 const transporter = nodemailer.createTransport({
-    pool: true,
-    maxConnections: 1,
     host: "smtp.office365.com",
     port: 587,
     secure: false,
@@ -156,26 +154,26 @@ const transporter = nodemailer.createTransport({
         ciphers: 'SSLv3',
         rejectUnauthorized: true,
         minVersion: 'TLSv1.2'
-    }
+    },
+    debug: true,
+    logger: true
 });
 
 // Verifiser tilkobling ved oppstart
 transporter.verify(function(error, success) {
     if (error) {
         console.error('E-postkonfigurasjon feil:', error);
+        if (error.code === 'EAUTH') {
+            console.error('Autentiseringsfeil detaljer:', {
+                responseCode: error.responseCode,
+                response: error.response,
+                command: error.command
+            });
+        }
     } else {
         console.log('E-postserver er klar til å sende meldinger');
     }
 });
-
-// Funksjon for å generere sikker nedlastingslenke
-function generateDownloadToken(orderId, productId) {
-    const secret = process.env.DOWNLOAD_SECRET_KEY;
-    return crypto
-        .createHmac('sha256', secret)
-        .update(`${orderId}-${productId}`)
-        .digest('hex');
-}
 
 // Funksjon for å sende ordre-e-post
 async function sendOrderEmail(customerEmail, orderData, products) {
@@ -187,26 +185,15 @@ async function sendOrderEmail(customerEmail, orderData, products) {
             day: '2-digit'
         });
 
-        // Finn produktene basert på Stripe price IDs
-        const attachments = products.map(item => {
-            // Finn produktet som matcher Stripe price ID
-            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === item.price.id);
-            
-            if (!productInfo) {
-                console.error(`Kunne ikke finne produkt for price_id: ${item.price.id}`);
-                return null;
-            }
+        const attachments = products.map(product => {
+            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
+            if (!productInfo) return null;
             
             return {
                 filename: productInfo.filename,
                 path: path.join(__dirname, 'products', productInfo.filename)
             };
-        }).filter(Boolean); // Fjern null-verdier
-
-        const productNames = products.map(item => {
-            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === item.price.id);
-            return productInfo ? productInfo.name : 'Ukjent produkt';
-        }).join(', ');
+        }).filter(Boolean);
 
         const emailTemplate = `
 Hei!

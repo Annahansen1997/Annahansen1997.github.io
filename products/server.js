@@ -252,8 +252,6 @@ app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', as
 
 // Konfigurer e-post transport
 const transporter = nodemailer.createTransport({
-    pool: true,
-    maxConnections: 1,
     host: "smtp.office365.com",
     port: 587,
     secure: false,
@@ -265,13 +263,22 @@ const transporter = nodemailer.createTransport({
         ciphers: 'SSLv3',
         rejectUnauthorized: true,
         minVersion: 'TLSv1.2'
-    }
+    },
+    debug: true,
+    logger: true
 });
 
 // Verifiser tilkobling ved oppstart
 transporter.verify(function(error, success) {
     if (error) {
         console.error('E-postkonfigurasjon feil:', error);
+        if (error.code === 'EAUTH') {
+            console.error('Autentiseringsfeil detaljer:', {
+                responseCode: error.responseCode,
+                response: error.response,
+                command: error.command
+            });
+        }
     } else {
         console.log('E-postserver er klar til å sende meldinger');
     }
