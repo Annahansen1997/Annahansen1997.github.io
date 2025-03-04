@@ -528,6 +528,13 @@ function showLoadingMessage(message) {
     document.body.appendChild(loadingDiv);
 }
 
+function hideLoadingMessage() {
+    const loadingMessage = document.querySelector('.loading-message');
+    if (loadingMessage) {
+        loadingMessage.remove();
+    }
+}
+
 function showSuccessMessage(message) {
     const successMessage = document.createElement('div');
     successMessage.className = 'success-message';
@@ -562,13 +569,22 @@ async function goToCheckout() {
     }
 
     try {
+        showLoadingMessage('Behandler betalingen...');
+        
+        // Konstruer fullstendige URLs for success og cancel med GitHub Pages path
+        const baseUrl = 'https://annahansen1997.github.io/products';
+        const successUrl = `${baseUrl}/success.html`;
+        const cancelUrl = `${baseUrl}/cancel.html`;
+        
         const response = await fetch('https://kreativmoro.onrender.com/create-checkout-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                cart: cartItems
+                cart: cartItems,
+                success_url: successUrl,
+                cancel_url: cancelUrl
             })
         });
 
@@ -587,7 +603,8 @@ async function goToCheckout() {
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Det oppstod en feil ved betaling. Vennligst prøv igjen senere.');
+        hideLoadingMessage();
+        showMessage('Det oppstod en feil ved betaling. Vennligst prøv igjen senere eller kontakt kundeservice.', 'error');
     }
 }
 
@@ -814,13 +831,6 @@ document.querySelectorAll('.buy-button').forEach(button => {
     button.onclick = () => handlePurchase(productId, productName, price);
 });
 
-function hideLoadingMessage() {
-    const loadingDiv = document.querySelector('.loading-message');
-    if (loadingDiv) {
-        loadingDiv.remove();
-    }
-}
-
 function buyNow(product) {
     // Legg til produktet i handlekurven
     addToCart(product);
@@ -894,14 +904,14 @@ async function initiateCheckout() {
 document.addEventListener('DOMContentLoaded', updateCartDisplay);
 
 function showMessage(message, type = 'success') {
-    const messageContainer = document.createElement('div');
-    messageContainer.className = `message ${type}`;
-    messageContainer.textContent = message;
-    document.body.appendChild(messageContainer);
-
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.textContent = message;
+    document.body.appendChild(messageDiv);
+    
     setTimeout(() => {
-        messageContainer.remove();
-    }, 3000);
+        messageDiv.remove();
+    }, 5000);
 }
 
 async function handleSuccessfulPayment() {
@@ -975,3 +985,137 @@ async function handleSuccessfulPayment() {
         showMessage('Det oppstod en feil ved behandling av ordren. Vennligst kontakt kundeservice.', 'error');
     }
 }
+
+const styles = `
+    .success-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .success-container h2 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .download-section {
+        margin-top: 30px;
+    }
+
+    .download-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .download-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: transform 0.2s;
+    }
+
+    .download-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .download-thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 15px;
+    }
+
+    .download-info {
+        flex: 1;
+    }
+
+    .download-info h4 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+    }
+
+    .download-button {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+    .download-button:hover {
+        background-color: #45a049;
+    }
+
+    .loading-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+        z-index: 1000;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .message {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 4px;
+        color: white;
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .message.success {
+        background-color: #4CAF50;
+    }
+
+    .message.error {
+        background-color: #f44336;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+`;
+
+const styleSheet = document.createElement('style');
+styleSheet.textContent = styles;
+document.head.appendChild(styleSheet);

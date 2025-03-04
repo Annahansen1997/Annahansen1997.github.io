@@ -148,6 +148,11 @@ async function goToCheckout() {
     try {
         showLoadingMessage('Behandler betalingen...');
         
+        // Konstruer fullstendige URLs for success og cancel
+        const baseUrl = window.location.origin;
+        const successUrl = `${baseUrl}/success.html`;
+        const cancelUrl = `${baseUrl}/cancel.html`;
+        
         const response = await fetch('https://kreativmoro.onrender.com/create-checkout-session', {
             method: 'POST',
             headers: {
@@ -155,15 +160,15 @@ async function goToCheckout() {
             },
             body: JSON.stringify({
                 cart: cartItems,
-                success_url: window.location.origin + '/success.html',
-                cancel_url: window.location.origin + '/cancel.html'
+                success_url: successUrl,
+                cancel_url: cancelUrl
             })
         });
 
         if (!response.ok) {
             const errorData = await response.text();
             console.error('Server response:', errorData);
-            throw new Error('Kunne ikke opprette betalingsøkt');
+            throw new Error('Network response was not ok');
         }
 
         const session = await response.json();
