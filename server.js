@@ -6,6 +6,19 @@ console.log('Email configuration:', {
     password: process.env.EMAIL_PASSWORD ? 'Satt' : 'Ikke satt'
 });
 
+const express = require('express');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const path = require('path');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+
+const app = express();
+
+
 // Legg også til en test-rute for å sende en test-e-post
 app.get('/test-email', async (req, res) => {
     try {
@@ -29,18 +42,6 @@ app.get('/test-email', async (req, res) => {
         res.status(500).send(`Feil ved sending av test-e-post: ${error.message}`);
     }
 });
-
-const express = require('express');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const path = require('path');
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
-
-const app = express();
 
 // Sikkerhetstiltak med tilpasset CSP
 app.use(helmet({
