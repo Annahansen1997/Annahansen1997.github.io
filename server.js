@@ -143,15 +143,25 @@ app.use((req, res, next) => {
 
 // Konfigurer e-post transport
 const transporter = nodemailer.createTransport({
-    host: "smtp-mail.outlook.com",
+    host: "smtp.office365.com",  // Endret fra smtp-mail.outlook.com
     port: 587,
-    secure: false, // true for 465, false for other ports
+    secure: false,
     auth: {
-        user: process.env.EMAIL_USER, // din hotmail/outlook e-post
-        pass: process.env.EMAIL_PASSWORD // ditt vanlige passord
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD  // Bruk App Password her
     },
     tls: {
-        ciphers: 'SSLv3'
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false  // Legg til denne linjen
+    }
+});
+
+// Verifiser tilkobling ved oppstart
+transporter.verify(function(error, success) {
+    if (error) {
+        console.error('E-postkonfigurasjon feil:', error);
+    } else {
+        console.log('E-postserver er klar til å sende meldinger');
     }
 });
 
