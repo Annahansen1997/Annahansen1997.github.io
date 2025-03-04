@@ -227,4 +227,82 @@ window.addEventListener('click', function(event) {
         event.preventDefault();
         closeModal(event.target.id);
     }
-}); 
+});
+
+// Funksjon for å håndtere vellykket betaling og levering av produkt
+async function handleSuccessfulPayment() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    
+    if (!sessionId) return;
+
+    try {
+        // Hent ordreinformasjon fra server
+        const response = await fetch(`https://kreativmoro.onrender.com/order-complete?session_id=${sessionId}`, {
+            method: 'GET'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Kunne ikke hente ordreinformasjon');
+        }
+        
+        const orderData = await response.json();
+        
+        // Send ordrebekreftelse og produkter på e-post
+        await sendOrderConfirmation({
+            email: orderData.customer_email,
+            productName: orderData.items.map(item => item.name).join(', '),
+            orderNumber: orderData.order_number,
+            price: orderData.total_amount,
+            items: orderData.items
+        });
+
+        // Tøm handlekurven
+        emptyCart();
+        
+        // Vis suksessmelding
+        showSuccessMessage('Takk for ditt kjøp! Produktene er sendt til din e-post.');
+        
+    } catch (error) {
+        console.error('Feil ved behandling av ordre:', error);
+        showMessage('Det oppstod en feil ved behandling av ordren. Vennligst kontakt kundeservice.', 'error');
+    }
+}
+
+// Kjør denne funksjonen når siden lastes
+document.addEventListener('DOMContentLoaded', function() {
+    // Sjekk om vi er på success-siden
+    if (window.location.pathname.includes('success.html')) {
+        handleSuccessfulPayment();
+    }
+});
+
+// Funksjon for å sende ordrebekreftelse
+function sendOrderConfirmation(orderDetails) {
+    return emailjs.send(
+        'default_service', // Service ID fra playground
+        'template_slf2zpr', // Template ID for ordrebekreftelse
+        {
+            product_name: orderDetails.productName,
+            order_number: orderDetails.orderNumber,
+            purchase_date: new Date().toLocaleDateString('no-NO'),
+            total_price: `${orderDetails.price.toFixed(2)} NOK`,
+            to_email: orderDetails.email,
+            reply_to: 'kreativmoro@outlook.com',
+            // Legg ved produktfilene som vedlegg
+            attachments: orderDetails.items ? orderDetails.items.map(item => ({
+                name: `${item.name}.pdf`,
+                url: `https://kreativmoro.onrender.com/downloads/${item.priceId}.pdf`
+            })) : []
+        }
+    ).then(
+        function(response) {
+            console.log('Ordrebekreftelse sendt:', response);
+            return response;
+        },
+        function(error) {
+            console.error('Feil ved sending av ordrebekreftelse:', error);
+            throw error;
+        }
+    );
+} 
