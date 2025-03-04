@@ -459,4 +459,33 @@ const styles = `
 // Legg til stilene i dokumentet
 const styleSheet = document.createElement('style');
 styleSheet.textContent = styles;
-document.head.appendChild(styleSheet); 
+document.head.appendChild(styleSheet);
+
+// Hjelpefunksjoner for meldinger
+function showMessage(message, type = 'success') {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.textContent = message;
+    document.body.appendChild(messageDiv);
+    
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 5000);
+}
+
+function showLoadingMessage(message) {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'loading-message';
+    loadingDiv.innerHTML = `
+        <div class="spinner"></div>
+        <p>${message}</p>
+    `;
+    document.body.appendChild(loadingDiv);
+}
+
+function hideLoadingMessage() {
+    const loadingMessage = document.querySelector('.loading-message');
+    if (loadingMessage) {
+        loadingMessage.remove();
+    }
+} 

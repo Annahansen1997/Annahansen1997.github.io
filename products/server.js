@@ -6,11 +6,23 @@ const path = require('path');
 const app = express();
 
 // CORS konfigurasjon
-app.use(cors({
-    origin: ['https://annahansen1997.github.io', 'http://localhost:3000'],
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+const corsOptions = {
+    origin: [
+        'https://kreativmoro.no',
+        'https://www.kreativmoro.no',
+        'https://annahansen1997.github.io',
+        'http://localhost:3000'
+    ],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
+// Pre-flight requests
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
