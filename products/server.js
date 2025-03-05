@@ -338,21 +338,35 @@ www.kreativmoro.no`;
 // Oppdater test-ruten
 app.get('/test-email', async (req, res) => {
     try {
+        // Sjekk SendGrid API-nøkkel
+        if (!process.env.SENDGRID_API_KEY) {
+            throw new Error('SENDGRID_API_KEY er ikke konfigurert');
+        }
+
+        // Sjekk avsender e-post
         if (!process.env.SENDGRID_FROM_EMAIL) {
             throw new Error('SENDGRID_FROM_EMAIL er ikke konfigurert');
         }
 
+        console.log('Forsøker å sende e-post til:', process.env.SENDGRID_FROM_EMAIL);
+
         const msg = {
             to: process.env.SENDGRID_FROM_EMAIL,
-            from: process.env.SENDGRID_FROM_EMAIL, // Forenklet format
+            from: process.env.SENDGRID_FROM_EMAIL,
             subject: 'Test E-post fra Kreativ Moro',
-            text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.'
+            text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.',
+            html: '<strong>Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.</strong>'
         };
 
-        await sgMail.send(msg);
-        res.send('Test-e-post sendt! Sjekk innboksen din.');
+        const response = await sgMail.send(msg);
+        console.log('SendGrid respons:', response);
+        
+        res.send('Test-e-post sendt! Sjekk innboksen din. SendGrid respons mottatt.');
     } catch (error) {
-        console.error('Feil ved sending av test-e-post:', error);
+        console.error('Detaljert feil ved sending av test-e-post:', {
+            message: error.message,
+            response: error.response ? error.response.body : null
+        });
         res.status(500).send(`Feil ved sending av test-e-post: ${error.message}`);
     }
 });
