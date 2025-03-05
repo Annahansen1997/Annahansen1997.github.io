@@ -338,12 +338,13 @@ www.kreativmoro.no`;
 // Oppdater test-ruten
 app.get('/test-email', async (req, res) => {
     try {
+        if (!process.env.SENDGRID_FROM_EMAIL) {
+            throw new Error('SENDGRID_FROM_EMAIL er ikke konfigurert');
+        }
+
         const msg = {
             to: process.env.SENDGRID_FROM_EMAIL,
-            from: {
-                email: process.env.SENDGRID_FROM_EMAIL,
-                name: 'Kreativ Moro'
-            },
+            from: process.env.SENDGRID_FROM_EMAIL, // Forenklet format
             subject: 'Test E-post fra Kreativ Moro',
             text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.'
         };
