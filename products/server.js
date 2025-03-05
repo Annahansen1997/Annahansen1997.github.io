@@ -3,7 +3,8 @@ const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path = require('path');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const fs = require('fs');
+const sgMail = require('@sendgrid/mail');
 
 const app = express();
 
@@ -250,41 +251,10 @@ app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', as
     }
 });
 
-// Konfigurer e-post transport
-const transporter = nodemailer.createTransport({
-    host: "smtp.office365.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-    },
-    tls: {
-        ciphers: 'SSLv3',
-        rejectUnauthorized: true,
-        minVersion: 'TLSv1.2'
-    },
-    debug: true,
-    logger: true
-});
+// Legg til SendGrid konfigurasjon
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Verifiser tilkobling ved oppstart
-transporter.verify(function(error, success) {
-    if (error) {
-        console.error('E-postkonfigurasjon feil:', error);
-        if (error.code === 'EAUTH') {
-            console.error('Autentiseringsfeil detaljer:', {
-                responseCode: error.responseCode,
-                response: error.response,
-                command: error.command
-            });
-        }
-    } else {
-        console.log('E-postserver er klar til å sende meldinger');
-    }
-});
-
-// Funksjon for å sende ordre-e-post
+// Oppdater sendOrderEmail funksjonen
 async function sendOrderEmail(customerEmail, orderData, products) {
     try {
         const now = new Date();
@@ -298,11 +268,21 @@ async function sendOrderEmail(customerEmail, orderData, products) {
             const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
             if (!productInfo) return null;
             
+            const filePath = path.join(__dirname, 'products', productInfo.filename);
+            const fileContent = fs.readFileSync(filePath);
+            
             return {
+                content: fileContent.toString('base64'),
                 filename: productInfo.filename,
-                path: path.join(__dirname, 'products', productInfo.filename)
+                type: 'application/pdf',
+                disposition: 'attachment'
             };
         }).filter(Boolean);
+
+        const productNames = products.map(product => {
+            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
+            return productInfo ? productInfo.name : '';
+        }).filter(Boolean).join(', ');
 
         const emailTemplate = `
 Hei!
@@ -310,10 +290,7 @@ Hei!
 Takk for din bestilling hos Kreativ Moro. Her er din(e) digitale produkt(er):
 
 Ordre detaljer:
-Produkt: ${products.map(product => {
-    const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
-    return productInfo ? productInfo.name : '';
-}).filter(Boolean).join(', ')}
+Produkt(er): ${productNames}
 Ordrenummer: ${orderData.order_number}
 Dato: ${formattedDate}
 Totalt betalt: ${(orderData.total_amount / 100).toFixed(2)} NOK
@@ -334,23 +311,45 @@ Kreativ Moro
 ---
 www.kreativmoro.no`;
 
-        await transporter.sendMail({
-            from: {
-                name: 'Kreativ Moro',
-                address: process.env.EMAIL_USER
-            },
+        const msg = {
             to: customerEmail,
+            from: {
+                email: process.env.SENDGRID_FROM_EMAIL,
+                name: 'Kreativ Moro'
+            },
             subject: 'Din bestilling fra Kreativ Moro',
             text: emailTemplate,
             attachments: attachments
-        });
+        };
 
+        await sgMail.send(msg);
         console.log('Ordre e-post sendt til:', customerEmail);
     } catch (error) {
         console.error('Feil ved sending av ordre e-post:', error);
         throw error;
     }
 }
+
+// Legg til en test-rute for å sende en test-e-post
+app.get('/test-email', async (req, res) => {
+    try {
+        const msg = {
+            to: process.env.SENDGRID_FROM_EMAIL,
+            from: {
+                email: process.env.SENDGRID_FROM_EMAIL,
+                name: 'Kreativ Moro'
+            },
+            subject: 'Test E-post fra Kreativ Moro',
+            text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.'
+        };
+
+        await sgMail.send(msg);
+        res.send('Test-e-post sendt! Sjekk innboksen din.');
+    } catch (error) {
+        console.error('Feil ved sending av test-e-post:', error);
+        res.status(500).send(`Feil ved sending av test-e-post: ${error.message}`);
+    }
+});
 
 // Oppdater webhook handler
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {

@@ -15,9 +15,13 @@ const morgan = require('morgan');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const fs = require('fs');
+const sgMail = require('@sendgrid/mail');
 
 const app = express();
 
+// Legg til SendGrid konfigurasjon
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Legg også til en test-rute for å sende en test-e-post
 app.get('/test-email', async (req, res) => {
@@ -189,9 +193,14 @@ async function sendOrderEmail(customerEmail, orderData, products) {
             const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
             if (!productInfo) return null;
             
+            const filePath = path.join(__dirname, 'products', productInfo.filename);
+            const fileContent = fs.readFileSync(filePath);
+            
             return {
+                content: fileContent.toString('base64'),
                 filename: productInfo.filename,
-                path: path.join(__dirname, 'products', productInfo.filename)
+                type: 'application/pdf',
+                disposition: 'attachment'
             };
         }).filter(Boolean);
 
@@ -222,18 +231,19 @@ Kreativ Moro
 ---
 www.kreativmoro.no`;
 
-        await transporter.sendMail({
-            from: {
-                name: 'Kreativ Moro',
-                address: process.env.EMAIL_USER
-            },
+        const msg = {
             to: customerEmail,
+            from: {
+                email: process.env.SENDGRID_FROM_EMAIL,
+                name: 'Kreativ Moro'
+            },
             subject: 'Din bestilling fra Kreativ Moro',
             text: emailTemplate,
             attachments: attachments
-        });
+        };
 
-        console.log('Ordre e-post sendt til:', customerEmail, 'med vedlegg:', attachments.map(a => a.filename).join(', '));
+        await sgMail.send(msg);
+        console.log('Ordre e-post sendt til:', customerEmail);
     } catch (error) {
         console.error('Feil ved sending av ordre e-post:', error);
         throw error;
