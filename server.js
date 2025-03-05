@@ -51,6 +51,62 @@ app.use((req, res, next) => {
 // Serve statiske filer
 app.use(express.static(path.join(__dirname)));
 
+// Test-email rute - må være før catch-all ruten
+app.get('/test-email', async (req, res) => {
+    try {
+        // Sjekk SendGrid API-nøkkel
+        if (!process.env.SENDGRID_API_KEY) {
+            throw new Error('SENDGRID_API_KEY er ikke konfigurert');
+        }
+
+        // Sjekk avsender e-post
+        if (!process.env.SENDGRID_FROM_EMAIL) {
+            throw new Error('SENDGRID_FROM_EMAIL er ikke konfigurert');
+        }
+
+        console.log('Forsøker å sende e-post til:', process.env.SENDGRID_FROM_EMAIL);
+
+        const msg = {
+            to: process.env.SENDGRID_FROM_EMAIL,
+            from: {
+                email: process.env.SENDGRID_FROM_EMAIL,
+                name: 'Kreativ Moro'
+            },
+            subject: 'Test E-post fra Kreativ Moro',
+            text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.',
+            html: '<strong>Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.</strong>',
+            mailSettings: {
+                sandboxMode: {
+                    enable: false
+                },
+                bypassListManagement: {
+                    enable: true
+                }
+            },
+            trackingSettings: {
+                clickTracking: {
+                    enable: true,
+                    enableText: true
+                },
+                openTracking: {
+                    enable: true
+                }
+            }
+        };
+
+        const response = await sgMail.send(msg);
+        console.log('SendGrid respons:', response);
+        
+        res.send('Test-e-post sendt! Sjekk innboksen din. SendGrid respons mottatt.');
+    } catch (error) {
+        console.error('Detaljert feil ved sending av test-e-post:', {
+            message: error.message,
+            response: error.response ? error.response.body : null
+        });
+        res.status(500).send(`Feil ved sending av test-e-post: ${error.message}`);
+    }
+});
+
 // Grunnleggende rute for rotadressen
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -347,62 +403,6 @@ www.kreativmoro.no`;
         throw error;
     }
 }
-
-// Oppdater test-ruten
-app.get('/test-email', async (req, res) => {
-    try {
-        // Sjekk SendGrid API-nøkkel
-        if (!process.env.SENDGRID_API_KEY) {
-            throw new Error('SENDGRID_API_KEY er ikke konfigurert');
-        }
-
-        // Sjekk avsender e-post
-        if (!process.env.SENDGRID_FROM_EMAIL) {
-            throw new Error('SENDGRID_FROM_EMAIL er ikke konfigurert');
-        }
-
-        console.log('Forsøker å sende e-post til:', process.env.SENDGRID_FROM_EMAIL);
-
-        const msg = {
-            to: process.env.SENDGRID_FROM_EMAIL,
-            from: {
-                email: process.env.SENDGRID_FROM_EMAIL,
-                name: 'Kreativ Moro'
-            },
-            subject: 'Test E-post fra Kreativ Moro',
-            text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.',
-            html: '<strong>Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.</strong>',
-            mailSettings: {
-                sandboxMode: {
-                    enable: false
-                },
-                bypassListManagement: {
-                    enable: true
-                }
-            },
-            trackingSettings: {
-                clickTracking: {
-                    enable: true,
-                    enableText: true
-                },
-                openTracking: {
-                    enable: true
-                }
-            }
-        };
-
-        const response = await sgMail.send(msg);
-        console.log('SendGrid respons:', response);
-        
-        res.send('Test-e-post sendt! Sjekk innboksen din. SendGrid respons mottatt.');
-    } catch (error) {
-        console.error('Detaljert feil ved sending av test-e-post:', {
-            message: error.message,
-            response: error.response ? error.response.body : null
-        });
-        res.status(500).send(`Feil ved sending av test-e-post: ${error.message}`);
-    }
-});
 
 // Oppdater webhook handler
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
