@@ -352,10 +352,30 @@ app.get('/test-email', async (req, res) => {
 
         const msg = {
             to: process.env.SENDGRID_FROM_EMAIL,
-            from: process.env.SENDGRID_FROM_EMAIL,
+            from: {
+                email: process.env.SENDGRID_FROM_EMAIL,
+                name: 'Kreativ Moro'
+            },
             subject: 'Test E-post fra Kreativ Moro',
             text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.',
-            html: '<strong>Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.</strong>'
+            html: '<strong>Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.</strong>',
+            mailSettings: {
+                sandboxMode: {
+                    enable: false
+                },
+                bypassListManagement: {
+                    enable: true
+                }
+            },
+            trackingSettings: {
+                clickTracking: {
+                    enable: true,
+                    enableText: true
+                },
+                openTracking: {
+                    enable: true
+                }
+            }
         };
 
         const response = await sgMail.send(msg);
