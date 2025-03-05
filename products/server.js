@@ -1,6 +1,11 @@
+require('dotenv').config();
+
 const express = require('express');
-const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -330,7 +335,7 @@ www.kreativmoro.no`;
     }
 }
 
-// Legg til en test-rute for å sende en test-e-post
+// Oppdater test-ruten
 app.get('/test-email', async (req, res) => {
     try {
         const msg = {

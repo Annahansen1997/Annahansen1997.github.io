@@ -1,11 +1,5 @@
 require('dotenv').config();
 
-// Legg til denne koden rett etter require('dotenv').config();
-console.log('Email configuration:', {
-    user: process.env.EMAIL_USER ? 'Satt' : 'Ikke satt',
-    password: process.env.EMAIL_PASSWORD ? 'Satt' : 'Ikke satt'
-});
-
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
@@ -13,96 +7,11 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const fs = require('fs');
 const sgMail = require('@sendgrid/mail');
 
 const app = express();
-
-// Legg til SendGrid konfigurasjon
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// Legg også til en test-rute for å sende en test-e-post
-app.get('/test-email', async (req, res) => {
-    try {
-        await transporter.sendMail({
-            from: {
-                name: 'Kreativ Moro',
-                address: process.env.EMAIL_USER
-            },
-            to: process.env.EMAIL_USER, // Sender til samme adresse for testing
-            subject: 'Test E-post fra Kreativ Moro',
-            text: 'Dette er en test-e-post for å verifisere at e-postkonfigurasjonen fungerer.',
-            attachments: [{
-                filename: 'test.txt',
-                content: 'Dette er en test-fil for å teste vedlegg.'
-            }]
-        });
-        
-        res.send('Test-e-post sendt! Sjekk innboksen din.');
-    } catch (error) {
-        console.error('Feil ved sending av test-e-post:', error);
-        res.status(500).send(`Feil ved sending av test-e-post: ${error.message}`);
-    }
-});
-
-// Sikkerhetstiltak med tilpasset CSP
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: [
-                "'self'",
-                "'unsafe-inline'",
-                "'unsafe-eval'",
-                "'unsafe-hashes'",
-                "https://js.stripe.com",
-                "https://cdn.jsdelivr.net",
-                "https://www.google-analytics.com"
-            ],
-            scriptSrcAttr: ["'unsafe-inline'"],
-            scriptSrcElem: [
-                "'self'",
-                "'unsafe-inline'",
-                "https://js.stripe.com",
-                "https://cdn.jsdelivr.net"
-            ],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
-            imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: ["'self'", "https://api.stripe.com", "https://kreativmoro.onrender.com"],
-            frameSrc: ["'self'", "https://js.stripe.com"],
-            fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
-            objectSrc: ["'none'"],
-            mediaSrc: ["'self'"],
-            childSrc: ["'self'", "https://js.stripe.com"]
-        }
-    },
-    crossOriginEmbedderPolicy: false
-}));
-
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutter
-    max: 100 // maks 100 requests per vindu
-});
-app.use('/api/', limiter);
-
-// Logging
-app.use(morgan('combined'));
-
-// Serve static files
-app.use(express.static(path.join(__dirname)));
-
-// Root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Handle all other routes to support SPA
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
 
 // CORS konfigurasjon
 const corsOptions = {
@@ -139,116 +48,65 @@ app.use((req, res, next) => {
     next();
 });
 
-// Logg alle forespørsler
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
-});
-
-// Konfigurer e-post transport
-const transporter = nodemailer.createTransport({
-    host: "smtp.office365.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
+// Produktkonfigurasjon
+const PRODUCTS = {
+    'vinterkos': {
+        price: 4500,
+        name: 'Vinterkos Aktivitetshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'vinterkos_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9IPLPxmfy63yEXy1w1l8T'
     },
-    tls: {
-        ciphers: 'SSLv3',
-        rejectUnauthorized: true,
-        minVersion: 'TLSv1.2'
+    'påskekos': {
+        price: 4500,
+        name: 'Påskekos Aktivitetshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'paskekos_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9MJLPxmfy63yETbGYTyLJ'
     },
-    debug: true,
-    logger: true
-});
-
-// Verifiser tilkobling ved oppstart
-transporter.verify(function(error, success) {
-    if (error) {
-        console.error('E-postkonfigurasjon feil:', error);
-        if (error.code === 'EAUTH') {
-            console.error('Autentiseringsfeil detaljer:', {
-                responseCode: error.responseCode,
-                response: error.response,
-                command: error.command
-            });
-        }
-    } else {
-        console.log('E-postserver er klar til å sende meldinger');
+    'dinosaur': {
+        price: 4500,
+        name: 'På eventyr med dinosaurene',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'dinosaur_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9NKLPxmfy63yEAoCoz18f'
+    },
+    'enhjørning': {
+        price: 4500,
+        name: 'Enhjørningens magiske eventyrhefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'enhjorning_aktivitetshefte.pdf',
+        price_id: 'price_1Qo9ODLPxmfy63yEtbAchGtn'
+    },
+    'bilbingo': {
+        price: 3500,
+        name: 'Bilbingo',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'bilbingo.pdf',
+        price_id: 'price_1Qo9P1LPxmfy63yES6FrJHo3'
+    },
+    'flybingo': {
+        price: 3500,
+        name: 'Flybingo',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'flybingo.pdf',
+        price_id: 'price_1Qo9PnLPxmfy63yEf9cE5DIr'
+    },
+    'brev_fra_påskeharen': {
+        price: 2000,
+        name: 'Brev fra Påskeharen',
+        description: 'Digital nedlasting - To PDF varianter (rosa og blå)',
+        filename: 'brev_paskeharen.pdf',
+        price_id: 'price_1QqhMBLPxmfy63yEHKyJ21FW'
+    },
+    'dyrene_i_skogen': {
+        price: 4500,
+        name: 'Dyrene i Skogen Fargeleggingshefte',
+        description: 'Digital nedlasting - PDF format',
+        filename: 'dyrene_i_skogen.pdf',
+        price_id: 'price_1QqhLDLPxmfy63yErSiWyw6O'
     }
-});
-
-// Funksjon for å sende ordre-e-post
-async function sendOrderEmail(customerEmail, orderData, products) {
-    try {
-        const now = new Date();
-        const formattedDate = now.toLocaleDateString('no-NO', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        });
-
-        const attachments = products.map(product => {
-            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
-            if (!productInfo) return null;
-            
-            const filePath = path.join(__dirname, 'products', productInfo.filename);
-            const fileContent = fs.readFileSync(filePath);
-            
-            return {
-                content: fileContent.toString('base64'),
-                filename: productInfo.filename,
-                type: 'application/pdf',
-                disposition: 'attachment'
-            };
-        }).filter(Boolean);
-
-        const emailTemplate = `
-Hei!
-
-Takk for din bestilling hos Kreativ Moro. Her er din(e) digitale produkt(er):
-
-Ordre detaljer:
-Produkt(er): ${productNames}
-Ordrenummer: ${orderData.order_number}
-Dato: ${formattedDate}
-Totalt betalt: ${(orderData.total_amount / 100).toFixed(2)} NOK
-
-Dine PDF-filer er vedlagt denne e-posten.
-
-Viktig informasjon:
-- PDF-filene er kun for personlig bruk
-- Ikke del filene med andre
-- Du kan skrive ut så mange kopier du ønsker til eget bruk
-
-Har du spørsmål om din bestilling? 
-Svar på denne e-posten eller kontakt oss via nettsiden.
-
-Med vennlig hilsen,
-Kreativ Moro
-
----
-www.kreativmoro.no`;
-
-        const msg = {
-            to: customerEmail,
-            from: {
-                email: process.env.SENDGRID_FROM_EMAIL,
-                name: 'Kreativ Moro'
-            },
-            subject: 'Din bestilling fra Kreativ Moro',
-            text: emailTemplate,
-            attachments: attachments
-        };
-
-        await sgMail.send(msg);
-        console.log('Ordre e-post sendt til:', customerEmail);
-    } catch (error) {
-        console.error('Feil ved sending av ordre e-post:', error);
-        throw error;
-    }
-}
+};
 
 // Sikker PDF nedlasting fra products-mappen
 app.get('/downloads/:filename', async (req, res) => {
@@ -312,65 +170,191 @@ app.get('/order-complete', async (req, res) => {
     }
 });
 
-// Produktkonfigurasjon
-const PRODUCTS = {
-    'vinterkos': {
-        price: 4500,
-        name: 'Vinterkos Aktivitetshefte',
-        description: 'Digital nedlasting - PDF format',
-        filename: 'vinterkos_aktivitetshefte.pdf',
-        price_id: 'price_1Qo9IPLPxmfy63yEXy1w1l8T'
-    },
-    'påskekos': {
-        price: 4500,
-        name: 'Påskekos Aktivitetshefte',
-        description: 'Digital nedlasting - PDF format',
-        filename: 'paskekos_aktivitetshefte.pdf',
-        price_id: 'price_1Qo9MJLPxmfy63yETbGYTyLJ'
-    },
-    'dinosaur': {
-        price: 4500,
-        name: 'Dinosaur Aktivitetshefte',
-        description: 'Digital nedlasting - PDF format',
-        filename: 'dinosaur_aktivitetshefte.pdf',
-        price_id: 'price_1Qo9NKLPxmfy63yEAoCoz18f'
-    },
-    'enhjørning': {
-        price: 4500,
-        name: 'Enhjørning Aktivitetshefte',
-        description: 'Digital nedlasting - PDF format',
-        filename: 'enhjorning_aktivitetshefte.pdf',
-        price_id: 'price_1Qo9ODLPxmfy63yEtbAchGtn'
-    },
-    'bilbingo': {
-        price: 3500,
-        name: 'Bilbingo',
-        description: 'Digital nedlasting - PDF format',
-        filename: 'bilbingo.pdf',
-        price_id: 'price_1Qo9P1LPxmfy63yES6FrJHo3'
-    },
-    'flybingo': {
-        price: 3500,
-        name: 'Flybingo',
-        description: 'Digital nedlasting - PDF format',
-        filename: 'flybingo.pdf',
-        price_id: 'price_1Qo9PnLPxmfy63yEf9cE5DIr'
-    },
-    'brev_fra_påskeharen': {
-        price: 2000,
-        name: 'Brev fra Påskeharen',
-        description: 'Digital nedlasting - To PDF varianter (rosa og blå)',
-        filename: 'brev_paskeharen.pdf',
-        price_id: 'price_1QqhMBLPxmfy63yEHKyJ21FW'
-    },
-    'dyrene_i_skogen': {
-        price: 4500,
-        name: 'Dyrene i Skogen Fargeleggingshefte',
-        description: 'Digital nedlasting - PDF format',
-        filename: 'dyrene_i_skogen.pdf',
-        price_id: 'price_1QqhLDLPxmfy63yErSiWyw6O'
+// Generer sikker nedlastingslenke
+function generateSecureDownloadUrl(sessionId, productId, filename) {
+    const timestamp = Date.now();
+    const token = crypto
+        .createHmac('sha256', process.env.DOWNLOAD_SECRET_KEY)
+        .update(`${sessionId}-${productId}-${timestamp}`)
+        .digest('hex');
+    
+    return `/secure-download/${sessionId}/${productId}/${timestamp}/${token}/${filename}`;
+}
+
+// Ny rute for å hente nedlastingslenker
+app.get('/get-download-links', async (req, res) => {
+    try {
+        const { session_id } = req.query;
+        const session = await stripe.checkout.sessions.retrieve(session_id, {
+            expand: ['line_items']
+        });
+
+        // Verifiser at betalingen er fullført
+        if (session.payment_status !== 'paid') {
+            return res.status(400).json({ error: 'Betaling ikke fullført' });
+        }
+
+        const files = session.line_items.data.map(item => {
+            const productId = item.price.product;
+            const product = Object.entries(PRODUCTS).find(([_, p]) => p.price_id === item.price.id);
+            
+            if (!product) return null;
+
+            const [key, productInfo] = product;
+            return {
+                name: productInfo.name,
+                filename: productInfo.filename,
+                downloadUrl: generateSecureDownloadUrl(session_id, productId, productInfo.filename)
+            };
+        }).filter(Boolean);
+
+        res.json({ files });
+    } catch (error) {
+        console.error('Feil ved generering av nedlastingslenker:', error);
+        res.status(500).json({ error: 'Kunne ikke generere nedlastingslenker' });
     }
-};
+});
+
+// Sikker nedlastingsrute
+app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', async (req, res) => {
+    try {
+        const { sessionId, productId, timestamp, token, filename } = req.params;
+        
+        // Verifiser token
+        const expectedToken = crypto
+            .createHmac('sha256', process.env.DOWNLOAD_SECRET_KEY)
+            .update(`${sessionId}-${productId}-${timestamp}`)
+            .digest('hex');
+        
+        if (token !== expectedToken) {
+            return res.status(403).send('Ugyldig nedlastingslenke');
+        }
+
+        // Sjekk om lenken er utløpt (f.eks. 24 timer)
+        const now = Date.now();
+        if (now - parseInt(timestamp) > 24 * 60 * 60 * 1000) {
+            return res.status(403).send('Nedlastingslenken er utløpt');
+        }
+
+        // Verifiser at sesjonen eksisterer og er betalt
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        if (session.payment_status !== 'paid') {
+            return res.status(403).send('Betaling ikke fullført');
+        }
+
+        // Send filen
+        const filePath = path.join(__dirname, 'products', filename);
+        res.download(filePath, filename, (err) => {
+            if (err) {
+                console.error('Feil ved nedlasting:', err);
+                res.status(500).send('Feil ved nedlasting av fil');
+            }
+        });
+    } catch (error) {
+        console.error('Feil ved sikker nedlasting:', error);
+        res.status(500).send('Serverfeil ved nedlasting');
+    }
+});
+
+// Legg til SendGrid konfigurasjon
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Oppdater sendOrderEmail funksjonen
+async function sendOrderEmail(customerEmail, orderData, products) {
+    try {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('no-NO', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        const attachments = products.map(product => {
+            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
+            if (!productInfo) return null;
+            
+            const filePath = path.join(__dirname, 'products', productInfo.filename);
+            const fileContent = fs.readFileSync(filePath);
+            
+            return {
+                content: fileContent.toString('base64'),
+                filename: productInfo.filename,
+                type: 'application/pdf',
+                disposition: 'attachment'
+            };
+        }).filter(Boolean);
+
+        const productNames = products.map(product => {
+            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
+            return productInfo ? productInfo.name : '';
+        }).filter(Boolean).join(', ');
+
+        const emailTemplate = `
+Hei!
+
+Takk for din bestilling hos Kreativ Moro. Her er din(e) digitale produkt(er):
+
+Ordre detaljer:
+Produkt(er): ${productNames}
+Ordrenummer: ${orderData.order_number}
+Dato: ${formattedDate}
+Totalt betalt: ${(orderData.total_amount / 100).toFixed(2)} NOK
+
+Dine PDF-filer er vedlagt denne e-posten.
+
+Viktig informasjon:
+- PDF-filene er kun for personlig bruk
+- Ikke del filene med andre
+- Du kan skrive ut så mange kopier du ønsker til eget bruk
+
+Har du spørsmål om din bestilling? 
+Svar på denne e-posten eller kontakt oss via nettsiden.
+
+Med vennlig hilsen,
+Kreativ Moro
+
+---
+www.kreativmoro.no`;
+
+        const msg = {
+            to: customerEmail,
+            from: {
+                email: process.env.SENDGRID_FROM_EMAIL,
+                name: 'Kreativ Moro'
+            },
+            subject: 'Din bestilling fra Kreativ Moro',
+            text: emailTemplate,
+            attachments: attachments
+        };
+
+        await sgMail.send(msg);
+        console.log('Ordre e-post sendt til:', customerEmail);
+    } catch (error) {
+        console.error('Feil ved sending av ordre e-post:', error);
+        throw error;
+    }
+}
+
+// Oppdater test-ruten
+app.get('/test-email', async (req, res) => {
+    try {
+        const msg = {
+            to: process.env.SENDGRID_FROM_EMAIL,
+            from: {
+                email: process.env.SENDGRID_FROM_EMAIL,
+                name: 'Kreativ Moro'
+            },
+            subject: 'Test E-post fra Kreativ Moro',
+            text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.'
+        };
+
+        await sgMail.send(msg);
+        res.send('Test-e-post sendt! Sjekk innboksen din.');
+    } catch (error) {
+        console.error('Feil ved sending av test-e-post:', error);
+        res.status(500).send(`Feil ved sending av test-e-post: ${error.message}`);
+    }
+});
 
 // Oppdater webhook handler
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
@@ -384,6 +368,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
         return;
     }
 
+    // Håndter ulike event typer
     switch (event.type) {
         case 'checkout.session.completed':
             const session = event.data.object;
@@ -417,8 +402,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
     response.json({received: true});
 });
 
-// Start serveren
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server kjører på port ${PORT}`);
-});
+}); 
