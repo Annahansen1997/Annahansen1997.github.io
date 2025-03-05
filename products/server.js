@@ -48,6 +48,16 @@ app.use((req, res, next) => {
     next();
 });
 
+// Grunnleggende rute for rotadressen
+app.get('/', (req, res) => {
+    res.redirect('https://annahansen1997.github.io');
+});
+
+// Håndter 404 for ukjente ruter
+app.use((req, res) => {
+    res.status(404).send('404 - Siden ble ikke funnet');
+});
+
 // Produktkonfigurasjon
 const PRODUCTS = {
     'vinterkos': {
