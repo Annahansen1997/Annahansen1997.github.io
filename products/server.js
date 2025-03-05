@@ -48,14 +48,17 @@ app.use((req, res, next) => {
     next();
 });
 
+// Serve statiske filer
+app.use(express.static(path.join(__dirname)));
+
 // Grunnleggende rute for rotadressen
 app.get('/', (req, res) => {
-    res.redirect('https://annahansen1997.github.io');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Håndter 404 for ukjente ruter
-app.use((req, res) => {
-    res.status(404).send('404 - Siden ble ikke funnet');
+// Håndter alle andre ruter ved å sende index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Produktkonfigurasjon
