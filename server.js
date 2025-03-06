@@ -11,6 +11,9 @@ const crypto = require('crypto');
 const fs = require('fs');
 const sgMail = require('@sendgrid/mail');
 
+// Legg til SendGrid konfigurasjon
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 const app = express();
 
 // CORS konfigurasjon
@@ -325,9 +328,6 @@ app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', as
     }
 });
 
-// Legg til SendGrid konfigurasjon
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
 // Oppdater sendOrderEmail funksjonen
 async function sendOrderEmail(customerEmail, orderData, products) {
     try {
@@ -453,4 +453,4 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server kjører på port ${PORT}`);
-}); 
+});
