@@ -412,6 +412,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
     try {
         event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
+        console.error(`Webhook Error: ${err.message}`);
         response.status(400).send(`Webhook Error: ${err.message}`);
         return;
     }
@@ -444,13 +445,8 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
             break;
             
         default:
-            console.log(`Uhandled event type: ${event.type}`);
+            console.log(`Unhandled event type: ${event.type}`);
     }
 
     response.json({received: true});
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server kjører på port ${PORT}`);
 });
