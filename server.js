@@ -450,3 +450,10 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
 
     response.json({received: true});
 });
+
+// Legg til portkonfigurasjon
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
