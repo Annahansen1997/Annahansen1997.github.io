@@ -115,11 +115,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Håndter alle andre ruter ved å sende index.html
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
 // Produktkonfigurasjon
 const PRODUCTS = {
     'vinterkos': {
@@ -416,6 +411,11 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
         response.status(400).send(`Webhook Error: ${err.message}`);
         return;
     }
+
+// Håndter alle andre ruter ved å sende index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
     console.log('Received event:', event);
 
