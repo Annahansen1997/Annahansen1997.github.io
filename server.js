@@ -417,6 +417,8 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
         return;
     }
 
+    console.log('Received event:', event);
+
     // Håndter ulike event typer
     switch (event.type) {
         case 'checkout.session.completed':
