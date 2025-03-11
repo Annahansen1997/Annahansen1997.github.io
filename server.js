@@ -27,32 +27,110 @@ const corsOptions = {
         'http://localhost:3000'
     ],
     methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With', 'stripe-signature'],
     credentials: true
 };
 
-app.use(cors(corsOptions));
+// Bruk middleware for alt unntatt webhook-ruten
+app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook') {
+        next();
+    } else {
+        cors(corsOptions)(req, res, next);
+    }
+});
 
-// Parse JSON bodies
-app.use(express.json());
+// Bruk JSON parsing for alt unntatt webhook-ruten
+app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook') {
+        next();
+    } else {
+        express.json()(req, res, next);
+    }
+});
 
 // Håndter preflight requests
 app.options('*', cors(corsOptions));
 
-// Legg til CORS headers for alle ruter
+// Legg til CORS headers for alle ruter (unntatt webhook)
 app.use((req, res, next) => {
+    if (req.originalUrl === '/webhook') {
+        next();
+        return;
+    }
+    
     const origin = req.headers.origin;
     if (corsOptions.origin.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, stripe-signature');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     next();
 });
 
 // Serve statiske filer
 app.use(express.static(path.join(__dirname)));
+
+// VIKTIG: Webhook route må komme FØR alle andre ruter
+app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
+    const sig = request.headers['stripe-signature'];
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(
+            request.body, 
+            sig, 
+            process.env.STRIPE_WEBHOOK_SECRET
+        );
+    } catch (err) {
+        console.error(`Webhook Error: ${err.message}`);
+        return response.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    console.log('Received event:', event);
+
+    // Håndter ulike event typer
+    switch (event.type) {
+        case 'checkout.session.completed':
+            const session = event.data.object;
+            
+            try {
+                // Hent komplett sesjonsinformasjon med line_items
+                const completeSession = await stripe.checkout.sessions.retrieve(session.id, {
+                    expand: ['line_items']
+                });
+                
+                // Send e-post med PDF-vedlegg
+                await sendOrderEmail(
+                    completeSession.customer_details.email,
+                    {
+                        order_number: completeSession.id,
+                        total_amount: completeSession.amount_total
+                    },
+                    completeSession.line_items.data
+                );
+                
+                console.log('Ordre e-post sendt til:', completeSession.customer_details.email);
+            } catch (error) {
+                console.error('Feil ved sending av ordre e-post:', error);
+                // Ikke send feilstatus - vi vil gi 200 OK til Stripe selv om e-posten feiler
+            }
+            break;
+            
+        default:
+            console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    // Send alltid 200 OK respons til Stripe
+    return response.status(200).json({received: true});
+});
+
+// Test-webhook rute for debugging
+app.post('/test-webhook', (req, res) => {
+    console.log('Test webhook mottatt');
+    res.status(200).json({ success: true });
+});
 
 // Test-email rute - må være før catch-all ruten
 app.get('/test-email', async (req, res) => {
@@ -399,58 +477,9 @@ www.kreativmoro.no`;
     }
 }
 
-// Oppdater webhook handler
-app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
-    const sig = request.headers['stripe-signature'];
-    let event;
-
-    try {
-        event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-    } catch (err) {
-        console.error(`Webhook Error: ${err.message}`);
-        response.status(400).send(`Webhook Error: ${err.message}`);
-        return;
-    }
-
-// Håndter alle andre ruter ved å sende index.html
+// Håndter alle andre ruter ved å sende index.html - MÅ VÆRE SIST
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-    console.log('Received event:', event);
-
-    // Håndter ulike event typer
-    switch (event.type) {
-        case 'checkout.session.completed':
-            const session = event.data.object;
-            
-            try {
-                // Hent komplett sesjonsinformasjon med line_items
-                const completeSession = await stripe.checkout.sessions.retrieve(session.id, {
-                    expand: ['line_items']
-                });
-                
-                // Send e-post med PDF-vedlegg
-                await sendOrderEmail(
-                    completeSession.customer_details.email,
-                    {
-                        order_number: completeSession.id,
-                        total_amount: completeSession.amount_total
-                    },
-                    completeSession.line_items.data
-                );
-                
-                console.log('Ordre e-post sendt til:', completeSession.customer_details.email);
-            } catch (error) {
-                console.error('Feil ved sending av ordre e-post:', error);
-            }
-            break;
-            
-        default:
-            console.log(`Unhandled event type: ${event.type}`);
-    }
-
-    response.json({received: true});
 });
 
 // Legg til portkonfigurasjon
