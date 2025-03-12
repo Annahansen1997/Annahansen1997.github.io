@@ -75,6 +75,7 @@ app.use(express.static(path.join(__dirname)));
 // VIKTIG: Webhook route må komme FØR alle andre ruter
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
     const sig = request.headers['stripe-signature'];
+    const connectedAccountId = request.headers['stripe-account'];
     let event;
 
     try {
@@ -98,7 +99,8 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
             try {
                 // Hent komplett sesjonsinformasjon med line_items
                 const completeSession = await stripe.checkout.sessions.retrieve(session.id, {
-                    expand: ['line_items']
+                    expand: ['line_items'],
+                    stripeAccount: connectedAccountId
                 });
                 
                 // Send e-post med PDF-vedlegg
