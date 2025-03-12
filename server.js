@@ -1,7 +1,9 @@
 require('dotenv').config();
 
 const express = require('express');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2025-01-27.acacia'
+});
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
