@@ -77,7 +77,6 @@ app.use(express.static(path.join(__dirname)));
 // VIKTIG: Webhook route må komme FØR alle andre ruter
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
     const sig = request.headers['stripe-signature'];
-    const connectedAccountId = request.headers['stripe-account'];
     let event;
 
     try {
@@ -99,23 +98,30 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
             const session = event.data.object;
             
             try {
-                // Hent komplett sesjonsinformasjon med line_items
-                const completeSession = await stripe.checkout.sessions.retrieve(session.id, {
-                    expand: ['line_items'],
-                    stripeAccount: connectedAccountId
-                });
-                
-                // Send e-post med PDF-vedlegg
-                await sendOrderEmail(
-                    completeSession.customer_details.email,
+                // Hent komplett sesjonsinformasjon med line_items - FIKSET EXPAND
+                const completeSession = await stripe.checkout.sessions.retrieve(
+                    session.id, 
                     {
-                        order_number: completeSession.id,
-                        total_amount: completeSession.amount_total
-                    },
-                    completeSession.line_items.data
+                        expand: ['line_items']
+                    }
                 );
                 
-                console.log('Ordre e-post sendt til:', completeSession.customer_details.email);
+                // Legg til sjekk på om line_items eksisterer
+                if (completeSession && completeSession.line_items && completeSession.line_items.data) {
+                    // Send e-post med PDF-vedlegg
+                    await sendOrderEmail(
+                        completeSession.customer_details.email,
+                        {
+                            order_number: completeSession.id,
+                            total_amount: completeSession.amount_total
+                        },
+                        completeSession.line_items.data
+                    );
+                    
+                    console.log('Ordre e-post sendt til:', completeSession.customer_details.email);
+                } else {
+                    console.error('Mangler line_items data i Stripe-responsen');
+                }
             } catch (error) {
                 console.error('Feil ved sending av ordre e-post:', error);
                 // Ikke send feilstatus - vi vil gi 200 OK til Stripe selv om e-posten feiler
@@ -301,11 +307,23 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 });
 
-// Hent ordre-informasjon
+// Hent ordre-informasjon - FIKSET EXPAND
 app.get('/order-complete', async (req, res) => {
     try {
         const { session_id } = req.query;
-        const session = await stripe.checkout.sessions.retrieve(session_id);
+        
+        // Legg til expand for line_items
+        const session = await stripe.checkout.sessions.retrieve(
+            session_id, 
+            {
+                expand: ['line_items']
+            }
+        );
+        
+        // Legg til sjekk for å sikre at dataen finnes
+        if (!session.line_items || !session.line_items.data) {
+            throw new Error('Mangler line_items data i Stripe-responsen');
+        }
         
         res.json({
             customer_email: session.customer_details.email,
@@ -341,6 +359,11 @@ app.get('/get-download-links', async (req, res) => {
         // Verifiser at betalingen er fullført
         if (session.payment_status !== 'paid') {
             return res.status(400).json({ error: 'Betaling ikke fullført' });
+        }
+
+        // Legg til sjekk for å sikre at dataen finnes
+        if (!session.line_items || !session.line_items.data) {
+            throw new Error('Mangler line_items data i Stripe-responsen');
         }
 
         const files = session.line_items.data.map(item => {
@@ -408,6 +431,11 @@ app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', as
 // Oppdater sendOrderEmail funksjonen
 async function sendOrderEmail(customerEmail, orderData, products) {
     try {
+        // Legg til sjekk for å sikre at produkter finnes
+        if (!products || !Array.isArray(products)) {
+            throw new Error('Ugyldig produktdata for e-postvedlegg');
+        }
+        
         const now = new Date();
         const formattedDate = now.toLocaleDateString('no-NO', {
             year: 'numeric',
@@ -416,21 +444,35 @@ async function sendOrderEmail(customerEmail, orderData, products) {
         });
 
         const attachments = products.map(product => {
+            if (!product.price || !product.price.id) {
+                console.error('Ugyldig produktobjekt:', product);
+                return null;
+            }
+            
             const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
-            if (!productInfo) return null;
+            if (!productInfo) {
+                console.error('Fant ikke produktinformasjon for:', product.price.id);
+                return null;
+            }
             
             const filePath = path.join(__dirname, 'products', productInfo.filename);
-            const fileContent = fs.readFileSync(filePath);
             
-            return {
-                content: fileContent.toString('base64'),
-                filename: productInfo.filename,
-                type: 'application/pdf',
-                disposition: 'attachment'
-            };
+            try {
+                const fileContent = fs.readFileSync(filePath);
+                return {
+                    content: fileContent.toString('base64'),
+                    filename: productInfo.filename,
+                    type: 'application/pdf',
+                    disposition: 'attachment'
+                };
+            } catch (err) {
+                console.error('Feil ved lesing av fil:', err);
+                return null;
+            }
         }).filter(Boolean);
 
         const productNames = products.map(product => {
+            if (!product.price || !product.price.id) return '';
             const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
             return productInfo ? productInfo.name : '';
         }).filter(Boolean).join(', ');
