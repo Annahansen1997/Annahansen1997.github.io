@@ -6,9 +6,6 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let lastScrollPosition = 0;
 
 document.addEventListener('DOMContentLoaded', function () {
-    // En enkelt initialisering av EmailJS
-    emailjs.init("QnvwE_3_avTq6RTuA");
-    
     // Sett opp skjemahåndtering
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {

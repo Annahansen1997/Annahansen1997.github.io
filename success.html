@@ -38,16 +38,23 @@
                 });
 
                 const templateParams = {
-                    to_email: customerEmail,
-                    product_name: files.map(file => file.name).join(', '),
-                    order_number: orderData.order_number,
-                    purchase_date: formattedDate,
-                    total_price: `${orderData.total_amount.toFixed(2)} NOK`,
-                    from_name: "Kreativ Moro",
-                    message: `Din bestilling er bekreftet! Du har kjøpt: ${files.map(file => file.name).join(', ')}`
+                    to: customerEmail,
+                    from: {
+                        email: 'your_sendgrid_verified_email@example.com',
+                        name: 'Kreativ Moro'
+                    },
+                    subject: 'Din bestilling fra Kreativ Moro',
+                    text: `Din bestilling er bekreftet! Du har kjøpt: ${files.map(file => file.name).join(', ')}`,
+                    html: `<p>Din bestilling er bekreftet! Du har kjøpt: ${files.map(file => file.name).join(', ')}</p>`,
+                    attachments: files.map(file => ({
+                        content: file.content, // Base64 encoded content
+                        filename: file.name,
+                        type: 'application/pdf',
+                        disposition: 'attachment'
+                    }))
                 };
 
-                await emailjs.send("service_v1g2fr8", "template_slf2zpr", templateParams);
+                await sgMail.send(templateParams);
                 console.log('Ordrebekreftelse sendt på e-post');
             } catch (error) {
                 console.error('Feil ved sending av ordrebekreftelse:', error);
@@ -113,4 +120,4 @@
         document.addEventListener('DOMContentLoaded', displayDownloadLinks);
     </script>
 </body>
-</html> 
+</html>

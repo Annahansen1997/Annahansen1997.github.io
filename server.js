@@ -431,11 +431,6 @@ app.get('/secure-download/:sessionId/:productId/:timestamp/:token/:filename', as
 // Oppdater sendOrderEmail funksjonen
 async function sendOrderEmail(customerEmail, orderData, products) {
     try {
-        // Legg til sjekk for å sikre at produkter finnes
-        if (!products || !Array.isArray(products)) {
-            throw new Error('Ugyldig produktdata for e-postvedlegg');
-        }
-        
         const now = new Date();
         const formattedDate = now.toLocaleDateString('no-NO', {
             year: 'numeric',
@@ -444,65 +439,17 @@ async function sendOrderEmail(customerEmail, orderData, products) {
         });
 
         const attachments = products.map(product => {
-            if (!product.price || !product.price.id) {
-                console.error('Ugyldig produktobjekt:', product);
-                return null;
-            }
-            
             const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
-            if (!productInfo) {
-                console.error('Fant ikke produktinformasjon for:', product.price.id);
-                return null;
-            }
-            
             const filePath = path.join(__dirname, 'products', productInfo.filename);
-            
-            try {
-                const fileContent = fs.readFileSync(filePath);
-                return {
-                    content: fileContent.toString('base64'),
-                    filename: productInfo.filename,
-                    type: 'application/pdf',
-                    disposition: 'attachment'
-                };
-            } catch (err) {
-                console.error('Feil ved lesing av fil:', err);
-                return null;
-            }
-        }).filter(Boolean);
+            const fileContent = fs.readFileSync(filePath).toString('base64');
 
-        const productNames = products.map(product => {
-            if (!product.price || !product.price.id) return '';
-            const productInfo = Object.values(PRODUCTS).find(p => p.price_id === product.price.id);
-            return productInfo ? productInfo.name : '';
-        }).filter(Boolean).join(', ');
-
-        const emailTemplate = `
-Hei!
-
-Takk for din bestilling hos Kreativ Moro. Her er din(e) digitale produkt(er):
-
-Ordre detaljer:
-Produkt(er): ${productNames}
-Ordrenummer: ${orderData.order_number}
-Dato: ${formattedDate}
-Totalt betalt: ${(orderData.total_amount / 100).toFixed(2)} NOK
-
-Dine PDF-filer er vedlagt denne e-posten.
-
-Viktig informasjon:
-- PDF-filene er kun for personlig bruk
-- Ikke del filene med andre
-- Du kan skrive ut så mange kopier du ønsker til eget bruk
-
-Har du spørsmål om din bestilling? 
-Svar på denne e-posten eller kontakt oss via nettsiden.
-
-Med vennlig hilsen,
-Kreativ Moro
-
----
-www.kreativmoro.no`;
+            return {
+                content: fileContent,
+                filename: productInfo.filename,
+                type: 'application/pdf',
+                disposition: 'attachment'
+            };
+        });
 
         const msg = {
             to: customerEmail,
@@ -511,7 +458,7 @@ www.kreativmoro.no`;
                 name: 'Kreativ Moro'
             },
             subject: 'Din bestilling fra Kreativ Moro',
-            text: emailTemplate,
+            text: `Hei!\n\nTakk for din bestilling hos Kreativ Moro. Her er din(e) digitale produkt(er):\n\nOrdre detaljer:\nProdukt(er): ${products.map(p => p.name).join(', ')}\nOrdrenummer: ${orderData.order_number}\nDato: ${formattedDate}\nTotalt betalt: ${(orderData.total_amount / 100).toFixed(2)} NOK\n\nDine PDF-filer er vedlagt denne e-posten.\n\nViktig informasjon:\n- PDF-filene er kun for personlig bruk\n- Ikke del filene med andre\n- Du kan skrive ut så mange kopier du ønsker til eget bruk\n\nHar du spørsmål om din bestilling?\nSvar på denne e-posten eller kontakt oss via nettsiden.\n\nMed vennlig hilsen,\nKreativ Moro\n\n---\nwww.kreativmoro.no`,
             attachments: attachments
         };
 
