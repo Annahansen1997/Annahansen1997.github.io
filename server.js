@@ -11,10 +11,18 @@ const morgan = require('morgan');
 const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 
-// Legg til SendGrid konfigurasjon
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Konfigurer nodemailer med Outlook SMTP
+const transporter = nodemailer.createTransport({
+    host: 'smtp.office365.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: process.env.EMAIL_USER, // Outlook email
+        pass: process.env.EMAIL_PASSWORD // Outlook password
+    }
+});
 
 const app = express();
 
@@ -145,50 +153,25 @@ app.post('/test-webhook', (req, res) => {
 // Test-email rute - må være før catch-all ruten
 app.get('/test-email', async (req, res) => {
     try {
-        // Sjekk SendGrid API-nøkkel
-        if (!process.env.SENDGRID_API_KEY) {
-            throw new Error('SENDGRID_API_KEY er ikke konfigurert');
+        // Sjekk Outlook e-post og passord
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+            throw new Error('EMAIL_USER eller EMAIL_PASSWORD er ikke konfigurert');
         }
 
-        // Sjekk avsender e-post
-        if (!process.env.SENDGRID_FROM_EMAIL) {
-            throw new Error('SENDGRID_FROM_EMAIL er ikke konfigurert');
-        }
+        console.log('Forsøker å sende e-post til:', process.env.EMAIL_USER);
 
-        console.log('Forsøker å sende e-post til:', process.env.SENDGRID_FROM_EMAIL);
-
-        const msg = {
-            to: process.env.SENDGRID_FROM_EMAIL,
-            from: {
-                email: process.env.SENDGRID_FROM_EMAIL,
-                name: 'Kreativ Moro'
-            },
+        const mailOptions = {
+            from: `"Kreativ Moro" <${process.env.EMAIL_USER}>`,
+            to: process.env.EMAIL_USER,
             subject: 'Test E-post fra Kreativ Moro',
-            text: 'Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.',
-            html: '<strong>Dette er en test-e-post for å verifisere at SendGrid-konfigurasjonen fungerer.</strong>',
-            mailSettings: {
-                sandboxMode: {
-                    enable: false
-                },
-                bypassListManagement: {
-                    enable: true
-                }
-            },
-            trackingSettings: {
-                clickTracking: {
-                    enable: true,
-                    enableText: true
-                },
-                openTracking: {
-                    enable: true
-                }
-            }
+            text: 'Dette er en test-e-post for å verifisere at Outlook SMTP-konfigurasjonen fungerer.',
+            html: '<strong>Dette er en test-e-post for å verifisere at Outlook SMTP-konfigurasjonen fungerer.</strong>'
         };
 
-        const response = await sgMail.send(msg);
-        console.log('SendGrid respons:', response);
+        const response = await transporter.sendMail(mailOptions);
+        console.log('Outlook SMTP respons:', response);
         
-        res.send('Test-e-post sendt! Sjekk innboksen din. SendGrid respons mottatt.');
+        res.send('Test-e-post sendt! Sjekk innboksen din. Outlook SMTP respons mottatt.');
     } catch (error) {
         console.error('Detaljert feil ved sending av test-e-post:', {
             message: error.message,
@@ -451,18 +434,21 @@ async function sendOrderEmail(customerEmail, orderData, products) {
             };
         });
 
-        const msg = {
+        const mailOptions = {
+            from: `"Kreativ Moro" <${process.env.EMAIL_USER}>`,
             to: customerEmail,
-            from: {
-                email: process.env.SENDGRID_FROM_EMAIL,
-                name: 'Kreativ Moro'
-            },
             subject: 'Din bestilling fra Kreativ Moro',
             text: `Hei!\n\nTakk for din bestilling hos Kreativ Moro. Her er din(e) digitale produkt(er):\n\nOrdre detaljer:\nProdukt(er): ${products.map(p => p.name).join(', ')}\nOrdrenummer: ${orderData.order_number}\nDato: ${formattedDate}\nTotalt betalt: ${(orderData.total_amount / 100).toFixed(2)} NOK\n\nDine PDF-filer er vedlagt denne e-posten.\n\nViktig informasjon:\n- PDF-filene er kun for personlig bruk\n- Ikke del filene med andre\n- Du kan skrive ut så mange kopier du ønsker til eget bruk\n\nHar du spørsmål om din bestilling?\nSvar på denne e-posten eller kontakt oss via nettsiden.\n\nMed vennlig hilsen,\nKreativ Moro\n\n---\nwww.kreativmoro.no`,
-            attachments: attachments
+            attachments: attachments.map(attachment => ({
+                filename: attachment.filename,
+                content: attachment.content,
+                encoding: 'base64',
+                contentType: attachment.type,
+                disposition: attachment.disposition
+            }))
         };
 
-        await sgMail.send(msg);
+        await transporter.sendMail(mailOptions);
         console.log('Ordre e-post sendt til:', customerEmail);
     } catch (error) {
         console.error('Feil ved sending av ordre e-post:', error);
