@@ -13,14 +13,12 @@ const crypto = require('crypto');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 
-// Konfigurer nodemailer med Outlook SMTP
+// Konfigurer nodemailer med Gmail SMTP
 const transporter = nodemailer.createTransport({
-    host: 'smtp.office365.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    service: 'gmail',
     auth: {
-        user: process.env.EMAIL_USER, // Outlook email
-        pass: process.env.EMAIL_PASSWORD // Outlook password
+        user: process.env.EMAIL_USER, // Gmail email
+        pass: process.env.EMAIL_PASSWORD // Gmail app password
     }
 });
 
@@ -153,7 +151,7 @@ app.post('/test-webhook', (req, res) => {
 // Test-email rute - må være før catch-all ruten
 app.get('/test-email', async (req, res) => {
     try {
-        // Sjekk Outlook e-post og passord
+        // Sjekk Gmail e-post og passord
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
             throw new Error('EMAIL_USER eller EMAIL_PASSWORD er ikke konfigurert');
         }
@@ -164,14 +162,14 @@ app.get('/test-email', async (req, res) => {
             from: `"Kreativ Moro" <${process.env.EMAIL_USER}>`,
             to: process.env.EMAIL_USER,
             subject: 'Test E-post fra Kreativ Moro',
-            text: 'Dette er en test-e-post for å verifisere at Outlook SMTP-konfigurasjonen fungerer.',
-            html: '<strong>Dette er en test-e-post for å verifisere at Outlook SMTP-konfigurasjonen fungerer.</strong>'
+            text: 'Dette er en test-e-post for å verifisere at Gmail SMTP-konfigurasjonen fungerer.',
+            html: '<strong>Dette er en test-e-post for å verifisere at Gmail SMTP-konfigurasjonen fungerer.</strong>'
         };
 
         const response = await transporter.sendMail(mailOptions);
-        console.log('Outlook SMTP respons:', response);
+        console.log('Gmail SMTP respons:', response);
         
-        res.send('Test-e-post sendt! Sjekk innboksen din. Outlook SMTP respons mottatt.');
+        res.send('Test-e-post sendt! Sjekk innboksen din. Gmail SMTP respons mottatt.');
     } catch (error) {
         console.error('Detaljert feil ved sending av test-e-post:', {
             message: error.message,
