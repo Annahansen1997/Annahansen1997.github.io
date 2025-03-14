@@ -465,7 +465,7 @@ function sendOrderConfirmation(orderDetails) {
             purchase_date: new Date().toLocaleDateString('no-NO'),
             total_price: `${orderDetails.price.toFixed(2)} NOK`,
             to_email: orderDetails.email,
-            reply_to: 'kreativmoro@outlook.com',
+            reply_to: 'kreativmoro@gmail.com',
             // Legg ved produktfilene som vedlegg
             attachments: orderDetails.items ? orderDetails.items.map(item => ({
                 name: `${item.name}.pdf`,
