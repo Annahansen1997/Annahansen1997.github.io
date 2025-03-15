@@ -5,7 +5,7 @@ html, body {
     width: 100%;
     -webkit-overflow-scrolling: touch;
     position: relative;
-    overflow-x: hidden;
+    overflow-y: auto !important;
 }
 
 body {
@@ -13,15 +13,19 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    width: 100%;
 }
 
-/* Fikser modal scrolling på mobil */
 body.modal-open {
-    position: fixed;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto; /* Endret fra overflow: hidden */
 }
 
 header {
@@ -69,7 +73,6 @@ header {
     padding: 0.5rem;
     cursor: pointer;
     color: #666;
-    min-height: 44px;
 }
 
 .search-button:hover {
@@ -91,7 +94,6 @@ header {
     padding: 0.5rem;
     border-radius: 4px;
     transition: background-color 0.3s;
-    min-height: 44px;
 }
 
 .nav-link:hover {
@@ -202,7 +204,6 @@ main {
     font-size: 0.9rem;
     white-space: nowrap;
     min-width: 0;
-    min-height: 44px;
 }
 
 .product-card .buy-button {
@@ -221,7 +222,6 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    min-height: 44px;
 }
 
 button:hover {
@@ -248,6 +248,7 @@ footer {
     background-color: rgba(0, 0, 0, 0.5);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 100px; /* Juster denne verdien etter behov */
 }
 
 .modal-content {
@@ -291,14 +292,13 @@ footer {
     color: #333;
     cursor: pointer;
     z-index: 1001;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.8);
+    background: transparent;
     border: none;
-    border-radius: 50%;
     padding: 0;
 }
 
@@ -329,7 +329,6 @@ footer {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    min-height: 44px;
 }
 
 .buy-button:hover {
@@ -423,7 +422,6 @@ footer {
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9em;
-    min-height: 44px;
 }
 
 .view-cart-btn:hover {
@@ -435,21 +433,15 @@ footer {
     padding-bottom: 20px;
 }
 
-/* Oppdatert handlekurvoppsett for bedre mobilvisning */
 .cart-item {
-    display: grid;
-    grid-template-columns: 80px 1fr auto;
-    grid-template-areas: 
-        "image details price"
-        "image quantity delete";
-    gap: 10px;
+    display: flex;
+    align-items: center;
     padding: 15px;
     border-bottom: 1px solid #eee;
-    align-items: center;
+    gap: 15px;
 }
 
 .cart-item-image {
-    grid-area: image;
     width: 80px;
     height: 80px;
     object-fit: cover;
@@ -458,7 +450,7 @@ footer {
 }
 
 .cart-item-details {
-    grid-area: details;
+    flex: 1;
     min-width: 0;
 }
 
@@ -474,7 +466,6 @@ footer {
 }
 
 .cart-item-quantity {
-    grid-area: quantity;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -483,11 +474,11 @@ footer {
 .quantity-btn {
     background: #f0f0f0;
     border: none;
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -499,13 +490,12 @@ footer {
 }
 
 .cart-item-price {
-    grid-area: price;
     font-weight: bold;
+    min-width: 100px;
     text-align: right;
 }
 
 .delete-btn {
-    grid-area: delete;
     background: none;
     border: none;
     color: #ff4444;
@@ -513,14 +503,12 @@ footer {
     cursor: pointer;
     padding: 5px;
     transition: color 0.2s;
-    justify-self: end;
 }
 
 .delete-btn:hover {
     color: #ff0000;
 }
 
-/* Oppdatert handlekurv-sammendrag og betalingsknapp */
 .cart-summary {
     margin-top: 20px;
     padding-top: 20px;
@@ -537,22 +525,13 @@ footer {
 
 .checkout-button {
     width: 100%;
-    padding: 16px;
+    padding: 15px;
     background-color: #27ae60;
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 1.1em;
-    margin-bottom: 15px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
-    transition: all 0.3s ease;
-}
-
-.checkout-button:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 4px rgba(39, 174, 96, 0.3);
+    margin-bottom: 10px;
 }
 
 .empty-cart-button {
@@ -562,7 +541,6 @@ footer {
     color: white;
     border: none;
     border-radius: 4px;
-    min-height: 44px;
 }
 
 .empty-cart-message {
@@ -607,81 +585,6 @@ footer {
     text-decoration: underline;
 }
 
-/* Forbedret betalingsmetode-valg */
-.payment-methods {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 15px 0;
-}
-
-.payment-method {
-    flex: 1 0 45%;
-    padding: 12px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.payment-method.selected {
-    border-color: #27ae60;
-    background-color: rgba(39, 174, 96, 0.1);
-}
-
-.payment-form {
-    margin-top: 20px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-.form-group textarea {
-    min-height: 80px;
-}
-
-/* Animasjoner for bedre mobilopplevelse */
-@keyframes slideIn {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.modal.fade-in {
-    animation: fadeIn 0.3s ease-out;
-}
-
-.cart-message {
-    animation: slideIn 0.3s ease-out;
-}
-
-/* Responsiv design forbedringer */
 @media (max-width: 768px) {
     html, body {
         overflow-x: hidden;
@@ -690,195 +593,127 @@ footer {
         -webkit-overflow-scrolling: touch;
     }
 
-    .header-bottom {
-        flex-direction: column;
-        gap: 1rem;
+    body.modal-open {
+        overflow-y: auto; /* Endret fra overflow: hidden */
     }
-    
-    .search-container {
-        max-width: 100%;
-    }
-    
+
     .header-nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: nowrap;
         width: 100%;
-        justify-content: space-between;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-        gap: 0.5rem;
     }
-    
+
     .nav-link {
+        flex: 0 1 auto;
         white-space: nowrap;
         font-size: 0.9rem;
         padding: 0.5rem;
-        text-align: center;
-        justify-content: center;
     }
 
-    /* Forbedret produkt-grid for mobil */
-    .product-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1rem;
-    }
-    
-    .product-card {
-        width: 100%;
-        min-height: 350px;
-    }
-    
-    /* Modal forbedringer for mobil */
-    .modal-content {
-        margin: 10px;
-        width: calc(100% - 20px);
-        max-height: calc(100vh - 20px);
-        padding: 15px;
-    }
-    
-    .close {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-    }
-    
-    /* Forbedringer for handlekurv på mobil */
-    .cart-item {
-        grid-template-columns: 70px 1fr;
-        grid-template-areas: 
-            "image details"
-            "image price"
-            "quantity quantity"
-            "delete delete";
-        padding: 10px;
-    }
-    
-    .cart-item-quantity {
-        justify-content: center;
-        margin: 8px 0;
-    }
-    
-    .cart-item-price {
-        text-align: left;
-        margin-top: 5px;
-    }
-    
-    .delete-btn {
-        justify-self: center;
-        margin-top: 5px;
-        width: 100%;
-        text-align: center;
-        padding: 8px;
-        background-color: #fff4f4;
-        border-radius: 4px;
-    }
-    
-    /* Sticky betalingsseksjon på mobil */
-    .cart-summary {
-        position: sticky;
-        bottom: 0;
-        background: white;
-        padding: 15px;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        z-index: 100;
-        margin-bottom: 0;
-        border-radius: 8px 8px 0 0;
-    }
-    
-    /* Forbedret kontaktskjema for mobil */
     .contact-modal-content {
         width: 95%;
         max-width: 500px;
-        margin: 10px auto;
-        padding: 15px;
+        margin: 20px auto;
+        padding: 20px;
+        height: auto;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 8px;
     }
-    
+
+    .close {
+        position: fixed;
+        right: 10px;
+        top: 20px;
+        width: 36px;
+        height: 36px;
+        font-size: 24px;
+        z-index: 1005;
+    }
+
     .form-group {
         margin-bottom: 10px;
     }
-    
+
     .form-group input,
     .form-group textarea {
+        width: calc(100% - 16px);
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .form-group textarea {
+        min-height: 60px;
+        max-height: 120px;
+    }
+
+    .submit-button {
+        width: 100%;
         padding: 10px;
+        font-size: 14px;
+        margin-top: 5px;
     }
-    
-    /* Forbedret betalingsmetode-visning på mobil */
-    .payment-methods {
-        flex-direction: column;
-    }
-    
-    .payment-method {
-        flex: 1 0 auto;
-    }
-}
 
-/* "Tilbake til toppen"-knapp */
-.back-to-top {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background-color: rgba(52, 152, 219, 0.8);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
+    body.modal-open {
+        position: fixed;
+        width: 100%;
+        overflow: hidden;
+    }
 
-.back-to-top.visible {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Swipeable produktkort på mobil */
-@media (max-width: 768px) {
-    .swipe-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-        display: flex;
-        gap: 1rem;
-        padding: 0.5rem;
-        margin: 0 -1rem;
-    }
-    
-    .swipe-item {
-        scroll-snap-align: start;
-        flex: 0 0 auto;
-        width: 80%;
-    }
-    
-    /* Indikator for sveip */
-    .swipe-indicator {
-        text-align: center;
-        color: #666;
-        margin: 1rem 0;
-        font-size: 0.9rem;
-    }
-}
-
-/* Forbedret tastatur-opplevelse for input-felt */
-@media (max-width: 768px) {
-    input, textarea, select {
-        font-size: 16px !important; /* Forhindrer zoom på iOS */
-    }
-    
-    .form-group.focused {
+    .cart-summary {
         position: relative;
+        padding-bottom: 80px;
     }
-    
-    .form-group.focused::after {
-        content: '';
-        position: absolute;
-        bottom: -20px;
-        left: 0;
-        right: 0;
-        height: 20px;
+
+    .modal-content {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .cart-item {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .cart-item-details {
+        flex: 1 1 100%;
+        order: 2;
+    }
+
+    .cart-item-quantity {
+        flex: 1 1 auto;
+        order: 3;
+    }
+
+    .cart-item-price {
+        flex: 0 0 auto;
+        order: 4;
+    }
+
+    .delete-btn {
+        order: 5;
+    }
+
+    .modal-info {
+        padding: 15px 0;
+    }
+
+    .content-section {
+        margin: 15px 0;
+    }
+
+    .bullet-list {
+        padding-left: 15px;
+    }
+
+    .carousel-container {
+        margin-top: 40px;
+    }
+
+    .single-image {
+        margin-top: 40px;
     }
 }
