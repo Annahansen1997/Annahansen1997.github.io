@@ -5,7 +5,6 @@ html, body {
     width: 100%;
     -webkit-overflow-scrolling: touch;
     position: relative;
-    overflow-y: auto !important;
 }
 
 body {
@@ -20,12 +19,6 @@ body {
     -webkit-overflow-scrolling: touch;
     position: relative;
     width: 100%;
-}
-
-body.modal-open {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto; /* Endret fra overflow: hidden */
 }
 
 header {
@@ -98,18 +91,6 @@ header {
 
 .nav-link:hover {
     background-color: rgba(0, 0, 0, 0.05);
-}
-
-.nav-link .fa-heart {
-    color: #333;
-    font-size: 1.3rem;
-    margin-right: 8px;
-    transition: all 0.3s ease;
-}
-
-.nav-link:hover .fa-heart {
-    transform: scale(1.1);
-    color: #000;
 }
 
 .cart-link {
@@ -191,27 +172,9 @@ main {
     margin: 0.5rem 0;
 }
 
-.product-card .button-group {
-    display: flex;
-    gap: 0.3rem;
-    margin: 0.5rem 0;
-}
-
-.product-card .buy-button,
-.product-card .add-to-cart-button {
-    width: 100%;
-    padding: 8px 4px;
+.product-card button {
+    padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
-    white-space: nowrap;
-    min-width: 0;
-}
-
-.product-card .buy-button {
-    background-color: #4CAF50;
-}
-
-.product-card .buy-button:hover {
-    background-color: #45a049;
 }
 
 button {
@@ -245,35 +208,29 @@ footer {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 100px; /* Juster denne verdien etter behov */
+}
+
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 
 .modal-content {
-    background-color: #fff;
-    margin: 20px auto;
+    background-color: white;
+    margin: 5% auto;
     padding: 20px;
     width: 90%;
-    max-width: 800px;
+    max-width: 600px;
     border-radius: 8px;
     position: relative;
-    overflow-y: auto;
-    max-height: 85vh;
-}
-
-.cart-modal-content {
     max-height: 85vh;
     overflow-y: auto;
-}
-
-.modal-content.cart-modal-content,
-.modal-content.about-modal-content,
-.modal-content.contact-modal-content,
-.modal-content.terms-modal-content,
-.modal-content.privacy-modal-content {
-    max-width: 800px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-content img {
@@ -285,21 +242,11 @@ footer {
 
 .close {
     position: absolute;
-    right: 15px;
+    right: 20px;
     top: 10px;
     font-size: 28px;
     font-weight: bold;
-    color: #333;
     cursor: pointer;
-    z-index: 1001;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    padding: 0;
 }
 
 .close:hover {
@@ -328,6 +275,7 @@ footer {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin-top: 20px;
     font-size: 16px;
 }
 
@@ -411,7 +359,9 @@ footer {
     border-radius: 4px;
     animation: slideIn 0.3s ease-out;
     z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .view-cart-btn {
@@ -428,85 +378,67 @@ footer {
     background-color: #f8f9fa;
 }
 
+.cart-modal-content {
+    max-width: 800px;
+}
+
 #cart-items {
-    margin-top: 40px;
-    padding-bottom: 20px;
+    margin: 20px 0;
 }
 
 .cart-item {
     display: flex;
     align-items: center;
-    padding: 15px;
+    padding: 1rem;
     border-bottom: 1px solid #eee;
-    gap: 15px;
+    gap: 1rem;
 }
 
-.cart-item-image {
+.cart-item img {
     width: 80px;
     height: 80px;
     object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 4px;
 }
 
 .cart-item-details {
     flex: 1;
-    min-width: 0;
-}
-
-.cart-item-details h3 {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-    color: #333;
-}
-
-.cart-item-details p {
-    margin: 5px 0;
-    color: #666;
 }
 
 .cart-item-quantity {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .quantity-btn {
-    background: #f0f0f0;
-    border: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s;
+    font-size: 1.2rem;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 .quantity-btn:hover {
-    background: #e0e0e0;
+    background-color: #e0e0e0;
+}
+
+.cart-item-quantity span {
+    min-width: 30px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .cart-item-price {
     font-weight: bold;
     min-width: 100px;
     text-align: right;
-}
-
-.delete-btn {
-    background: none;
-    border: none;
-    color: #ff4444;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 5px;
-    transition: color 0.2s;
-}
-
-.delete-btn:hover {
-    color: #ff0000;
 }
 
 .cart-summary {
@@ -552,168 +484,571 @@ footer {
 
 /* Kontaktskjema stiler */
 .contact-modal-content {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
     max-width: 500px;
-    width: 90%;
-    position: relative;
-    margin: 20px auto;
-    height: auto;
-    max-height: 90vh;
-    overflow-y: auto;
 }
 
-.contact-info {
-    text-align: center;
-    padding: 20px;
-    line-height: 1.6;
+.contact-form {
+    padding: 20px 0;
 }
 
-.contact-info p {
-    margin: 15px 0;
-    font-size: 16px;
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
     color: #2c3e50;
+    font-weight: bold;
 }
 
-.contact-info a {
-    color: #3498db;
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #2980b9;
+}
+
+.success-message {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #27ae60;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    animation: slideIn 0.3s ease-out;
+    z-index: 1000;
+}
+
+.about-modal-content {
+    max-width: 800px;
+}
+
+.about-content {
+    padding: 20px 0;
+}
+
+.about-text p {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+}
+
+.about-intro {
+    font-size: 1.3em;
+    color: #2c3e50;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.about-closing {
+    font-style: italic;
+    color: #2c3e50;
+    border-top: 1px solid #eee;
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+}
+
+.success-page {
+    max-width: 600px;
+    margin: 100px auto;
+    text-align: center;
+    padding: 2rem;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
     text-decoration: none;
+    border-radius: 4px;
+    margin-top: 20px;
 }
 
-.contact-info a:hover {
+.back-button:hover {
+    background-color: #2980b9;
+}
+
+/* Kjøpsvilkår stiler */
+.terms-note {
+    font-size: 0.9em;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.terms-note a {
+    color: #3498db;
     text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-    html, body {
-        overflow-x: hidden;
-        width: 100%;
-        position: relative;
-        -webkit-overflow-scrolling: touch;
+.terms-modal-content {
+    max-width: 800px;
+}
+
+.terms-content {
+    padding: 20px 0;
+}
+
+.terms-content h3 {
+    color: #2c3e50;
+    margin: 1.5rem 0 0.5rem;
+}
+
+.terms-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+/* Oppdater checkout-button stil */
+.checkout-button {
+    margin-top: 5px;
+}
+
+.footer-link {
+    color: #3498db;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}
+
+/* Personvern modal stiler */
+.privacy-modal-content {
+    max-width: 800px;
+}
+
+.privacy-content {
+    padding: 20px 0;
+}
+
+.privacy-content h3 {
+    color: #2c3e50;
+    margin: 1.5rem 0 0.5rem;
+}
+
+.privacy-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.privacy-content ul {
+    margin: 0.5rem 0 1rem 1.5rem;
+    line-height: 1.6;
+}
+
+.privacy-content li {
+    margin-bottom: 0.5rem;
+}
+
+.privacy-update {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    font-style: italic;
+    color: #666;
+}
+
+/* Juster footer-links spacing */
+.footer-link {
+    margin: 0 5px;
+}
+
+/* Bildekarusell stiler */
+.image-carousel {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    overflow: hidden;
+    background: #f9f9f9;
+}
+
+.carousel-image {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-image.active {
+    opacity: 1;
+}
+
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 16px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-button.prev {
+    left: 10px;
+}
+
+.carousel-button.next {
+    right: 10px;
+}
+
+.carousel-dots {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active {
+    background-color: #3498db;
+}
+
+/* Handlekurv-knapp stil */
+.cart-link {
+    position: relative;
+}
+
+/* Rabattkode-seksjon stil */
+.discount-section {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.discount-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.apply-discount-btn {
+    padding: 8px 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.apply-discount-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Oppdater cart-summary stil */
+.cart-summary {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: #e74c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.delete-btn:hover {
+    background-color: #fee;
+    color: #c0392b;
+}
+
+.delete-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Kontaktskjema validering */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: none;
+}
+
+.form-group input:invalid,
+.form-group textarea:invalid {
+    border-color: #e74c3c;
+}
+
+.required-notice {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.form-group label::after {
+    content: " *";
+    color: #e74c3c;
+}
+
+/* Anmeldelser stiler */
+.reviews-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.reviews-container {
+    margin: 1rem 0;
+}
+
+.review-item {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.review-stars {
+    color: #ffd700;
+    font-size: 1.2rem;
+}
+
+.review-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.review-text {
+    line-height: 1.6;
+}
+
+.star-rating {
+    margin: 1rem 0;
+}
+
+.star {
+    color: #ddd;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star.active {
+    color: #ffd700;
+}
+
+.star:hover,
+.star:hover~.star {
+    color: #ffd700;
+}
+
+#review-text {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.8rem;
+    margin: 1rem 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.submit-review-btn {
+    background-color: #3498db;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-review-btn:hover {
+    background-color: #2980b9;
+}
+
+.review-count {
+    color: #666;
+    margin-left: 1rem;
+    font-size: 0.9rem;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
     }
 
-    body.modal-open {
-        overflow-y: auto; /* Endret fra overflow: hidden */
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Handlekurv dropdown */
+.cart-link {
+    position: relative;
+}
+
+.cart-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: none;
+    z-index: 100;
+    min-width: 200px;
+}
+
+.cart-link:hover .cart-dropdown {
+    display: block;
+}
+
+.view-cart-button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
+
+.view-cart-button:hover {
+    background-color: #2980b9;
+}
+
+.single-image {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.single-image img.product-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+/* Loading message styles */
+.loading-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
     }
 
-    .header-nav {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        gap: 1rem;
-        flex-wrap: nowrap;
-        width: 100%;
+    100% {
+        transform: rotate(360deg);
     }
+}
 
-    .nav-link {
-        flex: 0 1 auto;
-        white-space: nowrap;
-        font-size: 0.9rem;
-        padding: 0.5rem;
-    }
-
-    .contact-modal-content {
-        width: 95%;
-        max-width: 500px;
-        margin: 20px auto;
-        padding: 20px;
-        height: auto;
-        max-height: 90vh;
-        overflow-y: auto;
-        border-radius: 8px;
-    }
-
-    .close {
-        position: fixed;
-        right: 10px;
-        top: 20px;
-        width: 36px;
-        height: 36px;
-        font-size: 24px;
-        z-index: 1005;
-    }
-
-    .form-group {
-        margin-bottom: 10px;
-    }
-
-    .form-group input,
-    .form-group textarea {
-        width: calc(100% - 16px);
-        padding: 8px;
-        font-size: 14px;
-    }
-
-    .form-group textarea {
-        min-height: 60px;
-        max-height: 120px;
-    }
-
-    .submit-button {
-        width: 100%;
-        padding: 10px;
-        font-size: 14px;
-        margin-top: 5px;
-    }
-
-    body.modal-open {
-        position: fixed;
-        width: 100%;
-        overflow: hidden;
-    }
-
-    .cart-summary {
-        position: relative;
-        padding-bottom: 80px;
-    }
-
-    .modal-content {
-        height: auto;
-        min-height: 100vh;
-    }
-
-    .cart-item {
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .cart-item-details {
-        flex: 1 1 100%;
-        order: 2;
-    }
-
-    .cart-item-quantity {
-        flex: 1 1 auto;
-        order: 3;
-    }
-
-    .cart-item-price {
-        flex: 0 0 auto;
-        order: 4;
-    }
-
-    .delete-btn {
-        order: 5;
-    }
-
-    .modal-info {
-        padding: 15px 0;
-    }
-
-    .content-section {
-        margin: 15px 0;
-    }
-
-    .bullet-list {
-        padding-left: 15px;
-    }
-
-    .carousel-container {
-        margin-top: 40px;
-    }
-
-    .single-image {
-        margin-top: 40px;
-    }
+.loading-message p {
+    font-size: 1.2em;
+    color: #333;
+    text-align: center;
 }
