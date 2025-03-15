@@ -279,6 +279,8 @@ app.post('/create-checkout-session', async (req, res) => {
             mode: 'payment',
             success_url: `${req.body.success_url}?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: req.body.cancel_url,
+            customer_email: req.body.customer_email, // Legg til e-post
+            billing_address_collection: 'required' // Gjør e-post obligatorisk
         });
 
         res.json({ url: session.url });
