@@ -7,6 +7,24 @@ html, body {
     position: relative;
 }
 
+.about-modal-content p, 
+.contact-modal-content p,
+.about-text p,
+.about-intro,
+.about-closing,
+.contact-form h2 {
+    text-align: center;
+}
+
+.form-group label {
+    text-align: center;
+    display: block;
+}
+
+.modal-content h2 {
+    text-align: center;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
