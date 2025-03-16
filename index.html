@@ -9,15 +9,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://js.stripe.com/v3/"></script>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
-    script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://*.emailjs.com; 
-    connect-src 'self' https://*.emailjs.com https://api.emailjs.com https://api.stripe.com https://kreativmoro.onrender.com; 
+    script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://www.paypal.com; 
+    connect-src 'self' https://api.stripe.com https://kreativmoro.onrender.com; 
     style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; 
     font-src 'self' https://cdnjs.cloudflare.com; 
-    img-src 'self' data:; 
-    frame-src 'self' https://js.stripe.com;">
+    img-src 'self' data: https://www.paypalobjects.com; 
+    frame-src 'self' https://js.stripe.com https://www.paypal.com;">
     <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="script.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AWO8WxknaZp3JRVkb4xR0bHc8vlcsVqRVTT_xOir4PKl6a00mAQam1fOngGUxbI3B0sQ-Id9pdfwzPt6"></script>
 </head>
 
 <body>
@@ -952,7 +953,7 @@
                     <h3>4. Levering</h3>
                     <p>- PDF-filen sendes til e-postadressen oppgitt ved kjøp<br>
                         - Levering skjer automatisk etter bekreftet betaling<br>
-                        - Ved manglende mottak, ta kontakt via vårt kontaktskjema</p>
+                        - Ved manglende mottak av varer, ta kontakt på kreativmoro@gmail.com</p>
 
                     <h3>5. Angrerett</h3>
                     <p>I henhold til angrerettloven § 22 bokstav n, gjelder ikke angrerett for digitale produkter som
@@ -969,7 +970,7 @@
                         relatert til kjøpet.</p>
 
                     <h3>8. Kontakt</h3>
-                    <p>Ved spørsmål eller problemer, kontakt oss via kontaktskjemaet på nettsiden.</p>
+                    <p>Ved spørsmål eller problemer, kontakt oss på kreativmoro@gmail.com</p>
                 </div>
             </div>
         </div>
@@ -983,7 +984,7 @@
                     <p>Vi samler kun inn følgende personopplysninger:</p>
                     <ul>
                         <li>E-postadresse (ved kjøp og henvendelser)</li>
-                        <li>Navn (ved henvendelser via kontaktskjema)</li>
+                        <li>Navn (ved henvendelser via e-post)</li>
                     </ul>
 
                     <h3>2. Formål med innsamlingen</h3>
@@ -991,7 +992,7 @@
                     <ul>
                         <li>Levering av digitale produkter</li>
                         <li>Kundeservice og support</li>
-                        <li>Behandling av henvendelser via kontaktskjema</li>
+                        <li>Behandling av henvendelser via e-post</li>
                     </ul>
 
                     <h3>3. Lagring og sikkerhet</h3>
@@ -1015,7 +1016,7 @@
                     </ul>
 
                     <h3>7. Kontakt angående personvern</h3>
-                    <p>For spørsmål om personvern, kontakt oss via kontaktskjemaet på nettsiden.</p>
+                    <p>For spørsmål om personvern, send e-post til kreativmoro@gmail.com</p>
 
                     <div class="privacy-update">
                         <p>Sist oppdatert: Januar 2025</p>
@@ -1037,6 +1038,8 @@
             </div>
         </div>
     </main>
+
+    <div id="paypal-button-container"></div>
 
     <footer>
         <p>&copy; 2025 Kreativ Moro. Alle rettigheter forbeholdt. |
