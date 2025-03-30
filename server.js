@@ -39,6 +39,40 @@ const corsOptions = {
     credentials: true
 };
 
+// Helmet med CSP-konfigurasjon
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            connectSrc: [
+                "'self'", 
+                "https://api.stripe.com",
+                "https://kreativmoro.onrender.com",
+                "https://www.sandbox.paypal.com",
+                "https://www.paypal.com",
+                "https://checkout.klarna.com"
+            ],
+            scriptSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://js.stripe.com",
+                "https://www.sandbox.paypal.com",
+                "https://www.paypal.com",
+                "https://checkout.klarna.com"
+            ],
+            frameSrc: [
+                "'self'",
+                "https://js.stripe.com",
+                "https://www.sandbox.paypal.com",
+                "https://www.paypal.com",
+                "https://checkout.klarna.com"
+            ],
+            imgSrc: ["'self'", "data:", "https:"],
+            styleSrc: ["'self'", "'unsafe-inline'"]
+        }
+    }
+}));
+
 // Bruk middleware for alt unntatt webhook-ruten
 app.use((req, res, next) => {
     if (req.originalUrl === '/webhook') {
