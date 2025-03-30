@@ -271,7 +271,7 @@ app.post('/create-checkout-session', async (req, res) => {
         const { cart } = req.body;
         
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card', 'klarna'],
+            payment_method_types: ['card', 'paypal', 'klarna'],
             line_items: cart.map(item => ({
                 price: item.priceId,
                 quantity: item.quantity,
